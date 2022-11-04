@@ -36,3 +36,16 @@ int getRange(List<int> list) {
   var output = getMinMax(tempList); // Get Minimum and Max values of the list
   return output['max']! - output['min']!;
 }
+
+// Sort the list in descending order and return all odd numbers
+List<int> getOdds(List<int> list) {
+  var output = List<int>.from(list); // Create mutable copy of the input
+  output.sort((b, a) => a.compareTo(b)); // Order list in descending order
+  // Run through entire list, verify if each element is even and remove them from the list
+  for(var i = 0; i < output.length; i++){
+    if(output[i] % 2 == 0) {
+      output.removeAt(i);
+    }
+  }
+  return output;
+}
