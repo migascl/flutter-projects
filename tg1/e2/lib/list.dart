@@ -29,3 +29,10 @@ Map<String, int> getMinMax(List<int> list) {
     'max': output[output.length - 1]
   };
 }
+
+// Calculate the range of the list by subtracting the
+int getRange(List<int> list) {
+  var tempList = List<int>.from(list); // Create mutable copy of the input
+  var output = getMinMax(tempList); // Get Minimum and Max values of the list
+  return output['max']! - output['min']!;
+}
