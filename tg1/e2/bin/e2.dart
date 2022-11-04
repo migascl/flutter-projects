@@ -1,5 +1,8 @@
-import 'package:e2/e2.dart' as e2;
+// Libraries
+import 'package:e2/list.dart';
+import 'package:e2/menu.dart';
 
 void main(List<String> arguments) {
-  print('Hello world: ${e2.calculate()}!');
+  var list = generateList();
+  menu(list);
 }
