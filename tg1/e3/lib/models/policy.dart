@@ -16,7 +16,7 @@ class Policy {
   late InsuranceTypes _insuranceType; // Insurance type
   late double _insuredAmount; // Amount insured (Valor segurado)
   late BillingTypes _billingType; // Billing type (monthly, anually)
-  late var _billingCost; // Billing cost of the insurance (Valor do prémio a pagar)
+  late double _billingCost; // Billing cost of the insurance (Valor do prémio a pagar)
   late bool _active; // Policy status
 
   // Constructors
