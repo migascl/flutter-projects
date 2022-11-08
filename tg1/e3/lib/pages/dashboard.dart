@@ -6,19 +6,18 @@ import '../models/policy.dart';
 void dashboard() {
 
   stdout.writeln("Dashboard:");
-
-
+  stdout.writeln("Quantidade de Apólices:");
   // Query for total active insurance policies
+  stdout.writeln("    Total:");
   int totalActivePolicies = 0;
   Policy.cache.forEach((key, value) {
     if (value.active) totalActivePolicies++;
   });
-  stdout.writeln("Apólices Ativas: $totalActivePolicies  |  "
-      "Apólices Inativas: ${Policy.cache.length - totalActivePolicies}");
+  stdout.writeln("        Apólices Ativas: $totalActivePolicies");
+  stdout.writeln("        Apólices Inativas: ${Policy.cache.length - totalActivePolicies}");
 
 
   // Query for active policies based on insurance type
-  stdout.writeln("Quantidade de Apólices:");
   stdout.writeln("    Por Categoria:");
   InsuranceTypes.values.forEach((type) {
     int _activePolicies = 0;
@@ -30,7 +29,7 @@ void dashboard() {
     });
     double _avgActivePolicies = _sumActivePolicies / _activePolicies;
     if(_activePolicies > 0){
-      stdout.writeln("          ${Policy.insuranceTypeToString(type)}: $_activePolicies");
+      stdout.writeln("        ${Policy.insuranceTypeToString(type)}: $_activePolicies");
       stdout.writeln("              Média: $_avgActivePolicies€");
     }
   });
