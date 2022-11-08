@@ -1,6 +1,7 @@
+// Library imports
 import 'dart:convert';
-
 import '../util/generateid.dart';
+import 'package:e3/models/policy.dart';
 
 class Entity {
   // Class instances cache data
@@ -27,7 +28,7 @@ class Entity {
   String get address => _address;
   int get id => generateID([_name]);
 
-  //Setters
+  // Setters
   // Verify if entity already exists
   set name(e){
     Entity tempObj = Entity._internal(e, age, address);
@@ -41,6 +42,17 @@ class Entity {
   }
   set age(e) => _age = e;
   set address(e) => _address = e;
+
+  // Remove reference to object in cache
+  // Throwing an error if dependencies are found
+  static void remove(Entity entity) {
+    Policy.cache.forEach((key, value) {
+      if (value.holder == entity || value.insured == entity ) {
+        throw 'A policy is tied to this entity!';
+      }
+    });
+    _cache.remove(entity.id);
+  }
 
   // Return object in JSON format
   String toJSON() {

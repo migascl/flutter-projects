@@ -1,6 +1,7 @@
+// Library imports
 import 'dart:convert';
-
 import '../util/generateid.dart';
+import 'package:e3/models/policy.dart';
 
 class Insurer {
   // Class instances cache data
@@ -36,6 +37,17 @@ class Insurer {
     }
   }
 
+  // Remove reference to object in cache
+  // Throwing an error if dependencies are found
+  static void remove(Insurer insurer) {
+    Policy.cache.forEach((key, value) {
+      if (value.insurer == insurer) {
+        throw 'A policy is tied to this insurer!';
+      }
+    });
+    _cache.remove(insurer.id);
+  }
+
   // Return object in JSON format
   String toJSON() {
     Map json = {
@@ -60,4 +72,6 @@ class Insurer {
       print(encoder.convert(json));
     });
   }
+
+
 }
