@@ -172,6 +172,25 @@ class Policy {
     _cache.remove(policy.id);
   }
 
+  static String insuranceTypeToString(InsuranceTypes type){
+    switch(type) {
+      case InsuranceTypes.health:
+        return 'Seguro de Saúde';
+        break;
+      case InsuranceTypes.life:
+        return 'Seguro de Vida';
+        break;
+      case InsuranceTypes.home:
+        return 'Seguro de Habitação';
+        break;
+      case InsuranceTypes.car:
+        return 'Seguro Automóvel';
+        break;
+      default:
+        return 'NaN';
+    }
+  }
+
   // Return object in JSON format
   String toJSON() {
     Map json = {
