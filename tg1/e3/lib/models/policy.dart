@@ -176,16 +176,12 @@ class Policy {
     switch(type) {
       case InsuranceTypes.health:
         return 'Seguro de Saúde';
-        break;
       case InsuranceTypes.life:
         return 'Seguro de Vida';
-        break;
       case InsuranceTypes.home:
         return 'Seguro de Habitação';
-        break;
       case InsuranceTypes.car:
         return 'Seguro Automóvel';
-        break;
       default:
         return 'NaN';
     }
