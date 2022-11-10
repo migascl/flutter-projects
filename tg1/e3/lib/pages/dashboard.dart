@@ -1,24 +1,25 @@
+// Imports
 import 'dart:io';
 import 'package:e3/util/globals.dart';
 import '../models/insurer.dart';
 import '../models/policy.dart';
 
+// Displays summed up version of the data
 void dashboard() {
 
   stdout.writeln("Dashboard:");
   stdout.writeln("Quantidade de Apólices:");
   // Query for total active insurance policies
-  stdout.writeln("    Total:");
   int totalActivePolicies = 0;
   Policy.cache.forEach((key, value) {
     if (value.active) totalActivePolicies++;
   });
-  stdout.writeln("        Apólices Ativas: $totalActivePolicies");
-  stdout.writeln("        Apólices Inativas: ${Policy.cache.length - totalActivePolicies}");
+  stdout.writeln("\t├ Ativas: $totalActivePolicies");
+  stdout.writeln("\t└ Inativas: ${Policy.cache.length - totalActivePolicies}");
 
 
   // Query for active policies based on insurance type
-  stdout.writeln("    Por Categoria:");
+  stdout.writeln("\tPor Categoria:");
   InsuranceTypes.values.forEach((type) {
     int _activePolicies = 0;
     double _sumActivePolicies = 0;
@@ -29,14 +30,14 @@ void dashboard() {
     });
     double _avgActivePolicies = _sumActivePolicies / _activePolicies;
     if(_activePolicies > 0){
-      stdout.writeln("        ${insuranceTypeToString(type)}: $_activePolicies");
-      stdout.writeln("              Média: $_avgActivePolicies€");
+      stdout.writeln("\t\t- ${insuranceTypeToString(type)}: $_activePolicies");
+      stdout.writeln("\t\t  └ Média: $_avgActivePolicies€");
     }
   });
 
 
   // Query for active insurance policies based on insurer
-  stdout.writeln("    Por Seguradora:");
+  stdout.writeln("\tPor Seguradora:");
   Insurer.cache.forEach((key, value) {
     int _activePolicies = 0;
     double _sumActivePolicies = 0;
@@ -47,8 +48,8 @@ void dashboard() {
     });
     double _avgActivePolicies = _sumActivePolicies / _activePolicies;
     if(_activePolicies > 0) {
-      stdout.writeln("          ${value.name}: $_activePolicies");
-      stdout.writeln("              Média: $_avgActivePolicies€");
+      stdout.writeln("\t\t- ${value.name}: $_activePolicies");
+      stdout.writeln("\t\t  └ Média: $_avgActivePolicies€");
     }
   });
 }
