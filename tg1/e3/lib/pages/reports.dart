@@ -56,7 +56,7 @@ void insuranceTypeReport(){
         });
     // Print result if finds any active policies
     if(_activePolicies > 0){
-      stdout.writeln("-${Policy.insuranceTypeToString(type)} -> Total: $_insuranceTypeBillingCost€");
+      stdout.writeln("-${insuranceTypeToString(type)} -> Total: $_insuranceTypeBillingCost€");
     }
     _totalBillingCost += _insuranceTypeBillingCost; // Add sub query result to main query
   });

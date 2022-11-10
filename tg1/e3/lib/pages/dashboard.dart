@@ -29,7 +29,7 @@ void dashboard() {
     });
     double _avgActivePolicies = _sumActivePolicies / _activePolicies;
     if(_activePolicies > 0){
-      stdout.writeln("        ${Policy.insuranceTypeToString(type)}: $_activePolicies");
+      stdout.writeln("        ${insuranceTypeToString(type)}: $_activePolicies");
       stdout.writeln("              Média: $_avgActivePolicies€");
     }
   });
