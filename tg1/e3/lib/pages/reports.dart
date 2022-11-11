@@ -7,7 +7,7 @@ import '../util/globals.dart';
 
 // Reports menu
 void reports(){
-  stdout.writeln("\nRelatórios:");
+  stdout.writeln("\nRELATÓRIOS");
   stdout.writeln("\tRelatório de apólices ativas:");
   stdout.writeln("\t\t1. Por tipo de seguro");
   stdout.writeln("\t\t2. Por seguradora");
@@ -57,12 +57,12 @@ void insuranceTypeReport(){
         });
     // Print result if finds any active policies
     if(_activePolicies > 0){
-      stdout.writeln("-${insuranceTypeToString(type)} -> Total: $_insuranceTypeBillingCost€");
+      stdout.writeln("\t-${insuranceTypeToString(type)} -> Total: $_insuranceTypeBillingCost€");
     }
     _totalBillingCost += _insuranceTypeBillingCost; // Add sub query result to main query
   });
-  stdout.writeln("─────────────────────────────────────────");
-  stdout.writeln("Total: $_totalBillingCost€ por ano");
+  stdout.writeln("\t─────────────────────────────────────────");
+  stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
 }
 
 
@@ -86,12 +86,12 @@ void insurerReport(){
     });
     // Print result if finds any active policies
     if(_activePolicies > 0){
-      stdout.writeln("-${insurer.name} -> Total: $_insurerBillingCost€");
+      stdout.writeln("\t-${insurer.name} -> Total: $_insurerBillingCost€");
     }
     _totalBillingCost += _insurerBillingCost; // Add sub query result to main query
   });
-  stdout.writeln("─────────────────────────────────────────");
-  stdout.writeln("Total: $_totalBillingCost€ por ano");
+  stdout.writeln("\t─────────────────────────────────────────");
+  stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
 }
 
 // Entity report
@@ -108,7 +108,7 @@ void entityReport(){
     });
     // Print result if finds any active policies
     if(_activePolicies > 0){
-      stdout.writeln("-Entidade: ${entity.name}");
+      stdout.writeln("\t${entity.name}");
       stdout.writeln("\t├Idade: ${entity.age}");
       stdout.writeln("\t└Morada: ${entity.address}");
     }

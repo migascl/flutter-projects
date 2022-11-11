@@ -8,7 +8,7 @@ import 'add.dart';
 
 // Data managing page, here the user chooses what data it wants to view or add
 void manager(){
-  stdout.writeln("\nDados");
+  stdout.writeln("\nDADOS");
   stdout.writeln("\t1. Entidades");
   stdout.writeln("\t2. Seguradoras");
   stdout.writeln("\t3. Apólices");

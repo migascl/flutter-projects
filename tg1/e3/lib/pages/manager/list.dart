@@ -16,15 +16,15 @@ void list(Type type) {
       // Iterate through every entity
       for(int i = 0; i < entities.length; i++){
         Entity entity = entities.entries.elementAt(i).value;
-        stdout.writeln("$i. ${entity.name} (${entity.id})");
-        stdout.writeln("\t└ Idade: ${entity.age}");
-        stdout.writeln("\t└ Morada: ${entity.address}");
+        stdout.writeln("\t$i. ${entity.name} (${entity.id})");
+        stdout.writeln("\t\t└ Idade: ${entity.age}");
+        stdout.writeln("\t\t└ Morada: ${entity.address}");
       }
       stdout.write("Digite o número do elemento da lista para selecionar uma entidade:");
       try {
         String? index = stdin.readLineSync();
         Entity entity = Entity.cache.entries.elementAt(int.parse(index!)).value;
-        stdout.write("Editar (e) ou Remover (r) ${entity.name} (${entity.id}): ");
+        stdout.write("└ Editar (e) ou Remover (r) ${entity.name} (${entity.id}): ");
         String? option = stdin.readLineSync();
         switch(option) {
           case 'e':
@@ -44,18 +44,18 @@ void list(Type type) {
       }
       break;
     case Insurer:
-      stdout.writeln("Seguradoras");
+      stdout.writeln("Seguradoras:");
       Map<int, Insurer> insurers = Insurer.cache;
       // Iterate through every insurer
       for(int i = 0; i < insurers.length; i++){
         Insurer insurer = insurers.entries.elementAt(i).value;
-        stdout.writeln("$i. ${insurer.name} (${insurer.id})");
+        stdout.writeln("\t$i. ${insurer.name} (${insurer.id})");
       }
       stdout.write("Digite o número do elemento da lista para selecionar uma seguradora:");
       try {
         String? index = stdin.readLineSync();
         Insurer insurer = Insurer.cache.entries.elementAt(int.parse(index!)).value;
-        stdout.write("Editar (e) ou Remover (r) ${insurer.name} (${insurer.id}): ");
+        stdout.write("└ Editar (e) ou Remover (r) ${insurer.name} (${insurer.id}): ");
         String? option = stdin.readLineSync();
         switch(option) {
           case 'e':
@@ -75,27 +75,27 @@ void list(Type type) {
       }
       break;
     case Policy:
-      stdout.writeln("Apólices");
+      stdout.writeln("Apólices:");
       Map<int, Policy> policies = Policy.cache;
       // Iterate through every policy
       for(int i = 0; i < policies.length; i++){
         Policy policy = policies.entries.elementAt(i).value;
-        stdout.writeln("$i. "
+        stdout.writeln("\t$i. "
             "${insuranceTypeToString(policy.insuranceType)} "
             "${policy.insurer.name} "
             "(${policy.id})");
-        stdout.writeln("\t└ Tomador: ${policy.holder.name} (${policy.holder.id})");
-        stdout.writeln("\t└ Segurado: ${policy.insured.name} (${policy.insured.id})");
-        stdout.writeln("\t└ Valor segurado: ${policy.insuredAmount}");
-        stdout.writeln("\t└ Valor Prémio: ${policy.billingCost} "
+        stdout.writeln("\t\t└ Tomador: ${policy.holder.name} (${policy.holder.id})");
+        stdout.writeln("\t\t└ Segurado: ${policy.insured.name} (${policy.insured.id})");
+        stdout.writeln("\t\t└ Valor segurado: ${policy.insuredAmount}");
+        stdout.writeln("\t\t└ Valor Prémio: ${policy.billingCost} "
             "${(policy.insuranceType == BillingTypes.monthly) ? ("por mês") : ("por ano") }");
-        stdout.writeln("\t└ Estado: ${(policy.active) ? "Ativo" : "Inativo"}");
+        stdout.writeln("\t\t└ Estado: ${(policy.active) ? "Ativo" : "Inativo"}");
       }
       stdout.write("Digite o número do elemento da lista para selecionar uma apólice:");
       try {
         String? index = stdin.readLineSync();
         Policy policy = Policy.cache.entries.elementAt(int.parse(index!)).value;
-        stdout.write("Editar (e) ou Remover (r) "
+        stdout.write("└ Editar (e) ou Remover (r) "
             "${insuranceTypeToString(policy.insuranceType)} "
             "${policy.insurer.name} "
             "(${policy.id}): ");

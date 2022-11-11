@@ -6,7 +6,7 @@ import 'dashboard.dart';
 
 void menu(){
   dashboard();
-  stdout.writeln("Menu:");
+  stdout.writeln("MENU");
   stdout.writeln("\t1. Relatórios");
   stdout.writeln("\t2. Dados");
   stdout.write("Insira o digito da opção desejada: ");
