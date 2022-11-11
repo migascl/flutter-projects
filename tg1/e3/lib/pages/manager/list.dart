@@ -7,9 +7,9 @@ import '../../models/policy.dart';
 
 // Menu to view all data
 // Requires an object type to determine which data type to list.
-void list(Type obj) {
+void list(Type type) {
   stdout.writeln("");
-  switch(obj) {
+  switch(type) {
     case Entity:
       stdout.writeln("Entidades:");
       Map<int, Entity> entities = Entity.cache;
