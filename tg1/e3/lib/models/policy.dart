@@ -33,16 +33,21 @@ class Policy {
       )
   {
     int id = generateID([insurer, holder, insured, insuranceType]);
-    return _cache.putIfAbsent(id, () => Policy._internal(
-        insurer,
-        holder,
-        insured,
-        insuranceType,
-        insuredAmount,
-        billingType,
-        billingCost,
-        active
-    ));
+    if(_cache.containsKey(id)){
+      throw DuplicateException();
+    } else {
+      return _cache.putIfAbsent(id, () =>
+          Policy._internal(
+              insurer,
+              holder,
+              insured,
+              insuranceType,
+              insuredAmount,
+              billingType,
+              billingCost,
+              active
+          ));
+    }
   }
   // Internal constructor (Isn't saved into cache)
   Policy._internal(

@@ -16,7 +16,11 @@ class Insurer {
   // It follows the Singleton Pattern by checking its cache for duplicates
   factory Insurer(String name) {
     int id = generateID([name]);
-    return _cache.putIfAbsent(id, () => Insurer._internal(name));
+    if(_cache.containsKey(id)){
+      throw DuplicateException();
+    } else {
+      return _cache.putIfAbsent(id, () => Insurer._internal(name));
+    }
   }
   // Internal constructor (Isn't saved into cache)
   Insurer._internal(this._name);

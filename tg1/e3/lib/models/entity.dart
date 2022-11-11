@@ -18,7 +18,11 @@ class Entity {
   // It follows the Singleton Pattern by checking its cache for duplicates
   factory Entity(String name, int age, String address) {
     int id = generateID([name]);
-    return _cache.putIfAbsent(id, () => Entity._internal(name, age, address));
+    if(_cache.containsKey(id)){
+      throw DuplicateException();
+    } else {
+      return _cache.putIfAbsent(id, () => Entity._internal(name, age, address));
+    }
   }
   // Internal constructor (Isn't saved into cache)
   Entity._internal(this._name, this._age, this._address);
