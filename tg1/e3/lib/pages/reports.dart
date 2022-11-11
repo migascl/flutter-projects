@@ -7,12 +7,12 @@ import '../util/globals.dart';
 
 // Reports menu
 void reports(){
-  stdout.writeln("Relatórios");
+  stdout.writeln("\nRelatórios:");
   stdout.writeln("\tRelatório de apólices ativas:");
   stdout.writeln("\t\t1. Por tipo de seguro");
   stdout.writeln("\t\t2. Por seguradora");
   stdout.writeln("\ta. Relatório de entidades");
-  stdout.writeln("Escreva o caráter da opção desejada: ");
+  stdout.write("Escreva o caráter da opção desejada: ");
   // Receives input from the user, and catches any type error
   try {
     String? option = stdin.readLineSync();
@@ -33,12 +33,13 @@ void reports(){
     stdout.writeln("Opção inválida!");
   }
   // User prompt to go back to menu
-  stdout.writeln("\nPrima Enter para voltar ao menu.");
+  stdout.write("\nPrima Enter para voltar ao menu.");
   stdin.readLineSync();
 }
 
 // Policy report based on insurance type
 void insuranceTypeReport(){
+  stdout.writeln("\nRelatório de Apólices por tipo de seguro:");
   double _totalBillingCost = 0; // Total billing cost of all active policies
   // Iterate through every insurance Type
   InsuranceTypes.values.forEach((type) {
@@ -67,6 +68,7 @@ void insuranceTypeReport(){
 
 // Policy report based on insurer
 void insurerReport(){
+  stdout.writeln("\nRelatório de Apólices por seguradora:");
   double _totalBillingCost = 0; // Total billing cost of all active policies
   // Iterate through every insurer
   Insurer.cache.values.forEach((insurer) {
@@ -94,6 +96,7 @@ void insurerReport(){
 
 // Entity report
 void entityReport(){
+  stdout.writeln("\nRelatório de Entidades:");
   // Iterate through every entity
   Entity.cache.values.forEach((entity) {
     int _activePolicies = 0;
