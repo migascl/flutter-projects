@@ -7,7 +7,7 @@ import '../models/policy.dart';
 // Displays summed up version of the data
 void dashboard() {
 
-  stdout.writeln("Dashboard:");
+  stdout.writeln("\nDashboard:");
   stdout.writeln("Quantidade de Apólices:");
   // Query for total active insurance policies
   int totalActivePolicies = 0;
