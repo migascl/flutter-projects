@@ -1,5 +1,7 @@
-// Library imports
+// Imports
 import 'dart:convert';
+import 'package:e3/util/globals.dart';
+
 import '../util/generateid.dart';
 import 'package:e3/models/policy.dart';
 
@@ -33,7 +35,7 @@ class Insurer {
       _name = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
 
@@ -42,7 +44,7 @@ class Insurer {
   static void remove(Insurer insurer) {
     Policy.cache.forEach((key, value) {
       if (value.insurer == insurer) {
-        throw 'A policy is tied to this insurer!';
+        throw DependencyException();
       }
     });
     _cache.remove(insurer.id);

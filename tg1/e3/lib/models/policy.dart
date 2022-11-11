@@ -1,5 +1,5 @@
+// Imports
 import 'dart:convert';
-
 import '../util/generateid.dart';
 import '../util/globals.dart';
 import 'entity.dart';
@@ -84,7 +84,7 @@ class Policy {
       _insurer = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set holder(Entity e) {
@@ -103,7 +103,7 @@ class Policy {
       _holder = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set insured(Entity e) {
@@ -122,7 +122,7 @@ class Policy {
       _insured = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set insuranceType(InsuranceTypes e) {
@@ -141,7 +141,7 @@ class Policy {
       _insuranceType = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set insuredAmount(e) => _insuredAmount = e;
@@ -161,7 +161,7 @@ class Policy {
       _billingType = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set billingCost(e) => _billingCost = e;

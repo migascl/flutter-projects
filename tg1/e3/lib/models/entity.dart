@@ -1,5 +1,7 @@
-// Library imports
+// Imports
 import 'dart:convert';
+import 'package:e3/util/globals.dart';
+
 import '../util/generateid.dart';
 import 'package:e3/models/policy.dart';
 
@@ -37,7 +39,7 @@ class Entity {
       _name = e;
       _cache.putIfAbsent(id, () => this);
     } else {
-      throw 'Already exists!';
+      throw DuplicateException();
     }
   }
   set age(e) => _age = e;
@@ -48,7 +50,7 @@ class Entity {
   static void remove(Entity entity) {
     Policy.cache.forEach((key, value) {
       if (value.holder == entity || value.insured == entity ) {
-        throw 'A policy is tied to this entity!';
+        throw DependencyException();
       }
     });
     _cache.remove(entity.id);
