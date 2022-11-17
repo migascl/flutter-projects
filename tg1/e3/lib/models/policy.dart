@@ -150,25 +150,7 @@ class Policy {
     }
   }
   set insuredAmount(e) => _insuredAmount = e;
-  set billingType(BillingTypes e) {
-    Policy tempObj = Policy._internal(
-        insurer,
-        holder,
-        insured,
-        insuranceType,
-        insuredAmount,
-        e,
-        billingCost,
-        active
-    );
-    if(!_cache.containsKey(tempObj.id)){
-      _cache.remove(id);
-      _billingType = e;
-      _cache.putIfAbsent(id, () => this);
-    } else {
-      throw DuplicateException();
-    }
-  }
+  set billingType(e) => _billingType = e;
   set billingCost(e) => _billingCost = e;
   set active(e) => _active = e;
 
