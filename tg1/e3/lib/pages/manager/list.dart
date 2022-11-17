@@ -39,10 +39,14 @@ void list(Type type) {
         }
       } on DependencyException {
         stdout.writeln("Existem apólices associadas a esta entidade.");
-      } catch (e) {
-        stdout.writeln("Opção inválida! $e");
+      } on DuplicateException {
+        stdout.writeln("Esta entidade já existe.");
+      }
+      catch (e) {
+        stdout.writeln("Ocorreu um erro! $e");
       }
       break;
+
     case Insurer:
       stdout.writeln("Seguradoras:");
       Map<int, Insurer> insurers = Insurer.cache;
@@ -69,11 +73,15 @@ void list(Type type) {
             stdout.writeln("Opção inválida!");
         }
       } on DependencyException {
-        stdout.writeln("Existem apólices associadas a esta seguradora.");
+        stdout.writeln("Existem apólices associadas a esta entidade.");
+      } on DuplicateException {
+        stdout.writeln("Esta entidade já existe.");
       } catch (e) {
-        stdout.writeln("Opção inválida! $e");
+        stdout.writeln("Ocorreu um erro! $e");
       }
       break;
+
+
     case Policy:
       stdout.writeln("Apólices:");
       Map<int, Policy> policies = Policy.cache;
@@ -112,7 +120,7 @@ void list(Type type) {
             stdout.writeln("Opção inválida!");
         }
       } catch (e) {
-        stdout.writeln("Opção inválida! $e");
+        stdout.writeln("Ocorreu um erro! $e");
       }
       break;
   }
