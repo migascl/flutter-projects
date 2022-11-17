@@ -132,9 +132,13 @@ void list(Type type) {
           case 'e':
 
             break;
+          // Remove Policy
           case 'r':
             Policy.remove(policy);
-            stdout.writeln("Apólice apagada.");
+            stdout.writeln("Apólice "
+            "${insuranceTypeToString(policy.insuranceType)} "
+            "${policy.insurer.name} "
+            "(${policy.id}) apagada.");
             break;
           default:
             stdout.writeln("Opção inválida!");
