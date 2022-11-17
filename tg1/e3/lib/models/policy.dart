@@ -152,10 +152,10 @@ class Policy {
       throw DuplicateException();
     }
   }
-  set insuredAmount(e) => _insuredAmount = e;
-  set billingType(e) => _billingType = e;
-  set billingCost(e) => _billingCost = e;
-  set active(e) => _active = e;
+  set insuredAmount(double e) => _insuredAmount = e;
+  set billingType(BillingTypes e) => _billingType = e;
+  set billingCost(double e) => _billingCost = e;
+  set active(bool e) => _active = e;
 
   // Remove reference to object in cache
   static void remove(Policy policy) {
