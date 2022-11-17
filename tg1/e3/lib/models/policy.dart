@@ -74,6 +74,7 @@ class Policy {
 
   // Setters
   set insurer(Insurer e) {
+    if(e == _insurer) return;
     Policy tempObj = Policy._internal(
         e,
         holder,
@@ -93,6 +94,7 @@ class Policy {
     }
   }
   set holder(Entity e) {
+    if(e == _holder) return;
     Policy tempObj = Policy._internal(
         insurer,
         e,
@@ -112,6 +114,7 @@ class Policy {
     }
   }
   set insured(Entity e) {
+    if(e == _insured) return;
     Policy tempObj = Policy._internal(
         insurer,
         holder,
