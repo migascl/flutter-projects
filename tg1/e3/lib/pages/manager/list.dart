@@ -42,9 +42,10 @@ void list(Type type) {
             if(address!.isNotEmpty) entity.address = address;
             stdout.writeln("Entidade ${entity.name} alterada com successo");
             break;
+          // Remove Entity
           case 'r':
             Entity.remove(entity);
-            stdout.writeln("Entidade apagada.");
+            stdout.writeln("Entidade ${entity.name} apagada.");
             break;
           default:
             stdout.writeln("Opção inválida!");
