@@ -36,7 +36,10 @@ class Entity {
 
   // Setters
   // Verify if entity already exists
-  set name(e){
+  set name(String e){
+    if(e.isEmpty){
+      throw FormatException();
+    }
     Entity tempObj = Entity._internal(e, age, address);
     if(!_cache.containsKey(tempObj.id)){
       _cache.remove(id);
@@ -46,8 +49,20 @@ class Entity {
       throw DuplicateException();
     }
   }
-  set age(e) => _age = e;
-  set address(e) => _address = e;
+  set age(int e){
+    if(e <= 0){
+      throw FormatException();
+    } else {
+      _age = e;
+    }
+  }
+  set address(String e){
+    if(e.isEmpty){
+      throw FormatException();
+    } else {
+      _address = e;
+    }
+  }
 
   // Remove reference to object in cache
   // Throwing an error if dependencies are found
