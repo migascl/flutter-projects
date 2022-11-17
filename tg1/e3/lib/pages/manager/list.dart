@@ -116,7 +116,7 @@ void list(Type type) {
         stdout.writeln("\t\t└ Segurado: ${policy.insured.name} (${policy.insured.id})");
         stdout.writeln("\t\t└ Valor segurado: ${policy.insuredAmount}");
         stdout.writeln("\t\t└ Valor Prémio: ${policy.billingCost} "
-            "${(policy.insuranceType == BillingTypes.monthly) ? ("por mês") : ("por ano") }");
+            "${(policy.billingType == BillingTypes.monthly) ? ("por mês") : ("por ano") }");
         stdout.writeln("\t\t└ Estado: ${(policy.active) ? "Ativo" : "Inativo"}");
       }
       stdout.write("Digite o número do elemento da lista para selecionar uma apólice:");
