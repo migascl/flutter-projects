@@ -27,8 +27,20 @@ void list(Type type) {
         stdout.write("└ Editar (e) ou Remover (r) ${entity.name} (${entity.id}): ");
         String? option = stdin.readLineSync();
         switch(option) {
+          // Edit Entity
           case 'e':
-
+            stdout.writeln("\nEditar ${entity.name} (Caso não queira editar um campo em espcífico, prima enter)");
+            stdout.write("\t └ Nome: ");
+            String? name = stdin.readLineSync();
+            stdout.write("\t └ Idade: ");
+            String? age = stdin.readLineSync();
+            stdout.write("\t └ Morada: ");
+            String? address = stdin.readLineSync();
+            // Check if entries are not empty
+            if(name!.isNotEmpty) entity.name = name;
+            if(age!.isNotEmpty) entity.age = int.parse(age);
+            if(address!.isNotEmpty) entity.address = address;
+            stdout.writeln("Entidade ${entity.name} alterada com successo");
             break;
           case 'r':
             Entity.remove(entity);
