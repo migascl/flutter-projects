@@ -84,9 +84,10 @@ void list(Type type) {
             if(name!.isNotEmpty) insurer.name = name;
             stdout.writeln("Seguradora ${insurer.name} alterada com successo");
             break;
+          // Remove Insurer
           case 'r':
             Insurer.remove(insurer);
-            stdout.writeln("Seguradora apagada.");
+            stdout.writeln("Seguradora ${insurer.name} apagada.");
             break;
           default:
             stdout.writeln("Opção inválida!");
