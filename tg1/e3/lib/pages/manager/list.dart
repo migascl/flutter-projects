@@ -75,8 +75,14 @@ void list(Type type) {
         stdout.write("└ Editar (e) ou Remover (r) ${insurer.name} (${insurer.id}): ");
         String? option = stdin.readLineSync();
         switch(option) {
+          // Edit Insurer
           case 'e':
-
+            stdout.writeln("\nEditar ${insurer.name} (Caso não queira editar um campo em espcífico, prima enter)");
+            stdout.write("\t └ Nome: ");
+            String? name = stdin.readLineSync();
+            // Check if entries are not empty
+            if(name!.isNotEmpty) insurer.name = name;
+            stdout.writeln("Seguradora ${insurer.name} alterada com successo");
             break;
           case 'r':
             Insurer.remove(insurer);
