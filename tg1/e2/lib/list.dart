@@ -3,14 +3,14 @@ import 'dart:math';
 
 List<int> generateList() {
   // Initialize the interval of possible lengths of the list
-  var intervalStart = 90;
-  var intervalFinish = 150;
+  int intervalStart = 90;
+  int intervalFinish = 150;
   // Calculate the length of the list
   // Since Random() can't generate a random value within a given range,
   // it's calculated within the range of number of elements in the list (intervalFinish - intervalStart)
   // and added the base length afterwards (intervalStart)
-  var length = intervalStart + Random().nextInt(intervalFinish - intervalStart);
-  var list = List<int>.filled(length, 0); // Initialize final list with the length calculated above with no values
+  int length = intervalStart + Random().nextInt(intervalFinish - intervalStart);
+  List<int> list = List<int>.filled(length, 0); // Initialize final list with the length calculated above with no values
   // Fill the list with random numbers from 0 to 500
   for (var i = 0; i < list.length; i++) {
     list[i] = Random().nextInt(500);
@@ -31,14 +31,14 @@ Map<String, int> getMinMax(List<int> list) {
 
 // Calculate the range of the list by subtracting the
 int getRange(List<int> list) {
-  var tempList = List<int>.from(list); // Create mutable copy of the input
-  var output = getMinMax(tempList); // Get Minimum and Max values of the list
+  List<int> tempList = List<int>.from(list); // Create mutable copy of the input
+  Map<String, int> output = getMinMax(tempList); // Get Minimum and Max values of the list
   return output['max']! - output['min']!;
 }
 
 // Sort the list in descending order and return all odd numbers
 List<int> getOdds(List<int> list) {
-  var output = List<int>.from(list); // Create mutable copy of the input
+  List<int> output = List<int>.from(list); // Create mutable copy of the input
   output.sort((b, a) => a.compareTo(b)); // Order list in descending order
   // Run through entire list, verify if each element is even and remove them from the list
   for(var i = 0; i < output.length; i++){
