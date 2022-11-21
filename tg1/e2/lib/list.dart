@@ -42,9 +42,7 @@ List<int> getOdds(List<int> list) {
   output.sort((b, a) => a.compareTo(b)); // Order list in descending order
   // Run through entire list, verify if each element is even and remove them from the list
   for(var i = 0; i < output.length; i++){
-    if(output[i] % 2 == 0) {
-      output.removeAt(i);
-    }
+    if(output[i].isEven) output.removeAt(i);
   }
   return output;
 }
