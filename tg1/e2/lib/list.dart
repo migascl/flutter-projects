@@ -20,13 +20,12 @@ List<int> generateList() {
 
 // Creates a map with the keys of the maximum and minimum value of the list
 Map<String, int> getMinMax(List<int> list) {
-  var output = List<int>.from(list); // Create mutable copy of the input
-  output.sort((a, b) => a.compareTo(b)); // Sort the list in ascending order to determine highest and lowest value
-  print(output);
+  List<int> output = List<int>.from(list); // Create mutable copy of the input
+  output.sort(); // Sort the list in ascending order to determine highest and lowest value
   // Return the minimum and maximum number in the list into a Map
   return {
-    'min' : output[0],
-    'max': output[output.length - 1]
+    'min' : output.first,
+    'max': output.last
   };
 }
 
