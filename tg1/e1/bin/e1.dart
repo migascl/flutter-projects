@@ -2,16 +2,17 @@ void main(List<String> arguments) {
   // Variables
   int start = 100;
   int finish = 200;
+  int sum = 0; // Sum of all prime numbers
+  double avg = 0; // Average of prime numbers
 
   print('Intervalo: ]$start, $finish[');
-  var sum = 0;
   // Loop that runs through the entire interval adding every prime number to sum
   for (var i = start; i <= finish; i++) {
     if(isPrime(i)) sum += i;
   }
   print('Soma: $sum');
   // Calculate average of prime numbers by dividing the sum with the number of elements of the interval
-  var avg = sum / (finish - start);
+  avg = sum / (finish - start);
   print('Média: $avg');
 }
 
