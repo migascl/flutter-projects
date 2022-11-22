@@ -109,7 +109,7 @@ void list(Type type) {
       for(int i = 0; i < policies.length; i++){
         Policy policy = policies.entries.elementAt(i).value;
         stdout.writeln("\t$i. "
-            "${insuranceTypeToString(policy.insuranceType)} "
+            "${policy.insuranceType.name} "
             "${policy.insurer.name} "
             "(${policy.id})");
         stdout.writeln("\t\t└ Tomador: ${policy.holder.name} (${policy.holder.id})");
@@ -124,7 +124,7 @@ void list(Type type) {
         String? index = stdin.readLineSync();
         Policy policy = Policy.cache.entries.elementAt(int.parse(index!)).value;
         stdout.write("└ Editar (e) ou Remover (r) "
-            "${insuranceTypeToString(policy.insuranceType)} "
+            "${policy.insuranceType.name} "
             "${policy.insurer.name} "
             "(${policy.id}): ");
         String? option = stdin.readLineSync();
@@ -164,7 +164,7 @@ void list(Type type) {
             stdout.writeln("\tTipo de Seguro: ");
             for(int i = 0; i < InsuranceTypes.values.length; i++){
               InsuranceTypes insuranceType = InsuranceTypes.values.elementAt(i);
-              stdout.writeln("\t\t$i. ${insuranceTypeToString(insuranceType)}");
+              stdout.writeln("\t\t$i. ${insuranceType.name}");
             }
             stdout.write("\tDigite o número do elemento da lista para selecionar o tipo de seguro: ");
             String? insuranceTypeIndex = stdin.readLineSync();
@@ -205,7 +205,7 @@ void list(Type type) {
             }
             if(active != null) policy.active = active;
             stdout.writeln("Apólice "
-                "${insuranceTypeToString(policy.insuranceType)} "
+                "${policy.insuranceType.name} "
                 "${policy.insurer.name} "
                 "(${policy.id}) alterada.");
             break;
@@ -213,7 +213,7 @@ void list(Type type) {
           case 'r':
             Policy.remove(policy);
             stdout.writeln("Apólice "
-            "${insuranceTypeToString(policy.insuranceType)} "
+            "${policy.insuranceType.name} "
             "${policy.insurer.name} "
             "(${policy.id}) apagada.");
             break;

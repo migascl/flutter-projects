@@ -75,7 +75,7 @@ void add(Type type) {
         stdout.writeln("\tTipo de Seguro: ");
         for(int i = 0; i < InsuranceTypes.values.length; i++){
           InsuranceTypes insuranceType = InsuranceTypes.values.elementAt(i);
-          stdout.writeln("\t\t$i. ${insuranceTypeToString(insuranceType)}");
+          stdout.writeln("\t\t$i. ${insuranceType.name}");
         }
         stdout.write("\tDigite o número do elemento da lista para selecionar o tipo de seguro: ");
         String? insuranceTypeIndex = stdin.readLineSync();
@@ -114,7 +114,7 @@ void add(Type type) {
         }
         Policy policy = Policy(insurer, holder, insured, insuranceType, insuredAmount, billingType, billingCost, active);
         stdout.writeln("Apólice "
-            "${insuranceTypeToString(policy.insuranceType)} ${policy.insurer.name} "
+            "${policy.insuranceType.name} ${policy.insurer.name} "
             "(${policy.id}) criada.");
       } on DuplicateException {
         stdout.writeln("Apólice já existe!");

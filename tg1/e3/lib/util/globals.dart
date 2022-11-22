@@ -1,22 +1,19 @@
 // File dedicated to global data and classes
 
 // Insurance types
-enum InsuranceTypes { health, life, home, car }
-// Returns insurance types in a string format readable to the user
-String insuranceTypeToString(InsuranceTypes type){
-  switch(type) {
-    case InsuranceTypes.health:
-      return 'Seguro de Saúde';
-    case InsuranceTypes.life:
-      return 'Seguro de Vida';
-    case InsuranceTypes.home:
-      return 'Seguro de Habitação';
-    case InsuranceTypes.car:
-      return 'Seguro Automóvel';
-    default:
-      return 'NaN';
-  }
+enum InsuranceTypes {
+  health(name: 'Seguro de Saúde'),
+  life(name: 'Seguro de Vida'),
+  home(name: 'Seguro de Habitação'),
+  car(name: 'Seguro de Automóvel');
+
+  // Variable
+  final String name;
+
+  // Constructor
+  const InsuranceTypes({required this.name});
 }
+
 // Types of insurance billing
 enum BillingTypes { monthly, annually }
 
