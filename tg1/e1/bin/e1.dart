@@ -18,6 +18,7 @@ void main(List<String> arguments) {
 
 // Algorithm to determine if a number is prime or not
 bool isPrime(int num){
+  if(num <= 1) return false; // Prime numbers have to be greater than 1
   // Initialize loop with i starting in 2, incrementing by 1, until num/i is greater than i
   for (var i = 2; i <= num / i; ++i) {
     // If i is a factor of num, num is not prime, returning false.
