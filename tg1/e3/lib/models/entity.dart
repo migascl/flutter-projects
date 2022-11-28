@@ -18,7 +18,7 @@ class Entity {
   // Before creating an object, it generates a unique ID with the parameters provided
   // This ID is used to check for duplicates, if no duplicates found, it creates the object and stores it in cache
   factory Entity({required String name, required int age, required String address}) {
-    int id = generateID([name]);
+    int id = generateID([name, age, address]);
     if(_cache.containsKey(id)){
       throw DuplicateException();
     } else {
@@ -33,7 +33,7 @@ class Entity {
   String get name => _name;
   int get age => _age;
   String get address => _address;
-  int get id => generateID([_name]);
+  int get id => generateID([_name, _age, _address]);
 
   // Setters
   // Verify if entity already exists
@@ -54,14 +54,28 @@ class Entity {
     if(e <= 0){
       throw FormatException();
     } else {
-      _age = e;
+      Entity tempObj = Entity._internal(name, e, address);
+      if(!_cache.containsKey(tempObj.id)){
+        _cache.remove(id);
+        _age = e;
+        _cache.putIfAbsent(id, () => this);
+      } else {
+        throw DuplicateException();
+      }
     }
   }
   set address(String e){
     if(e.isEmpty){
       throw FormatException();
     } else {
-      _address = e;
+      Entity tempObj = Entity._internal(name, age, e);
+      if(!_cache.containsKey(tempObj.id)){
+        _cache.remove(id);
+        _address = e;
+        _cache.putIfAbsent(id, () => this);
+      } else {
+        throw DuplicateException();
+      }
     }
   }
 
