@@ -1,9 +1,10 @@
 // Library Imports
 import 'dart:io';
 import 'package:e3/models/entity.dart';
+import '../models/billing_types.dart';
+import '../models/insurance_types.dart';
 import '../models/insurer.dart';
 import '../models/policy.dart';
-import '../util/globals.dart';
 
 // Reports menu
 void reports(){

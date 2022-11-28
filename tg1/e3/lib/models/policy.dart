@@ -1,8 +1,10 @@
 // Imports
 import 'dart:convert';
 import '../util/generateid.dart';
-import '../util/globals.dart';
+import '../util/exceptions.dart';
+import 'billing_types.dart';
 import 'entity.dart';
+import 'insurance_types.dart';
 import 'insurer.dart';
 
 class Policy {

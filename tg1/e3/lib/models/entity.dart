@@ -1,6 +1,6 @@
 // Imports
 import 'dart:convert';
-import 'package:e3/util/globals.dart';
+import 'package:e3/util/exceptions.dart';
 
 import '../util/generateid.dart';
 import 'package:e3/models/policy.dart';

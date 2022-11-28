@@ -1,9 +1,11 @@
 // Library imports
 import 'dart:io';
-import 'package:e3/util/globals.dart';
+import '../../models/billing_types.dart';
 import '../../models/entity.dart';
+import '../../models/insurance_types.dart';
 import '../../models/insurer.dart';
 import '../../models/policy.dart';
+import '../../util/exceptions.dart';
 
 // Menu to view all data
 // Requires an object type to determine which data type to list.

@@ -1,9 +1,11 @@
 // Imports
 import 'dart:io';
-import 'package:e3/util/globals.dart';
+import '../../models/billing_types.dart';
 import '../../models/entity.dart';
+import '../../models/insurance_types.dart';
 import '../../models/insurer.dart';
 import '../../models/policy.dart';
+import '../../util/exceptions.dart';
 
 void add(Type type) {
   stdout.write("\nAdicionar ");

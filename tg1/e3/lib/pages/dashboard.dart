@@ -1,6 +1,6 @@
 // Imports
 import 'dart:io';
-import 'package:e3/util/globals.dart';
+import '../models/insurance_types.dart';
 import '../models/insurer.dart';
 import '../models/policy.dart';
 
