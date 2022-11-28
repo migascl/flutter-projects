@@ -17,7 +17,7 @@ class Entity {
   // Constructors
   // Before creating an object, it generates a unique ID with the parameters provided
   // This ID is used to check for duplicates, if no duplicates found, it creates the object and stores it in cache
-  factory Entity(String name, int age, String address) {
+  factory Entity({required String name, required int age, required String address}) {
     int id = generateID([name]);
     if(_cache.containsKey(id)){
       throw DuplicateException();

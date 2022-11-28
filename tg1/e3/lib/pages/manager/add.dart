@@ -17,7 +17,7 @@ void add(Type type) {
         String? age = stdin.readLineSync();
         stdout.write("\tMorada: ");
         String? address = stdin.readLineSync();
-        Entity entity = Entity(name!, int.parse(age!), address!);
+        Entity entity = Entity(name: name!, age: int.parse(age!), address: address!);
         stdout.writeln("Entidade ${entity.name} (${entity.id}) criada.");
       } on DuplicateException {
         stdout.writeln("Entidade já existe!");
@@ -112,7 +112,15 @@ void add(Type type) {
             active = false;
             break;
         }
-        Policy policy = Policy(insurer, holder, insured, insuranceType, insuredAmount, billingType, billingCost, active);
+        Policy policy = Policy(
+            insurer: insurer,
+            holder: holder,
+            insured: insured,
+            insuranceType: insuranceType,
+            insuredAmount: insuredAmount,
+            billingType: billingType,
+            billingCost: billingCost,
+            active: active);
         stdout.writeln("Apólice "
             "${policy.insuranceType.name} ${policy.insurer.name} "
             "(${policy.id}) criada.");

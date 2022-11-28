@@ -22,16 +22,16 @@ class Policy {
   // Constructors
   // Before creating an object, it generates a unique ID with the parameters provided
   // This ID is used to check for duplicates, if no duplicates found, it creates the object and stores it in cache
-  factory Policy(
-      Insurer insurer,
-      Entity holder,
-      Entity insured,
-      InsuranceTypes insuranceType,
-      double insuredAmount,
-      BillingTypes billingType,
-      var billingCost,
-      bool active
-      )
+  factory Policy({
+    required Insurer insurer,
+    required Entity holder,
+    required Entity insured,
+    required InsuranceTypes insuranceType,
+    required double insuredAmount,
+    required BillingTypes billingType,
+    required var billingCost,
+    required bool active
+  })
   {
     int id = generateID([insurer, holder, insured, insuranceType]);
     if(_cache.containsKey(id)){
