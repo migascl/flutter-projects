@@ -20,7 +20,8 @@ class Policy {
   late bool _active; // Policy status
 
   // Constructors
-  // It follows the Singleton Pattern by checking its cache for duplicates
+  // Before creating an object, it generates a unique ID with the parameters provided
+  // This ID is used to check for duplicates, if no duplicates found, it creates the object and stores it in cache
   factory Policy(
       Insurer insurer,
       Entity holder,

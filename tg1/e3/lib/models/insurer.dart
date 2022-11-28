@@ -13,7 +13,8 @@ class Insurer {
   late String _name;
 
   // Constructors
-  // It follows the Singleton Pattern by checking its cache for duplicates
+  // Before creating an object, it generates a unique ID with the parameters provided
+  // This ID is used to check for duplicates, if no duplicates found, it creates the object and stores it in cache
   factory Insurer(String name) {
     int id = generateID([name]);
     if(_cache.containsKey(id)){
