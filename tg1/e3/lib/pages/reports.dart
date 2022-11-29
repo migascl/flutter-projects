@@ -42,10 +42,11 @@ void reports(){
 void insuranceTypeReport(){
   stdout.writeln("\nRelatório de Apólices por tipo de seguro:");
   double _totalBillingCost = 0; // Total billing cost of all active policies
+  int _totalActivePolicies = 0; // Total number of active policies
   // Iterate through every insurance Type
   InsuranceTypes.values.forEach((type) {
     double _insuranceTypeBillingCost = 0; // Total billing of cost active policies of a certain type
-    int _activePolicies = 0;
+    int _activePolicies = 0; // Total of active policies of a certain type
     // Query all active policies of a certain insurance type
     Policy.cache.entries.toList()
         .where((e) => e.value.active && e.value.insuranceType == type)
@@ -60,10 +61,17 @@ void insuranceTypeReport(){
     if(_activePolicies > 0){
       stdout.writeln("\t-${type.name} -> Total: $_insuranceTypeBillingCost€");
     }
-    _totalBillingCost += _insuranceTypeBillingCost; // Add sub query result to main query
+    // Add sub query result to main query
+    _totalBillingCost += _insuranceTypeBillingCost;
+    _totalActivePolicies += _activePolicies;
   });
-  stdout.writeln("\t─────────────────────────────────────────");
-  stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
+  // Print total if finds any active policies
+  if(_totalActivePolicies > 0){
+    stdout.writeln("\t─────────────────────────────────────────");
+    stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
+  } else {
+    stdout.writeln("\tNão existem nenhumas apólices ativas.");
+  }
 }
 
 
@@ -71,10 +79,11 @@ void insuranceTypeReport(){
 void insurerReport(){
   stdout.writeln("\nRelatório de Apólices por seguradora:");
   double _totalBillingCost = 0; // Total billing cost of all active policies
+  int _totalActivePolicies = 0; // Total number of active policies
   // Iterate through every insurer
   Insurer.cache.values.forEach((insurer) {
     double _insurerBillingCost = 0; // Total billing of cost active policies based on insurer
-    int _activePolicies = 0;
+    int _activePolicies = 0; // Total of active policies of a certain type
     // Query all active policies of a certain insurer
     Policy.cache.entries.toList()
         .where((e) => e.value.active && e.value.insurer == insurer)
@@ -89,10 +98,17 @@ void insurerReport(){
     if(_activePolicies > 0){
       stdout.writeln("\t-${insurer.name} -> Total: $_insurerBillingCost€");
     }
-    _totalBillingCost += _insurerBillingCost; // Add sub query result to main query
+    // Add sub query result to main query
+    _totalBillingCost += _insurerBillingCost;
+    _totalActivePolicies += _activePolicies;
   });
-  stdout.writeln("\t─────────────────────────────────────────");
-  stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
+  // Print total if finds any active policies
+  if(_totalActivePolicies > 0){
+    stdout.writeln("\t─────────────────────────────────────────");
+    stdout.writeln("\tTotal: $_totalBillingCost€ por ano");
+  } else {
+    stdout.writeln("\tNão existem nenhumas apólices ativas.");
+  }
 }
 
 // Entity report
