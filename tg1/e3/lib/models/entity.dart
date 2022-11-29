@@ -36,18 +36,18 @@ class Entity {
   int get id => generateID([_name, _age, _address]);
 
   // Setters
-  // Verify if entity already exists
   set name(String e){
-    if(e.isEmpty){
+    if(e.isEmpty) {
       throw FormatException();
-    }
-    Entity tempObj = Entity._internal(e, age, address);
-    if(!_cache.containsKey(tempObj.id)){
-      _cache.remove(id);
-      _name = e;
-      _cache.putIfAbsent(id, () => this);
     } else {
-      throw DuplicateException();
+      Entity tempObj = Entity._internal(e, age, address);
+      if(!_cache.containsKey(tempObj.id)){
+        _cache.remove(id);
+        _name = e;
+        _cache.putIfAbsent(id, () => this);
+      } else {
+        throw DuplicateException();
+      }
     }
   }
   set age(int e){
