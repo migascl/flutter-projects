@@ -15,14 +15,14 @@ class MyList {
     // and added the base length afterwards (intervalStart)
     int length = _start + Random().nextInt(_finish - _start);
     List<int> tempList = List<int>.filled(length, 0); // Initialize final list with the length calculated above with no values
-    // Fill the list with random numbers from 0 to 500
+    // Fill the list with random numbers from 0 to 999
     for (var i = 0; i < tempList.length; i++) {
       tempList[i] = Random().nextInt(999);
     }
     tempList.sort(); // Sort in ascending order
     return MyList._internal(tempList);
   }
-  MyList._internal(this._list);
+  MyList._internal(this._list); // Internal Constructor
 
   // Getters
   List<int> get list => _list;
