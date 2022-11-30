@@ -1,5 +1,4 @@
-# Enunciado 3
-#### Miguel Leirosa
+# Trabalho 1 - Enunciado 3
 O mediador de seguros “Surpresas existem!” necessita de uma aplicação para gerir a sua 
 carteira de seguros. De entre os dados a guardar de cada apólice salienta-se:
 - a seguradora, 
