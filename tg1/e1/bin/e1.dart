@@ -1,15 +1,22 @@
 void main(List<String> arguments) {
   // Variables
-  int start = 100;
-  int finish = 200;
+  const int start = 100;
+  const int finish = 200;
   int sum = 0; // Sum of all prime numbers
   double avg = 0; // Average of prime numbers
+  final list = <int>[]; // List of numbers
+
+  // Fill list with whole numbers not including the start and finish values
+  for (var i = start; i <= finish; i++) {
+    if(i >= start && i <= finish) list.add(i);
+  }
 
   print('Intervalo: ]$start, $finish[');
   // Loop that runs through the entire interval adding every prime number to sum
-  for (var i = start; i <= finish; i++) {
-    if(isPrime(i)) sum += i;
-  }
+  list.forEach((element) {
+    if(isPrime(element)) sum += element;
+  });
+
   print('Soma: $sum');
   // Calculate average of prime numbers by dividing the sum with the number of elements of the interval
   avg = sum / (finish - start);
