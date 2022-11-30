@@ -54,31 +54,4 @@ class Insurer {
     });
     _cache.remove(insurer.id);
   }
-
-  // Return object in JSON format
-  String toJSON() {
-    Map json = {
-      'id' : id,
-      'name' : _name,
-    };
-    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-    return encoder.convert(json);
-  }
-
-  // Print cache data
-  static printCache(){
-    _cache.forEach((key, value) {
-      Map json = {
-        'key' : key,
-        'value':  {
-          'id' : value.id,
-          'name' : value.name,
-        }
-      };
-      JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-      print(encoder.convert(json));
-    });
-  }
-
-
 }
