@@ -1,48 +1,46 @@
 // Libraries
 import 'dart:math';
 
-List<int> generateList() {
-  // Initialize the interval of possible lengths of the list
-  int intervalStart = 90;
-  int intervalFinish = 150;
-  // Calculate the length of the list
-  // Since Random() can't generate a random value within a given range,
-  // it's calculated within the range of number of elements in the list (intervalFinish - intervalStart)
-  // and added the base length afterwards (intervalStart)
-  int length = intervalStart + Random().nextInt(intervalFinish - intervalStart);
-  List<int> list = List<int>.filled(length, 0); // Initialize final list with the length calculated above with no values
-  // Fill the list with random numbers from 0 to 500
-  for (var i = 0; i < list.length; i++) {
-    list[i] = Random().nextInt(500);
+class MyList {
+  // Variables
+  static const int _start = 90; // Minimum size of the list
+  static const int _finish = 150; // Maximum size of the list
+  final List<int> _list;
+
+  // Factory constructor
+  factory MyList() {
+    // Calculate the length of the list
+    // Since Random() can't generate a random value within a given range,
+    // it's calculated within the range of number of elements in the list (intervalFinish - intervalStart)
+    // and added the base length afterwards (intervalStart)
+    int length = _start + Random().nextInt(_finish - _start);
+    List<int> tempList = List<int>.filled(length, 0); // Initialize final list with the length calculated above with no values
+    // Fill the list with random numbers from 0 to 500
+    for (var i = 0; i < tempList.length; i++) {
+      tempList[i] = Random().nextInt(999);
+    }
+    tempList.sort(); // Sort in ascending order
+    return MyList._internal(tempList);
   }
-  return list; // Return list
-}
+  MyList._internal(this._list);
 
-// Creates a map with the keys of the maximum and minimum value of the list
-Map<String, int> getMinMax(List<int> list) {
-  List<int> output = List<int>.from(list); // Create mutable copy of the input
-  output.sort(); // Sort the list in ascending order to determine highest and lowest value
-  // Return the minimum and maximum number in the list into a Map
-  return {
-    'min' : output.first,
-    'max': output.last
-  };
-}
+  // Getters
+  List<int> get list => _list;
+  int get max => _list.last; // Max value of the list
+  int get min => _list.first; // Min value of the list
+  int get size => _list.length; // Size of the list
+  int get range => (max - min); // Range of the list
 
-// Calculate the range of the list by subtracting the
-int getRange(List<int> list) {
-  List<int> tempList = List<int>.from(list); // Create mutable copy of the input
-  Map<String, int> output = getMinMax(tempList); // Get Minimum and Max values of the list
-  return output['max']! - output['min']!;
-}
-
-// Sort the list in descending order and return all odd numbers
-List<int> getOdds(List<int> list) {
-  List<int> output = List<int>.from(list); // Create mutable copy of the input
-  output.sort((b, a) => a.compareTo(b)); // Order list in descending order
-  // Run through entire list, verify if each element is even and remove them from the list
-  for(var i = 0; i < output.length; i++){
-    if(output[i].isEven) output.removeAt(i);
+  // Sort the list in descending order and return all odd numbers
+  List<int> oddsInDescOrder(){
+    List<int> output = List<int>.from(_list); // Create mutable copy of the input
+    output.sort((b, a) => a.compareTo(b)); // Order list in descending order
+    output.removeWhere((element) => element.isEven); // Remove every even number from the list
+    return output;
   }
-  return output;
+
+  @override
+  String toString() {
+    return _list.toString();
+  }
 }

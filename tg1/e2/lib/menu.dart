@@ -1,11 +1,11 @@
 // Libraries
 import 'dart:io';
-import 'list.dart';
 
 // Menu console
 void menu(list) {
   stdout.writeln("\n-----------------------------------------------------------------------------------------------------------");
   stdout.writeln("Conjunto: $list");
+  stdout.writeln("Tamanho: ${list.size}");
   stdout.writeln("Menu:");
   stdout.writeln("\t1. Maior e menor elemento do conjunto.");
   stdout.writeln("\t2. Amplitude do conjunto.");
@@ -17,21 +17,20 @@ void menu(list) {
     switch(option) {
       case 1:
         stdout.writeln("\nMaior e menor elemento:");
-        Map<String, int> result = getMinMax(list);
-        stdout.writeln("\tMenor: ${result['min']}");
-        stdout.writeln("\tMaior: ${result['max']}");
+        stdout.writeln("\tMenor: ${list.min}");
+        stdout.writeln("\tMaior: ${list.max}");
         break;
       case 2:
-        stdout.writeln("\nAmplitude do conjunto: ${getRange(list)}");
+        stdout.writeln("\nAmplitude do conjunto: ${list.range}");
         break;
       case 3:
         stdout.writeln("\nLista dos números ímpares em ordem decrescente:");
-        print(getOdds(list));
+        print(list.oddsInDescOrder().toString());
         break;
       default:
         stdout.writeln("Opção inválida!");
     }
-  } catch (e) {
+  } on FormatException {
     stdout.writeln("Opção inválida!");
   }
   // User prompt to go back to menu
