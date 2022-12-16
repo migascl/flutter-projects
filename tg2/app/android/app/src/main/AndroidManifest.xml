@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ispg4212.tg2">
+    package="com.ispg4212.app">
    <application
-        android:label="tg2"
+        android:label="app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

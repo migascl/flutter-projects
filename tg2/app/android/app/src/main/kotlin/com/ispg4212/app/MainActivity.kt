@@ -1,4 +1,4 @@
-package com.ispg4212.tg2
+package com.ispg4212.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -8,4 +8,4 @@ build/
 
 # Files and directories created by IntelliJ.
 /.idea/
-/tg2.iml
+/app.iml
