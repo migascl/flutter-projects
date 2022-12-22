@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/utils/constants.dart';
 import '../../models/league_model.dart';
 import '../../controller/league_controller.dart';
 
@@ -21,9 +22,9 @@ class _LeagueViewState extends State<LeagueView> {
 
   @override
   Widget build(BuildContext context) {
-    print("League View building...");
+    print("League View: building...");
     return Consumer<LeagueController>(builder: (context, league, child) {
-      if (league.leagues.isEmpty || league.isLoading) {
+      if (league.leagues.isEmpty || league.state == ControllerState.busy) {
         return const Center(
           child: CircularProgressIndicator(),
         );
