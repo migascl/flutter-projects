@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/views/screens/home_view.dart';
+import 'package:provider/provider.dart';
+import 'controller/league_controller.dart';
 
 void main() {
   runApp(const Main());
@@ -14,13 +15,17 @@ class Main extends StatelessWidget {
   // Root of the application
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TG2',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: StartUpView(),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => LeagueController()),
+        ],
+        child: MaterialApp(
+          title: 'TG2',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: StartUpView(),
+        ));
   }
 }
 
@@ -52,12 +57,6 @@ class _StartUpView extends State<StartUpView> {
 
     // If response is successful (code 200) navigate to Home page, show error dialog if not
     if (result == 200) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => HomeView(),
-          maintainState: false,
-        ),
-      );
     } else {
       showDialog<String>(
           context: context,
