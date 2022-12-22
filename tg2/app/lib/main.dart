@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:tg2/controller/season_controller.dart';
+import 'package:tg2/views/screens/home_view.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'controller/league_controller.dart';
@@ -18,6 +20,21 @@ class Main extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => LeagueController()),
+          ChangeNotifierProxyProvider<LeagueController, SeasonController>(
+            // first, create the _proxy_ object, the one that you'll use in your UI
+            // at this point, you will have access to the previously provided objects
+            create: (context) => SeasonController(
+                Provider.of<LeagueController>(context, listen: false)),
+            // next, define a function to be called on `update`. It will return the same type
+            // as the create method.
+            update: (context, leagueController, seasonController) {
+              print("Season Provider update");
+              if (seasonController == null)
+                throw ArgumentError.notNull('season');
+              seasonController.leagueController = leagueController;
+              return seasonController;
+            },
+          ),
         ],
         child: MaterialApp(
           title: 'TG2',
