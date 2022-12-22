@@ -74,6 +74,12 @@ class _StartUpView extends State<StartUpView> {
 
     // If response is successful (code 200) navigate to Home page, show error dialog if not
     if (result == 200) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => HomeView(),
+          maintainState: false,
+        ),
+      );
     } else {
       showDialog<String>(
           context: context,
