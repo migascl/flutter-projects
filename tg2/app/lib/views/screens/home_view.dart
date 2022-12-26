@@ -1,12 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tg2/controller/season_controller.dart';
-import 'package:tg2/views/widgets/season_view.dart';
-import '../../controller/league_controller.dart';
-import '../../models/league_model.dart';
-import '../widgets/league_view.dart';
-
-enum Section { MATCHWEEK, TEAMS }
 
 class HomeView extends StatefulWidget {
   @override
@@ -26,8 +18,6 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        LeagueView(),
-        SeasonView(),
         ElevatedButton(
             onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
@@ -39,7 +29,7 @@ class _HomeViewState extends State<HomeView> {
         ElevatedButton(
             onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => MatchweeksView(),
+                    builder: (context) => TeamsView(),
                     maintainState: false,
                   ),
                 ),
@@ -60,16 +50,54 @@ class _MatchweeksViewState extends State<MatchweeksView> {
   @override
   Widget build(BuildContext context) {
     print("Matchweeks View: Building...");
-    return Scaffold(
-        appBar: AppBar(title: Text("Clubes")),
-        body: Center(
-          child: Consumer<SeasonController>(
-            builder: (context, season, child) {
-              return Text(
-                  'Jornada da liga ${season.leagueController.selectedLeague.name} na ${season.selectedSeason.name}');
-            },
+    return DefaultTabController(
+      initialIndex: 1,
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('TabBar Widget'),
+          bottom: const TabBar(
+            isScrollable: true,
+            tabs: <Widget>[
+              Tab(
+                text: "Jornada 13",
+              ),
+              Tab(
+                text: "Jornada 12",
+              ),
+              Tab(
+                text: "Jornada 11",
+              ),
+              Tab(
+                text: "Jornada 10",
+              ),
+              Tab(
+                text: "Jornada 9",
+              ),
+            ],
           ),
-        ));
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            Center(
+                child: Column(
+              children: [
+                Text("Jogos"),
+                Column(
+                  children: [Container(child: Text("12 de Novembro 2021"))],
+                ),
+              ],
+            )),
+            Center(
+              child: Text("It's rainy here"),
+            ),
+            Center(
+              child: Text("It's sunny here"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -86,13 +114,6 @@ class _TeamsViewState extends State<TeamsView> {
     print("Teams View: Building...");
     return Scaffold(
         appBar: AppBar(title: Text("Clubes")),
-        body: Center(
-          child: Consumer<SeasonController>(
-            builder: (context, season, child) {
-              return Text(
-                  'Club da liga ${season.leagueController.selectedLeague.name} na ${season.selectedSeason.name}');
-            },
-          ),
-        ));
+        body: Center(child: Text("Equipas")));
   }
 }
