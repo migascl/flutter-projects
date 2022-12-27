@@ -28,7 +28,7 @@ class _ClubViewState extends State<ClubView> {
   @override
   void initState() {
     super.initState();
-    _getClub = ClubProvider.getByID(widget.id);
+    _getClub = ClubProvider().getByID(widget.id);
   }
 
   @override
@@ -160,7 +160,7 @@ class _ClubInfoViewState extends State<ClubInfoView> {
   @override
   void initState() {
     super.initState();
-    _getStadium = StadiumProvider.getByID(widget.club.stadiumID);
+    _getStadium = StadiumProvider().getByID(widget.club.stadiumID);
   }
 
   @override
