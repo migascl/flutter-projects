@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tg2/views/screens/home_view.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(const Main());
