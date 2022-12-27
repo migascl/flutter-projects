@@ -9,7 +9,7 @@ import 'package:tg2/utils/exceptions.dart';
 // Stadium provider class
 class StadiumProvider {
   // Methods
-  Future<Stadium> getByID(int id) async {
+  static Future<Stadium> getByID(int id) async {
     try {
       print("STADIUM: Fetching $id...");
       var response = await http
@@ -28,7 +28,7 @@ class StadiumProvider {
     }
   }
 
-  Future<Map<int, Stadium>> getAll() async {
+  static Future<Map<int, Stadium>> getAll() async {
     try {
       print("STADIUM: Fetching all...");
       var response = await http

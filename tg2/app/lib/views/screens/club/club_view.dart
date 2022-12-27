@@ -5,9 +5,8 @@ import '../../../models/stadium_model.dart';
 import '../../../provider/club_provider.dart';
 
 class ClubView extends StatefulWidget {
-  const ClubView({super.key, required this.title, required this.id});
+  const ClubView({super.key, required this.id});
 
-  final String title;
   final int id;
 
   @override
@@ -29,7 +28,7 @@ class _ClubViewState extends State<ClubView> {
   @override
   void initState() {
     super.initState();
-    _getClub = ClubProvider().getByID(widget.id);
+    _getClub = ClubProvider.getByID(widget.id);
   }
 
   @override
@@ -101,7 +100,7 @@ class _ClubViewState extends State<ClubView> {
                   )),
                 ]);
               } else {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
@@ -134,6 +133,11 @@ class ClubSquadView extends StatefulWidget {
 
 class _ClubSquadViewState extends State<ClubSquadView> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Text("Plantel"),
@@ -156,7 +160,7 @@ class _ClubInfoViewState extends State<ClubInfoView> {
   @override
   void initState() {
     super.initState();
-    _getStadium = StadiumProvider().getByID(widget.club.stadiumID);
+    _getStadium = StadiumProvider.getByID(widget.club.stadiumID);
   }
 
   @override
