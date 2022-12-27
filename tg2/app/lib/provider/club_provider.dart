@@ -9,7 +9,7 @@ import 'package:tg2/models/club_model.dart';
 // Club provider class
 class ClubProvider {
   // Methods
-  static Future<Club> getByID(int id) async {
+  Future<Club> getByID(int id) async {
     try {
       print("CLUB: Fetching $id...");
       var response = await http
@@ -28,7 +28,7 @@ class ClubProvider {
     }
   }
 
-  static Future<Map<int, Club>> getAll() async {
+  Future<Map<int, Club>> getAll() async {
     try {
       print("CLUB: Fetching all...");
       var response = await http
