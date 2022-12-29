@@ -1,7 +1,8 @@
 // Enumerator of all possible Api endpoints
 enum ApiEndpoints {
   root(endpoint: '/'),
-  country(endpoint: '/country');
+  country(endpoint: '/country'),
+  stadium(endpoint: '/stadium');
 
   final String endpoint;
 

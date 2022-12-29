@@ -1,50 +1,39 @@
 // Library imports
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:tg2/utils/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:tg2/models/stadium_model.dart';
-import 'package:tg2/utils/exceptions.dart';
+import 'package:tg2/utils/api/api_endpoints.dart';
+import 'package:tg2/utils/api/api_service.dart';
+import 'package:tg2/utils/constants.dart';
 
 // Stadium provider class
-class StadiumProvider {
-  // Methods
-  Future<Stadium> getByID(int id) async {
-    try {
-      print("STADIUM: Fetching $id...");
-      var response = await http
-          .get(Uri.parse("${apiUrl}/stadium?id=eq.${id}"))
-          .timeout(const Duration(seconds: 5));
-      if (response.statusCode == 200) {
-        List<dynamic> json = jsonDecode(response.body);
-        if (json.isEmpty) throw ResponseException;
-        return Stadium.fromJson(json.first as Map<String, dynamic>);
-      } else {
-        throw ResponseException;
-      }
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+class StadiumProvider extends ChangeNotifier {
+  Map<int, Stadium> _items = {};
+  ProviderState _state = ProviderState.empty;
+
+  // Automatically fetch data when initialized
+  StadiumProvider() {
+    print("Stadium/P: Initialized");
+    get();
   }
 
-  Future<Map<int, Stadium>> getAll() async {
+  ProviderState get state => _state;
+  Map<int, Stadium> get items => _items;
+
+  Future<void> get() async {
     try {
-      print("STADIUM: Fetching all...");
-      var response = await http
-          .get(Uri.parse("${apiUrl}/stadium"))
-          .timeout(const Duration(seconds: 5));
-      late List<dynamic> json;
-      (response.statusCode == 200)
-          ? json = jsonDecode(response.body)
-          : throw ResponseException;
-      json = jsonDecode(response.body);
-      if (json.isEmpty) throw ResponseException;
-      return Map<int, Stadium>.fromIterable(json.toList(),
-          key: (item) => item['id'], value: (item) => Stadium.fromJson(item));
+      print("Stadium/P: Getting all...");
+      _state = ProviderState.busy;
+      notifyListeners();
+      final response = await ApiService().get(ApiEndpoints.stadium);
+      _items = { for (var item in response) item['id'] : Stadium.fromJson(item) };
+      print("Stadium/P: Fetched successfully!");
+      _state = ProviderState.ready;
+      notifyListeners();
     } catch (e) {
-      print(e);
-      rethrow;
+      print("Stadium/P: Error fetching! $e");
+      _state = ProviderState.empty;
+
     }
   }
 }
