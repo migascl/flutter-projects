@@ -1,11 +1,13 @@
 // Library imports
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+
+import '../utils/exceptions.dart';
 
 // Stadium provider class
 class StadiumProvider extends ChangeNotifier {
@@ -20,12 +22,12 @@ class StadiumProvider extends ChangeNotifier {
   }
 
   CountryProvider get countryProvider => _countryProvider;
-
   ProviderState get state => _state;
   Map<int, Stadium> get items => _items;
 
   Future<void> get() async {
     try {
+      if(_state == ProviderState.busy || countryProvider.state != ProviderState.ready) return;
       print("Stadium/P: Getting all...");
       _state = ProviderState.busy;
       notifyListeners();
@@ -37,7 +39,7 @@ class StadiumProvider extends ChangeNotifier {
     } catch (e) {
       print("Stadium/P: Error fetching! $e");
       _state = ProviderState.empty;
-
+      notifyListeners();
     }
   }
 }

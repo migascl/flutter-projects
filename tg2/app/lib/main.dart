@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/views/screens/home_view.dart';
+import 'package:tg2/views/screens/provider_test.dart';
 
 void main() {
   runApp(const Main());
@@ -20,10 +22,10 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
+        ChangeNotifierProvider<CountryProvider>(create: (_) => CountryProvider()),
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
             create: (context) => StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
-            update: (BuildContext context, CountryProvider countryProvider, stadiumProvider,) {
+            update: (context, countryProvider, stadiumProvider) {
               print("Notifier Stadium Update");
               return StadiumProvider(countryProvider);
             }
@@ -35,7 +37,13 @@ class Main extends StatelessWidget {
               return ClubProvider(stadiumProvider);
             }
         ),
-        // TODO ADD PLAYER PROVIDER
+        ChangeNotifierProxyProvider<CountryProvider, PlayerProvider>(
+            create: (context) => PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
+            update: (context, countryProvider, playerProvider) {
+              print("Notifier Player Update");
+              return PlayerProvider(countryProvider);
+            }
+        ),
         // TODO ADD EXAM PROVIDER
         // TODO ADD CONTRACT PROVIDER
         // TODO ADD MATCH PROVIDER
@@ -53,6 +61,7 @@ class Main extends StatelessWidget {
 
 // Screen to verify if app has connection to API
 class StartUpView extends StatefulWidget {
+  const StartUpView({super.key});
 
   @override
   State<StartUpView> createState() => _StartUpView();

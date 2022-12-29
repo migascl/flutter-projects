@@ -6,6 +6,7 @@ import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/exceptions.dart';
 
 // Club provider class
 class ClubProvider extends ChangeNotifier {
@@ -25,6 +26,7 @@ class ClubProvider extends ChangeNotifier {
 
   Future<void> get() async {
     try {
+      if(_state == ProviderState.busy || stadiumProvider.state != ProviderState.ready) return;
       print("Club/P: Getting all...");
       _state = ProviderState.busy;
       notifyListeners();
@@ -36,7 +38,7 @@ class ClubProvider extends ChangeNotifier {
     } catch (e) {
       print("Club/P: Error fetching! $e");
       _state = ProviderState.empty;
-
+      notifyListeners();
     }
   }
 }

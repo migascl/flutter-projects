@@ -1,10 +1,12 @@
 // Library imports
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tg2/models/country_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+
+import '../utils/exceptions.dart';
 
 // Country provider class
 class CountryProvider extends ChangeNotifier {
@@ -22,6 +24,7 @@ class CountryProvider extends ChangeNotifier {
 
   Future<void> get() async {
     try {
+      if(_state == ProviderState.busy) return;
       print("Country/P: Getting all...");
       _state = ProviderState.busy;
       notifyListeners();
@@ -33,7 +36,7 @@ class CountryProvider extends ChangeNotifier {
     } catch (e) {
       print("Country/P: Error fetching! $e");
       _state = ProviderState.empty;
-
+      notifyListeners();
     }
   }
 }
