@@ -2,18 +2,22 @@ class ResponseException implements Exception {
   final String message;
 
   ResponseException(
-      {this.message = "Attempted to fetch while client was busy."});
+      {this.message = "Invalid response."});
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "Attempted to fetch while client was busy.";
+    return message;
   }
 }
 
-class FetchingException implements Exception {
+class EmptyDataException implements Exception {
   final String message;
 
-  FetchingException(
-      {this.message = "Attempted to fetch while client was busy."});
+  EmptyDataException(
+      {this.message = "Response body is empty."});
+
+  @override
+  String toString() {
+    return message;
+  }
 }
