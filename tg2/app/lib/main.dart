@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
+import 'package:tg2/provider/clublist_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
@@ -21,8 +22,20 @@ class Main extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
-        ChangeNotifierProvider<StadiumProvider>(create: (context) => StadiumProvider()),
-        ChangeNotifierProvider<ClubProvider>(create: (context) => ClubProvider()),
+        ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
+            create: (context) => StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
+            update: (BuildContext context, CountryProvider countryProvider, stadiumProvider,) {
+              print("Notifier Stadium Update");
+              return StadiumProvider(countryProvider);
+            }
+    ),
+    ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
+            create: (context) => ClubProvider(Provider.of<StadiumProvider>(context, listen: false)),
+            update: (BuildContext context, StadiumProvider stadiumProvider, clubProvider) {
+              print("Notifier Club Update");
+              return ClubProvider(stadiumProvider);
+            }
+        ),
       ],
       child: MaterialApp(
         title: 'TG2',
