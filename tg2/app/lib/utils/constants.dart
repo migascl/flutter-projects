@@ -1,1 +1,1 @@
-const String apiUrl = "http://192.168.36.24:3000";
+enum ProviderState { empty, ready, busy }
