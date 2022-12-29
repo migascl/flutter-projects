@@ -2,20 +2,24 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:tg2/models/stadium_model.dart';
+import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 
 // Stadium provider class
 class StadiumProvider extends ChangeNotifier {
+  late CountryProvider _countryProvider;
   Map<int, Stadium> _items = {};
   ProviderState _state = ProviderState.empty;
 
   // Automatically fetch data when initialized
-  StadiumProvider() {
+  StadiumProvider(this._countryProvider) {
     print("Stadium/P: Initialized");
     get();
   }
+
+  CountryProvider get countryProvider => _countryProvider;
 
   ProviderState get state => _state;
   Map<int, Stadium> get items => _items;
