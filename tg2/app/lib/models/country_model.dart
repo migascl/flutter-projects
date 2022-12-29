@@ -1,8 +1,7 @@
 // Library Imports
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/api/api_endpoints.dart';
+import 'package:tg2/utils/api/api_service.dart';
 
 // A read-only model for the Country entity
 class Country {
@@ -23,22 +22,15 @@ class Country {
   String get name => _name;
   String get iso => _iso;
 
-  static Future<Map<int, Country>> fetch() async {
-    print("Country/M: Fetching list...");
+  static Future<Map<int, Country>> get() async {
     try {
-      var response = await http
-          .get(Uri.parse("${apiUrl}/country"))
-          .timeout(const Duration(seconds: 5));
-      if (response.statusCode == 200) {
-        final decodedJson = jsonDecode(response.body).toList();
-        Map<int, Country> result = { for (var item in decodedJson) item['id'] : Country.fromJson(item) };
-        print("Country/M: Fetched successfuly!");
-        return result;
-      } else {
-        throw Exception;
-      }
+      print("Country/M: Getting all countries...");
+      final response = await ApiService().get(ApiEndpoints.country);
+      Map<int, Country> result = { for (var item in response) item['id'] : Country.fromJson(item) };
+      print("Country/M: Fetched successfuly!");
+      return result;
     } catch (e) {
-      print("Country/M: Error fetching!");
+      print("Country/M: Error fetching! $e");
       return {};
     }
   }
