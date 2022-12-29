@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+import 'package:tg2/provider/club_provider.dart';
+import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/views/screens/home_view.dart';
-import 'package:tg2/utils/constants.dart';
-
-import 'models/country_model.dart';
 
 void main() {
   runApp(const Main());
@@ -19,13 +18,20 @@ class Main extends StatelessWidget {
   // Root of the application
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TG2',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<CountryProvider>(create: (_) => CountryProvider()),
+        Provider<StadiumProvider>(create: (_) => StadiumProvider()),
+        Provider<ClubProvider>(create: (_) => ClubProvider()),
+      ],
+      child: MaterialApp(
+        title: 'TG2',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: StartUpView(),
       ),
-      home: StartUpView(),
-    );
+      );
   }
 }
 
@@ -45,11 +51,7 @@ class _StartUpView extends State<StartUpView> {
       // Navigate to Home screen
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => FutureProvider<Map<int, Country>>(
-            create: (context) => Country.get(),
-            initialData: {},
-            child: HomeView(),
-          ),
+          builder: (context) => HomeView(),
           maintainState: false,
         ),
       );
