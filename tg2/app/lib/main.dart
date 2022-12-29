@@ -28,14 +28,18 @@ class Main extends StatelessWidget {
               print("Notifier Stadium Update");
               return StadiumProvider(countryProvider);
             }
-    ),
-    ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
+        ),
+        ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
             create: (context) => ClubProvider(Provider.of<StadiumProvider>(context, listen: false)),
             update: (BuildContext context, StadiumProvider stadiumProvider, clubProvider) {
               print("Notifier Club Update");
               return ClubProvider(stadiumProvider);
             }
         ),
+        // TODO ADD PLAYER PROVIDER
+        // TODO ADD EXAM PROVIDER
+        // TODO ADD CONTRACT PROVIDER
+        // TODO ADD MATCH PROVIDER
       ],
       child: MaterialApp(
         title: 'TG2',
@@ -44,7 +48,7 @@ class Main extends StatelessWidget {
         ),
         home: StartUpView(),
       ),
-      );
+    );
   }
 }
 

@@ -32,7 +32,6 @@ class ClubProvider extends ChangeNotifier {
       _items = { for (var item in response) item['id'] : Club.fromJson(item) };
       print("Club/P: Fetched successfully!");
       _state = ProviderState.ready;
-      print(_items[0]!.name);
       notifyListeners();
     } catch (e) {
       print("Club/P: Error fetching! $e");
