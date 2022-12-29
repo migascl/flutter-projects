@@ -20,9 +20,9 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<CountryProvider>(create: (_) => CountryProvider()),
-        Provider<StadiumProvider>(create: (_) => StadiumProvider()),
-        Provider<ClubProvider>(create: (_) => ClubProvider()),
+        ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
+        ChangeNotifierProvider<StadiumProvider>(create: (context) => StadiumProvider()),
+        ChangeNotifierProvider<ClubProvider>(create: (context) => ClubProvider()),
       ],
       child: MaterialApp(
         title: 'TG2',
