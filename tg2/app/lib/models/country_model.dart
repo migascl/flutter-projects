@@ -21,17 +21,4 @@ class Country {
   int get id => _id;
   String get name => _name;
   String get iso => _iso;
-
-  static Future<Map<int, Country>> get() async {
-    try {
-      print("Country/M: Getting all countries...");
-      final response = await ApiService().get(ApiEndpoints.country);
-      Map<int, Country> result = { for (var item in response) item['id'] : Country.fromJson(item) };
-      print("Country/M: Fetched successfuly!");
-      return result;
-    } catch (e) {
-      print("Country/M: Error fetching! $e");
-      return {};
-    }
-  }
 }
