@@ -1,9 +1,9 @@
-
-// Model for the Contract entity. Supports read & write.
+// Library Imports
 import 'package:flutter/material.dart';
 import 'package:tg2/models/position_model.dart';
 import 'package:tg2/utils/daterange_converter.dart';
 
+// Model for the Contract entity. Supports read & write.
 class Contract {
   // Variables
   late int _id;

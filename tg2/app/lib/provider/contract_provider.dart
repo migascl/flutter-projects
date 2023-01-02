@@ -38,7 +38,7 @@ class ContractProvider extends ChangeNotifier {
       _state = ProviderState.ready;
       notifyListeners();
     } catch (e, s) {
-      print("Contract/P: Error fetching! $e $s");
+      print("Contract/P: Error fetching! $e");
       _state = ProviderState.empty;
       notifyListeners();
     }
