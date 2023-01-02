@@ -25,6 +25,13 @@ class PlayerView extends StatefulWidget {
 
 class _PlayerViewState extends State<PlayerView> {
 
+  void loadPageData() {
+    Provider.of<ClubProvider>(context, listen: false).get();
+    Provider.of<PlayerProvider>(context, listen: false).get();
+    Provider.of<ContractProvider>(context, listen: false).get();
+    Provider.of<ExamProvider>(context, listen: false).get();
+  }
+
   // Page view controls
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
@@ -40,10 +47,7 @@ class _PlayerViewState extends State<PlayerView> {
     print("Player/V: Initialized State!");
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ClubProvider>(context, listen: false).get();
-      Provider.of<PlayerProvider>(context, listen: false).get();
-      Provider.of<ContractProvider>(context, listen: false).get();
-      Provider.of<ExamProvider>(context, listen: false).get();
+      loadPageData();
     });
   }
 
@@ -61,10 +65,7 @@ class _PlayerViewState extends State<PlayerView> {
               tooltip: 'Refresh',
               onPressed: () {
                 // Refresh page data
-                Provider.of<ClubProvider>(context, listen: false).get();
-                Provider.of<PlayerProvider>(context, listen: false).get();
-                Provider.of<ContractProvider>(context, listen: false).get();
-                Provider.of<ExamProvider>(context, listen: false).get();
+                loadPageData();
               },
             ),
           ],
@@ -150,6 +151,40 @@ class _PlayerViewState extends State<PlayerView> {
                                   ),
                                   title: Text(club.name),
                                   subtitle: Text("Ínicio: ${contract.period.start}\nFim: ${contract.period.end}"),
+                                  trailing: PopupMenuButton<int>(
+                                      onSelected: (int value) {
+                                        if(value == 0) {
+                                          showDialog<String>(
+                                              context: context,
+                                              builder: (BuildContext context) => AlertDialog(
+                                                title: const Text('Atenção!'),
+                                                content: Text("Tem a certeza que pretende eliminar contracto #${contract.id} ?\n"
+                                                    "Esta operação não irreversível!"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      contractProvider.delete(contract).then((value) => loadPageData());
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Sim'),
+                                                  ),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Não'),
+                                                  ),
+                                                ],
+                                              ));
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                        const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text('Remover'),
+                                        ),
+                                      ]
+                                  ),
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
@@ -157,9 +192,6 @@ class _PlayerViewState extends State<PlayerView> {
                                         maintainState: false,
                                       ),
                                     );
-                                  },
-                                  onLongPress: () {
-                                    // TODO ADD REMOVE FUNCTION
                                   },
                                 ),
                                 const Divider(
@@ -198,6 +230,40 @@ class _PlayerViewState extends State<PlayerView> {
                                         Text("Data: ${exam.date}"),
                                         Text("Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
                                       ],
+                                    ),
+                                    trailing: PopupMenuButton<int>(
+                                      onSelected: (int value) {
+                                        if(value == 0) {
+                                          showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: const Text('Atenção!'),
+                                              content: Text("Tem a certeza que pretende eliminar exame #${exam.id} ?\n"
+                                                  "Esta operação não irreversível!"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    examProvider.delete(exam).then((value) => loadPageData());
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Sim'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Não'),
+                                                ),
+                                              ],
+                                            ));
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                        const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text('Remover'),
+                                        ),
+                                      ]
                                     ),
                                   ),
                                   const Divider(height: 2.0),
