@@ -49,7 +49,6 @@ class _PlayerListViewState extends State<PlayerListView> {
             if(playerProvider.state == ProviderState.ready) {
               Map<int, Player> playerList = playerProvider.items;
               Map<int, Country> countryList = playerProvider.countryProvider.items;
-              // TODO ADD REMOVE FUNCTION
               return ListView.builder(
                 itemCount: playerList.length,
                 itemBuilder: (context, index) {
@@ -72,6 +71,9 @@ class _PlayerListViewState extends State<PlayerListView> {
                               maintainState: false,
                             ),
                           );
+                        },
+                        onLongPress: () {
+                          // TODO ADD REMOVE FUNCTION
                         },
                       ),
                       const Divider(

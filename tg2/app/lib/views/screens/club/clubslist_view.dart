@@ -51,7 +51,6 @@ class _ClubListViewState extends State<ClubListView> {
                 Map<int, Club> clubList = clubProvider.items;
                 Map<int, Stadium> stadiumList = clubProvider.stadiumProvider.items;
                 Map<int, Country> countryList = clubProvider.stadiumProvider.countryProvider.items;
-                // TODO ADD REMOVE FUNCTION
                 return ListView.builder(
                   itemCount: clubList.length,
                   itemBuilder: (context, index) {
@@ -75,6 +74,9 @@ class _ClubListViewState extends State<ClubListView> {
                                 maintainState: false,
                               ),
                             );
+                          },
+                          onLongPress: () {
+                            // TODO ADD REMOVE FUNCTION
                           },
                         ),
                         const Divider(
