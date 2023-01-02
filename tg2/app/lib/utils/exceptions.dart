@@ -1,13 +1,6 @@
 class ResponseException implements Exception {
-  final String message;
 
-  ResponseException(
-      {this.message = "Invalid response."});
-
-  @override
-  String toString() {
-    return message;
-  }
+  ResponseException(String s);
 }
 
 class EmptyDataException implements Exception {
