@@ -11,11 +11,11 @@ class Club {
   late String _fax;
   late String _email;
   late Color _color;
-  late String _icon;
+  late String _picture;
 
   // Constructors
   Club(this._id, this._name, this._stadiumID, this._phone, this._fax,
-      this._email, this._color, this._icon);
+      this._email, this._color, this._picture);
   Club.fromJson(Map<String, dynamic> json)
       : _id = json['id'],
         _name = json['name'],
@@ -25,7 +25,7 @@ class Club {
         _email = json['email'],
         _color = Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1],
             json['color_rgb'][2]),
-        _icon = json['icon'];
+        _picture = json['picture'];
 
   // Getters
   int get id => _id;
@@ -35,7 +35,7 @@ class Club {
   String get fax => _fax;
   String get email => _email;
   Color get color => _color;
-  String get icon => _icon;
+  String get picture => _picture;
 
   // Parse model to Json
   Map<String, dynamic> toJson() => {
@@ -46,6 +46,6 @@ class Club {
         'fax': _fax,
         'email': _email,
         'colour_rg': [_color.red, _color.green, _color.blue],
-        'icon': _icon
+        'picture': _picture
       };
 }

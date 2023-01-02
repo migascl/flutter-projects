@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/provider/stadium_provider.dart';
-import 'package:tg2/views/screens/club/club_view.dart';
 import 'package:tg2/views/screens/player/player_view.dart';
-import '../../models/club_model.dart';
 import '../../models/country_model.dart';
 import '../../models/player_model.dart';
-import '../../models/stadium_model.dart';
 import '../../provider/club_provider.dart';
 import '../../provider/country_provider.dart';
 import '../../utils/constants.dart';
@@ -61,7 +57,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                     children: [
                       ListTile(
                         leading: Image(
-                          image: NetworkImage(player.profile),
+                          image: NetworkImage(player.picture),
                           height: 32,
                         ),
                         title: Text(player.name),

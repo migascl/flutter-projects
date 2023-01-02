@@ -74,7 +74,7 @@ class _ClubViewState extends State<ClubView> {
                 children: [
                   Image(
                     height: 64,
-                    image: NetworkImage(widget.club.icon),
+                    image: NetworkImage(widget.club.picture),
                   ),
                   Text(
                     widget.club.name,

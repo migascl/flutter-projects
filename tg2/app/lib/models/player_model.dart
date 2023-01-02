@@ -8,11 +8,11 @@ class Player {
   late DateTime _birthday;
   late int _height;
   late int _weight;
-  late String _profile;
+  late String _picture;
 
   // Constructors
   Player(this._id, this._name, this._nickname, this._countryID, this._birthday,
-      this._height, this._weight, this._profile);
+      this._height, this._weight, this._picture);
   Player.fromJson(Map<String, dynamic> json)
       : _id = json['id'],
         _name = json['name'],
@@ -21,7 +21,7 @@ class Player {
         _birthday = DateTime.parse(json['birthday'].toString()),
         _height = json['height'],
         _weight = json['weight'],
-        _profile = json['profile'];
+        _picture = json['picture'];
 
   // Getters
   int get id => _id;
@@ -31,7 +31,7 @@ class Player {
   DateTime get birthday => _birthday;
   int get height => _height;
   int get weight => _weight;
-  String get profile => _profile;
+  String get picture => _picture;
 
   // Parse model to Json
   Map<String, dynamic> toJson() => {
@@ -42,6 +42,6 @@ class Player {
         'birthday': _birthday,
         'height': _height,
         'weight': _weight,
-        'profile': _profile,
+        'picture': _picture,
       };
 }

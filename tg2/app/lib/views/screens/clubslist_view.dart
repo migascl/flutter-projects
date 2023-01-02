@@ -61,7 +61,7 @@ class _ClubListViewState extends State<ClubListView> {
                       children: [
                         ListTile(
                           leading: Image(
-                            image: NetworkImage(club.icon),
+                            image: NetworkImage(club.picture),
                             height: 32,
                           ),
                           title: Text(club.name),
