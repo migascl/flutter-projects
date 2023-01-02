@@ -43,4 +43,23 @@ class ContractProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> delete(Contract contract) async {
+    try {
+      if(_state == ProviderState.busy) return false;
+      print("Contract/P: Deleting contract ${contract.id}...");
+      _state = ProviderState.busy;
+      notifyListeners();
+      await ApiService().delete(ApiEndpoints.contract, contract.id);
+      print("Contract/P: Deleted contract ${contract.id} successfully!");
+      _state = ProviderState.ready;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Contract/P: Error deleting contract ${contract.id}! $e");
+      _state = ProviderState.empty;
+      notifyListeners();
+    }
+    return false;
+  }
 }
