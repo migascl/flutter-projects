@@ -11,18 +11,16 @@ class ApiService {
   // Api GET method, it recieves an endpoint and fetches all results
   // It throws errors if the response timesout, status code is not valid or response body is empty
   Future<dynamic> get(ApiEndpoints endpoint) async {
-    print("ApiService${endpoint.endpoint}: Fetching...");
     var response = await http
         .get(Uri.parse(_apiUrl + endpoint.endpoint))
         .timeout(const Duration(seconds: 5));
+    await Future.delayed(Duration(milliseconds: 200));
     if (response.statusCode == 200) {
       var decodedJson = jsonDecode(response.body);
       if(decodedJson.isEmpty) throw EmptyDataException();
-      print("ApiService${endpoint.endpoint}: Success!");
       return decodedJson;
     } else {
-      print("ApiService${endpoint.endpoint}: Error!");
-      throw ResponseException();
+      throw ResponseException("http Response returned status code ${response.statusCode}");
     }
   }
 }
