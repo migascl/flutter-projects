@@ -1,6 +1,3 @@
-// Library Imports
-import 'dart:ui';
-
 // Model for the Exam entity. Supports read & write.
 class Exam {
   // Variables

@@ -113,7 +113,6 @@ class _PlayerViewState extends State<PlayerView> {
                       Map<int, Exam> examList = Map.fromEntries(examProvider.items.entries.expand((element) => [
                         if (element.value.playerID == widget.player.id) MapEntry(element.key, element.value)
                       ]));
-                      print(examList);
                       if(examList.isEmpty) {
                         return const Center(child: Text("Nenhum exam encontrado."));
                       }
