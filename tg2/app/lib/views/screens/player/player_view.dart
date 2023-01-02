@@ -44,9 +44,10 @@ class _PlayerViewState extends State<PlayerView> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.info), label: 'Informação'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.science_rounded), label: 'Exames'),
+                icon: Icon(Icons.file_copy_rounded), label: 'Contratos'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.file_copy_rounded), label: 'Contratos')
+                icon: Icon(Icons.science_rounded), label: 'Exames')
+
           ],
           onTap: _onTappedBar,
           currentIndex: _selectedIndex,
@@ -105,11 +106,14 @@ class _PlayerViewState extends State<PlayerView> {
                       ),
                     ],
                   ),
+                  // TODO ADD PLAYER CONTRACTS VIEW
+                  Center(child: Text("Contratos")),
                   Consumer<ExamProvider>(builder: (context, examProvider, child) {
                     if(examProvider.state == ProviderState.ready) {
                       Map<int, Exam> examList = Map.fromEntries(examProvider.items.entries.expand((element) => [
                         if (element.value.playerID == widget.player.id) MapEntry(element.key, element.value)
                       ]));
+                      print(examList);
                       if(examList.isEmpty) {
                         return const Center(child: Text("Nenhum exam encontrado."));
                       }
@@ -140,8 +144,6 @@ class _PlayerViewState extends State<PlayerView> {
                       return const Center(child: CircularProgressIndicator(),);
                     }
                   }),
-                  // TODO ADD PLAYER CONTRACTS VIEW
-                  Center(child: Text("Contratos")),
                 ],
                 onPageChanged: (page) {
                   setState(() {
