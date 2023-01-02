@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
+import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
@@ -9,7 +10,6 @@ import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/views/screens/home_view.dart';
-import 'package:tg2/views/screens/provider_test.dart';
 
 void main() {
   runApp(const Main());
@@ -21,6 +21,7 @@ class Main extends StatelessWidget {
   // Root of the application
   @override
   Widget build(BuildContext context) {
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<CountryProvider>(create: (_) => CountryProvider()),
@@ -48,11 +49,19 @@ class Main extends StatelessWidget {
         ChangeNotifierProxyProvider<PlayerProvider, ExamProvider>(
             create: (context) => ExamProvider(Provider.of<PlayerProvider>(context, listen: false)),
             update: (context, playerProvider, examProvider) {
-              print("Notifier Player Update");
+              print("Notifier Exam Update");
               return ExamProvider(playerProvider);
             }
         ),
-        // TODO ADD CONTRACT PROVIDER
+        ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider, ContractProvider>(
+            create: (context) => ContractProvider(
+              Provider.of<PlayerProvider>(context, listen: false),
+              Provider.of<ClubProvider>(context, listen: false) ),
+            update: (context, playerProvider, clubProvider, contractProvider) {
+              print("Notifier Contract Update");
+              return ContractProvider(playerProvider, clubProvider);
+            }
+        ),
         // TODO ADD MATCH PROVIDER
       ],
       child: MaterialApp(
