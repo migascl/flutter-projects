@@ -60,9 +60,10 @@ class _ClubViewState extends State<ClubView> {
                 icon: Icon(Icons.info), label: 'Dados Gerais')
           ],
           onTap: _onTappedBar,
-          selectedItemColor: Colors.orange,
+          selectedItemColor: widget.club.color,
           currentIndex: _selectedIndex,
         ),
+        // TODO IMPROVE PLAYER HEADER STYLE
         body: Column(children: [
           Container(
               color: widget.club.color,
@@ -93,7 +94,7 @@ class _ClubViewState extends State<ClubView> {
                 controller: _pageController,
                 children: [
                   Container(
-                  // TODO ADD CLUB STATS
+                    // TODO ADD CLUB STATS
                   ),
                   Container(
                     // TODO ADD CLUB CONTRACTS

@@ -1,12 +1,8 @@
 // Library imports
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/utils/exceptions.dart';
 import 'package:tg2/models/player_model.dart';
-
 import '../utils/api/api_endpoints.dart';
 import '../utils/api/api_service.dart';
 import 'country_provider.dart';
