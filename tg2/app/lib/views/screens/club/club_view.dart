@@ -1,7 +1,9 @@
 // Library Imports
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/main.dart';
 import 'package:tg2/provider/contract_provider.dart';
+import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/constants.dart';
@@ -12,6 +14,7 @@ import 'package:tg2/provider/country_provider.dart';
 
 import '../../../models/contract_model.dart';
 import '../../../models/player_model.dart';
+import '../../../models/match_model.dart';
 import '../player/player_view.dart';
 
 class ClubView extends StatefulWidget {
@@ -99,10 +102,109 @@ class _ClubViewState extends State<ClubView> {
               child: PageView(
                 controller: _pageController,
                 children: [
-                  Container(
-                    // TODO ADD CLUB STATS
-                  ),
-                  Consumer2<ContractProvider, PlayerProvider>(builder: (context, contractProvider, playerProvider, child) {
+                  Consumer<MatchProvider>(builder: (context, matchProvider, child) {
+                    if(matchProvider.state == ProviderState.ready) {
+                      Map<int, Match> matchList = Map.fromEntries(matchProvider.items.entries.expand((element) => [
+                        if (element.value.clubHomeID == widget.club.id || element.value.clubAwayID == widget.club.id)
+                          MapEntry(element.key, element.value)
+                      ]));
+                      if(matchList.isEmpty) {
+                        return const Center(child: Text("Clube ainda não participou em nenhum jogo."));
+                      }
+                      int points = 0;
+                      for (var item in matchList.values) {
+                        if(item.clubHomeID == widget.club.id) {
+                          points += item.homeScore;
+                          break;
+                        }
+                        if(item.clubAwayID == widget.club.id) {
+                          points += item.awayScore;
+                          break;
+                        }
+                      }
+                      return Column(
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(children: [
+                                  Text("Jogos Total"),
+                                  Text("${matchList.length}"),
+                                ]),
+                                Column(children: [
+                                  Text("Pontos Total"),
+                                  Text("$points"),
+                                ]),
+                          ]),
+                          Text("Jogos"),
+                          MediaQuery.removePadding(
+                            removeTop: true,
+                            context: context,
+                            child: ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: matchList.length,
+                              itemBuilder: (context, index) {
+                                Match match = matchList.values.elementAt(index);
+                                Club clubHome = matchProvider.clubProvider.items[match.clubHomeID]!;
+                                Club clubAway = matchProvider.clubProvider.items[match.clubAwayID]!;
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      title: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              if(clubHome.id != widget.club.id){
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ClubView(club: clubHome),
+                                                    maintainState: false,
+                                                  ),
+                                                );
+                                              }
+                                            }, // Image tapped
+                                            child: Image(
+                                              image: NetworkImage(clubHome.picture),
+                                              height: 48,
+                                            ),
+                                          ),
+                                          Text("${match.homeScore} : ${match.awayScore}"),
+                                          GestureDetector(
+                                            onTap: () {
+                                              if(clubAway.id != widget.club.id){
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ClubView(club: clubAway),
+                                                    maintainState: false,
+                                                  ),
+                                                );
+                                              }
+                                            }, // Image tapped
+                                            child: Image(
+                                              image: NetworkImage(clubAway.picture),
+                                              height: 48,
+                                            ),
+                                          ),
+                                        ]
+                                      ),
+                                    ),
+                                    const Divider(
+                                      height: 2.0,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator(),);
+                    }
+                  }),
+                  Consumer<ContractProvider>(builder: (context, contractProvider, child) {
                     if(contractProvider.state == ProviderState.ready) {
                       Map<int, Contract> contractList = Map.fromEntries(contractProvider.items.entries.expand((element) => [
                         if (element.value.clubID == widget.club.id) MapEntry(element.key, element.value)
@@ -117,7 +219,7 @@ class _ClubViewState extends State<ClubView> {
                             itemCount: contractList.length,
                             itemBuilder: (context, index) {
                               Contract contract = contractList.values.elementAt(index);
-                              Player player = playerProvider.items[contract.playerID]!;
+                              Player player = contractProvider.playerProvider.items[contract.playerID]!;
                               return Column(
                                 children: [
                                   ListTile(
@@ -152,11 +254,11 @@ class _ClubViewState extends State<ClubView> {
                   }),
                   Container(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                      child: Consumer2<CountryProvider, StadiumProvider>(
-                          builder: (context, countryProvider, stadiumProvider, child) {
+                      child: Consumer<StadiumProvider>(
+                          builder: (context, stadiumProvider, child) {
                             if(stadiumProvider.state == ProviderState.ready) {
                               Stadium stadium = stadiumProvider.items[widget.club.stadiumID]!;
-                              Country country = countryProvider.items[stadium.countryID]!;
+                              Country country = stadiumProvider.countryProvider.items[stadium.countryID]!;
                               return MediaQuery.removePadding(
                                   context: context,
                                   removeTop: true,
