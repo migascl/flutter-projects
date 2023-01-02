@@ -24,6 +24,11 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MultiProvider(
+      // Provider list
+      // Each provider is an entity in the API and follows the hierarchy set by the database
+      // Entities composed of different entities are defined as Proxy Providers so their data is refreshed
+      // in every parent change notification
+      // TODO -> MAYBE DIFFERENT PROVIDER APPROACH (BASED ON PAGES)
       providers: [
         ChangeNotifierProvider<CountryProvider>(create: (_) => CountryProvider()),
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
@@ -93,8 +98,8 @@ class StartUpView extends StatefulWidget {
 }
 
 class _StartUpView extends State<StartUpView> {
-  // This is used to test the connection to the API during launch before navigating to Home Screen
-  // If connection fails, an alert dialog will show and give the possibility of trying again
+  // This is used to test the connection with the API during launch before navigating to Home Screen
+  // If connection fails, an alert dialog will be displayed and give the possibility of trying again
   Future _attemptConnection() async {
     try{
       await ApiService().get(ApiEndpoints.root);
@@ -111,7 +116,7 @@ class _StartUpView extends State<StartUpView> {
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Ocorreu um erro!'),
             content: Text(
-                'Não foi possível estabelecer conexão ao servidor.\nErro $e.'),
+                'Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

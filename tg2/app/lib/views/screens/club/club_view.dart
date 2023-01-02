@@ -1,22 +1,20 @@
 // Library Imports
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tg2/main.dart';
+import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
-import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/country_model.dart';
 import 'package:tg2/models/stadium_model.dart';
-import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/models/contract_model.dart';
+import 'package:tg2/models/player_model.dart';
+import 'package:tg2/models/match_model.dart';
+import 'package:tg2/views/screens/player/player_view.dart';
 
-import '../../../models/contract_model.dart';
-import '../../../models/player_model.dart';
-import '../../../models/match_model.dart';
-import '../player/player_view.dart';
-
+// This page shows club's information
 class ClubView extends StatefulWidget {
   const ClubView({super.key, required this.club});
 
@@ -28,9 +26,10 @@ class ClubView extends StatefulWidget {
 
 class _ClubViewState extends State<ClubView> {
 
+  // Page view controls
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
-  void _onTappedBar(int value) {
+  void _onTabTap(int value) {
     setState(() {
       _selectedIndex = value;
     });
@@ -40,6 +39,12 @@ class _ClubViewState extends State<ClubView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<StadiumProvider>(context, listen: false).get();
+      Provider.of<ClubProvider>(context, listen: false).get();
+      Provider.of<MatchProvider>(context, listen: false).get();
+      Provider.of<ContractProvider>(context, listen: false).get();
+    });
   }
 
   @override
@@ -55,25 +60,16 @@ class _ClubViewState extends State<ClubView> {
               tooltip: 'Refresh',
               onPressed: () {
                 Provider.of<StadiumProvider>(context, listen: false).get();
+                Provider.of<ClubProvider>(context, listen: false).get();
+                Provider.of<MatchProvider>(context, listen: false).get();
+                Provider.of<ContractProvider>(context, listen: false).get();
               },
             ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.analytics_rounded), label: 'Estatísticas'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.groups_rounded), label: 'Plantel'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.info), label: 'Dados Gerais')
-          ],
-          onTap: _onTappedBar,
-          selectedItemColor: widget.club.color,
-          currentIndex: _selectedIndex,
-        ),
         // TODO IMPROVE PLAYER HEADER STYLE
         body: Column(children: [
+          // Page header
           Container(
               color: widget.club.color,
               height: 200,
@@ -98,19 +94,21 @@ class _ClubViewState extends State<ClubView> {
                   )
                 ],
               )),
+          // Page body
           Expanded(
               child: PageView(
                 controller: _pageController,
                 children: [
+                  // Club season statistics
                   Consumer<MatchProvider>(builder: (context, matchProvider, child) {
                     if(matchProvider.state == ProviderState.ready) {
+                      // List of matches the club participated on (Either home or away)
                       Map<int, Match> matchList = Map.fromEntries(matchProvider.items.entries.expand((element) => [
                         if (element.value.clubHomeID == widget.club.id || element.value.clubAwayID == widget.club.id)
                           MapEntry(element.key, element.value)
                       ]));
-                      if(matchList.isEmpty) {
-                        return const Center(child: Text("Clube ainda não participou em nenhum jogo."));
-                      }
+                      if(matchList.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
+                      // Club total points
                       int points = 0;
                       for (var item in matchList.values) {
                         if(item.clubHomeID == widget.club.id) {
@@ -128,15 +126,15 @@ class _ClubViewState extends State<ClubView> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Column(children: [
-                                  Text("Jogos Total"),
+                                  const Text("Jogos Total"),
                                   Text("${matchList.length}"),
                                 ]),
                                 Column(children: [
-                                  Text("Pontos Total"),
+                                  const Text("Pontos Total"),
                                   Text("$points"),
                                 ]),
                           ]),
-                          Text("Jogos"),
+                          const Text("Jogos"),
                           MediaQuery.removePadding(
                             removeTop: true,
                             context: context,
@@ -204,14 +202,13 @@ class _ClubViewState extends State<ClubView> {
                       return const Center(child: CircularProgressIndicator(),);
                     }
                   }),
+                  // Club team list
                   Consumer<ContractProvider>(builder: (context, contractProvider, child) {
                     if(contractProvider.state == ProviderState.ready) {
                       Map<int, Contract> contractList = Map.fromEntries(contractProvider.items.entries.expand((element) => [
                         if (element.value.clubID == widget.club.id) MapEntry(element.key, element.value)
                       ]));
-                      if(contractList.isEmpty) {
-                        return const Center(child: Text("Não existem jogadores neste clube."));
-                      }
+                      if(contractList.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
                       return MediaQuery.removePadding(
                           context: context,
                           removeTop: true,
@@ -241,9 +238,7 @@ class _ClubViewState extends State<ClubView> {
                                       // TODO ADD REMOVE FUNCTION
                                     },
                                   ),
-                                  const Divider(
-                                    height: 2.0,
-                                  ),
+                                  const Divider(height: 2.0),
                                 ],
                               );
                             },
@@ -252,49 +247,48 @@ class _ClubViewState extends State<ClubView> {
                       return const Center(child: CircularProgressIndicator(),);
                     }
                   }),
+                  // Club information
                   Container(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                      child: Consumer<StadiumProvider>(
-                          builder: (context, stadiumProvider, child) {
-                            if(stadiumProvider.state == ProviderState.ready) {
-                              Stadium stadium = stadiumProvider.items[widget.club.stadiumID]!;
-                              Country country = stadiumProvider.countryProvider.items[stadium.countryID]!;
-                              return MediaQuery.removePadding(
-                                  context: context,
-                                  removeTop: true,
-                                  child: ListView(
-                                    padding: const EdgeInsets.all(8),
-                                    children: [
-                                      ListTile(
-                                        title: Text("Morada"),
-                                        subtitle: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(stadium.name),
-                                            Text("${stadium.address}, ${country.name}")
-                                          ],
-                                        ),
-                                      ),
-                                      ListTile(
-                                        title: Text("Telefone"),
-                                        subtitle: Text(widget.club.phone),
-                                      ),
-                                      ListTile(
-                                        title: Text("Fax"),
-                                        subtitle: Text(widget.club.fax),
-                                      ),
-                                      ListTile(
-                                        title: Text("Email"),
-                                        subtitle: Text(widget.club.email),
-                                      ),
-                                    ],
-                                  )
-                              );
-                            } else {
-                              return const Center(child: CircularProgressIndicator());
-                            }
-                          }
-                          )
+                      child: Consumer<StadiumProvider>(builder: (context, stadiumProvider, child) {
+                        if(stadiumProvider.state == ProviderState.ready) {
+                          Stadium stadium = stadiumProvider.items[widget.club.stadiumID]!;
+                          Country country = stadiumProvider.countryProvider.items[stadium.countryID]!;
+                          return MediaQuery.removePadding(
+                              context: context,
+                              removeTop: true,
+                              child: ListView(
+                                padding: const EdgeInsets.all(8),
+                                children: [
+                                  ListTile(
+                                    title: const Text("Morada"),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(stadium.name),
+                                        Text("${stadium.address}, ${country.name}")
+                                      ],
+                                    ),
+                                  ),
+                                  ListTile(
+                                    title: const Text("Telefone"),
+                                    subtitle: Text(widget.club.phone),
+                                  ),
+                                  ListTile(
+                                    title: const Text("Fax"),
+                                    subtitle: Text(widget.club.fax),
+                                  ),
+                                  ListTile(
+                                    title: const Text("Email"),
+                                    subtitle: Text(widget.club.email),
+                                  ),
+                                ],
+                              )
+                          );
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      })
                   ),
               ],
               onPageChanged: (page) {
@@ -303,6 +297,20 @@ class _ClubViewState extends State<ClubView> {
                 });
               },
             )),
-        ]));
+        ]),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.analytics_rounded), label: 'Estatísticas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.groups_rounded), label: 'Plantel'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.info), label: 'Dados Gerais')
+        ],
+        onTap: _onTabTap,
+        selectedItemColor: widget.club.color,
+        currentIndex: _selectedIndex,
+      ),
+    );
   }
 }
