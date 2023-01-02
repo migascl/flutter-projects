@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/utils/constants.dart';
+import '../../../models/club_model.dart';
+import '../../../models/contract_model.dart';
 import '../../../models/exam_model.dart';
 import '../../../models/player_model.dart';
+import '../../../provider/club_provider.dart';
+import '../../../provider/contract_provider.dart';
 import '../../../provider/country_provider.dart';
 import '../../../provider/exam_provider.dart';
+import '../club/club_view.dart';
 
 class PlayerView extends StatefulWidget {
   const PlayerView({super.key, required this.player});
@@ -106,38 +111,89 @@ class _PlayerViewState extends State<PlayerView> {
                       ),
                     ],
                   ),
-                  // TODO ADD PLAYER CONTRACTS VIEW
-                  Center(child: Text("Contratos")),
+                  Consumer2<ContractProvider, ClubProvider>(builder: (context, contractProvider, clubProvider, child) {
+                    if(contractProvider.state == ProviderState.ready) {
+                      Map<int, Contract> contractList = Map.fromEntries(contractProvider.items.entries.expand((element) => [
+                        if (element.value.playerID == widget.player.id) MapEntry(element.key, element.value)
+                      ]));
+                      if(contractList.isEmpty) {
+                        return const Center(child: Text("Este jogador não contêm contratos."));
+                      }
+                      return MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        child: ListView.builder(
+                          itemCount: contractList.length,
+                          itemBuilder: (context, index) {
+                            Contract contract = contractList.values.elementAt(index);
+                            Club club = clubProvider.items[contract.clubID]!;
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Image(
+                                    image: NetworkImage(club.picture),
+                                    height: 32,
+                                  ),
+                                  title: Text(club.name),
+                                  subtitle: Text("Ínicio: ${contract.period.start}\nFim: ${contract.period.end}"),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) => ClubView(club: club),
+                                        maintainState: false,
+                                      ),
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    // TODO ADD REMOVE FUNCTION
+                                  },
+                                ),
+                                const Divider(
+                                  height: 2.0,
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator(),);
+                    }
+                  }),
                   Consumer<ExamProvider>(builder: (context, examProvider, child) {
                     if(examProvider.state == ProviderState.ready) {
                       Map<int, Exam> examList = Map.fromEntries(examProvider.items.entries.expand((element) => [
                         if (element.value.playerID == widget.player.id) MapEntry(element.key, element.value)
                       ]));
                       if(examList.isEmpty) {
-                        return const Center(child: Text("Nenhum exam encontrado."));
+                        return const Center(child: Text("Jogador não realizou nenhum exame."));
                       }
-                      return ListView.builder(
-                        itemCount: examList.length,
-                        itemBuilder: (context, index) {
-                          Exam exam = examList.values.elementAt(index);
-                          return Column(
-                            children: [
-                              ListTile(
-                                title: Text("Exame #${exam.id}"),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Data: ${exam.date}"),
-                                    Text("Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
-                                  ],
-                                ),
-                              ),
-                              const Divider(
-                                height: 2.0,
-                              ),
-                            ],
-                          );
-                        },
+                      return MediaQuery.removePadding(
+                          context: context,
+                          removeTop: true,
+                          child: ListView.builder(
+                            itemCount: examList.length,
+                            itemBuilder: (context, index) {
+                              Exam exam = examList.values.elementAt(index);
+                              return Column(
+                                children: [
+                                  ListTile(
+                                    title: Text("Exame #${exam.id}"),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Data: ${exam.date}"),
+                                        Text("Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
+                                      ],
+                                    ),
+                                  ),
+                                  const Divider(
+                                    height: 2.0,
+                                  ),
+                                ],
+                              );
+                            },
+                          )
                       );
                     } else {
                       return const Center(child: CircularProgressIndicator(),);
