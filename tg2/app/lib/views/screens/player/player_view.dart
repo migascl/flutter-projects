@@ -12,6 +12,7 @@ import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/views/screens/club/club_view.dart';
+import 'package:tg2/views/screens/exam_modify_view.dart';
 
 // This page shows player's information
 class PlayerView extends StatefulWidget {
@@ -24,6 +25,8 @@ class PlayerView extends StatefulWidget {
 }
 
 class _PlayerViewState extends State<PlayerView> {
+
+  FloatingActionButton? fab = null;
 
   void loadPageData() {
     Provider.of<ClubProvider>(context, listen: false).get();
@@ -54,6 +57,33 @@ class _PlayerViewState extends State<PlayerView> {
   @override
   Widget build(BuildContext context) {
     print("Player/V: Building...");
+
+    switch(_selectedIndex) {
+      case 0:
+        fab = null;
+        break;
+      case 1:
+        fab = FloatingActionButton(
+          onPressed: () {
+          },
+          child: const Icon(Icons.add_rounded),
+        );
+        break;
+      case 2:
+        fab = FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ExamModifyView(),
+                maintainState: false,
+              ),
+            );
+          },
+          child: const Icon(Icons.add_rounded),
+        );
+        break;
+    }
+
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -70,6 +100,7 @@ class _PlayerViewState extends State<PlayerView> {
             ),
           ],
         ),
+        floatingActionButton: fab,
         // TODO IMPROVE PLAYER HEADER STYLE
         body: Column(children: [
           // Page header
@@ -152,7 +183,9 @@ class _PlayerViewState extends State<PlayerView> {
                                   title: Text(club.name),
                                   subtitle: Text("Ínicio: ${contract.period.start}\nFim: ${contract.period.end}"),
                                   trailing: PopupMenuButton<int>(
+                                    // TODO ADD EDIT CONTRACT NAVIGATION
                                       onSelected: (int value) {
+                                        // Remove player
                                         if(value == 0) {
                                           showDialog<String>(
                                               context: context,
@@ -234,6 +267,14 @@ class _PlayerViewState extends State<PlayerView> {
                                     trailing: PopupMenuButton<int>(
                                       onSelected: (int value) {
                                         if(value == 0) {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => ExamModifyView(exam: exam,),
+                                              maintainState: false,
+                                            ),
+                                          );
+                                        }
+                                        if(value == 1) {
                                           showDialog<String>(
                                             context: context,
                                             builder: (BuildContext context) => AlertDialog(
@@ -261,6 +302,10 @@ class _PlayerViewState extends State<PlayerView> {
                                       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                                         const PopupMenuItem<int>(
                                           value: 0,
+                                          child: Text('Editar'),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 1,
                                           child: Text('Remover'),
                                         ),
                                       ]
