@@ -40,4 +40,23 @@ class ExamProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> delete(Exam exam) async {
+    try {
+      if(_state == ProviderState.busy) return false;
+      print("Exam/P: Deleting exam ${exam.id}...");
+      _state = ProviderState.busy;
+      notifyListeners();
+      await ApiService().delete(ApiEndpoints.exam, exam.id);
+      print("Exam/P: Deleted exam ${exam.id} successfully!");
+      _state = ProviderState.ready;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Exam/P: Error deleting exam ${exam.id}! $e");
+      _state = ProviderState.empty;
+      notifyListeners();
+    }
+    return false;
+  }
 }
