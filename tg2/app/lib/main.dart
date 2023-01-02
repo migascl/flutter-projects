@@ -5,6 +5,7 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
+import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
@@ -62,7 +63,15 @@ class Main extends StatelessWidget {
               return ContractProvider(playerProvider, clubProvider);
             }
         ),
-        // TODO ADD MATCH PROVIDER
+        ChangeNotifierProxyProvider2<ClubProvider, StadiumProvider, MatchProvider>(
+            create: (context) => MatchProvider(
+                Provider.of<ClubProvider>(context, listen: false),
+                Provider.of<StadiumProvider>(context, listen: false) ),
+            update: (context, clubProvider, stadiumProvider, matchProvider) {
+              print("Notifier Match Update");
+              return MatchProvider(clubProvider, stadiumProvider);
+            }
+        ),
       ],
       child: MaterialApp(
         title: 'TG2',

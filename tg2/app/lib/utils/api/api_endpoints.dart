@@ -6,7 +6,8 @@ enum ApiEndpoints {
   club(endpoint: '/club'),
   player(endpoint: '/player'),
   exam(endpoint: '/exam'),
-  contract(endpoint: '/contract');
+  contract(endpoint: '/contract'),
+  match(endpoint: '/match');
 
   final String endpoint;
 
