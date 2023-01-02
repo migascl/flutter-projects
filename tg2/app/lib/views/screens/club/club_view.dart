@@ -26,6 +26,13 @@ class ClubView extends StatefulWidget {
 
 class _ClubViewState extends State<ClubView> {
 
+  void loadPageData() {
+    Provider.of<StadiumProvider>(context, listen: false).get();
+    Provider.of<ClubProvider>(context, listen: false).get();
+    Provider.of<MatchProvider>(context, listen: false).get();
+    Provider.of<ContractProvider>(context, listen: false).get();
+  }
+
   // Page view controls
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
@@ -40,10 +47,7 @@ class _ClubViewState extends State<ClubView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<StadiumProvider>(context, listen: false).get();
-      Provider.of<ClubProvider>(context, listen: false).get();
-      Provider.of<MatchProvider>(context, listen: false).get();
-      Provider.of<ContractProvider>(context, listen: false).get();
+      loadPageData();
     });
   }
 
@@ -59,10 +63,7 @@ class _ClubViewState extends State<ClubView> {
               icon: const Icon(Icons.refresh_rounded),
               tooltip: 'Refresh',
               onPressed: () {
-                Provider.of<StadiumProvider>(context, listen: false).get();
-                Provider.of<ClubProvider>(context, listen: false).get();
-                Provider.of<MatchProvider>(context, listen: false).get();
-                Provider.of<ContractProvider>(context, listen: false).get();
+                loadPageData();
               },
             ),
           ],
@@ -188,9 +189,7 @@ class _ClubViewState extends State<ClubView> {
                                         ]
                                       ),
                                     ),
-                                    const Divider(
-                                      height: 2.0,
-                                    ),
+                                    const Divider(height: 2.0),
                                   ],
                                 );
                               },
@@ -226,6 +225,41 @@ class _ClubViewState extends State<ClubView> {
                                     ),
                                     title: Text("${contract.number}. ${player.nickname ?? player.name}"),
                                     subtitle: Text(contract.position.name),
+                                    trailing: PopupMenuButton<int>(
+                                        onSelected: (int value) {
+                                          // Remove player
+                                          if(value == 0) {
+                                            showDialog<String>(
+                                                context: context,
+                                                builder: (BuildContext context) => AlertDialog(
+                                                  title: const Text('Atenção!'),
+                                                  content: Text("Tem a certeza que pretende eliminar contracto #${contract.id} ?\n"
+                                                      "Esta operação não irreversível!"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        contractProvider.delete(contract).then((value) => loadPageData());
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Sim'),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Não'),
+                                                    ),
+                                                  ],
+                                                ));
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                          const PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text('Remover'),
+                                          ),
+                                        ]
+                                    ),
                                     onTap: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -233,9 +267,6 @@ class _ClubViewState extends State<ClubView> {
                                           maintainState: false,
                                         ),
                                       );
-                                    },
-                                    onLongPress: () {
-                                      // TODO ADD REMOVE FUNCTION
                                     },
                                   ),
                                   const Divider(height: 2.0),
