@@ -41,7 +41,7 @@ class Contract {
     'club_id': _clubID,
     'number': _number,
     'position_id': _position.index,
-    'period': _period,
+    'period': DateRangeConverter().encoder(period),
     '_document': _document,
   };
 }

@@ -10,4 +10,9 @@ class DateRangeConverter {
     return DateTimeRange(start: DateTime.parse(start), end: DateTime.parse(end));
   }
 
+  String encoder(DateTimeRange date) {
+    return "[${date.start.year}-${date.start.month}-${date.start.day},"
+        "${date.end.year}-${date.end.month}-${date.end.day})";
+  }
+
 }
