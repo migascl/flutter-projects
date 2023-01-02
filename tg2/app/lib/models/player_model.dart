@@ -29,6 +29,9 @@ class Player {
   String? get nickname => _nickname;
   int get countryID => _countryID;
   DateTime get birthday => _birthday;
+  int get age {
+    return DateTime.now().year - _birthday.year;
+  }
   int get height => _height;
   int get weight => _weight;
   String get picture => _picture;
