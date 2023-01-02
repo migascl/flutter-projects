@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/views/screens/club/club_view.dart';
-import '../../models/club_model.dart';
-import '../../models/country_model.dart';
-import '../../models/stadium_model.dart';
-import '../../provider/club_provider.dart';
-import '../../provider/country_provider.dart';
-import '../../utils/constants.dart';
+import '../../../models/club_model.dart';
+import '../../../models/country_model.dart';
+import '../../../models/stadium_model.dart';
+import '../../../provider/club_provider.dart';
+import '../../../provider/country_provider.dart';
+import '../../../utils/constants.dart';
 
 class ClubListView extends StatefulWidget {
   @override
@@ -31,9 +31,7 @@ class _ClubListViewState extends State<ClubListView> {
     print("ClubList/V: Building...");
     return Scaffold(
         appBar: AppBar(
-            title: Text("${Provider.of<CountryProvider>(context, listen: true).state.name}, "
-                "${Provider.of<StadiumProvider>(context, listen: true).state.name}, "
-                "${Provider.of<ClubProvider>(context, listen: true).state.name}"),
+            title: const Text("Clubes"),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh_rounded),
@@ -45,12 +43,15 @@ class _ClubListViewState extends State<ClubListView> {
             ),
           ],
         ),
+        // TODO ADD CREATE FUNCTION
+        floatingActionButton: null,
         body: Consumer<ClubProvider>(
             builder: (context, clubProvider, child) {
               if(clubProvider.state == ProviderState.ready) {
                 Map<int, Club> clubList = clubProvider.items;
                 Map<int, Stadium> stadiumList = clubProvider.stadiumProvider.items;
                 Map<int, Country> countryList = clubProvider.stadiumProvider.countryProvider.items;
+                // TODO ADD REMOVE FUNCTION
                 return ListView.builder(
                   itemCount: clubList.length,
                   itemBuilder: (context, index) {

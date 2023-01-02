@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/views/screens/player/player_view.dart';
-import '../../models/country_model.dart';
-import '../../models/player_model.dart';
-import '../../provider/club_provider.dart';
-import '../../provider/country_provider.dart';
-import '../../utils/constants.dart';
+import '../../../models/country_model.dart';
+import '../../../models/player_model.dart';
+import '../../../provider/club_provider.dart';
+import '../../../provider/country_provider.dart';
+import '../../../utils/constants.dart';
 
 class PlayerListView extends StatefulWidget {
   const PlayerListView({super.key});
@@ -31,8 +31,7 @@ class _PlayerListViewState extends State<PlayerListView> {
     print("PlayerList/V: Building...");
     return Scaffold(
       appBar: AppBar(
-        title: Text("${Provider.of<CountryProvider>(context, listen: true).state.name}, "
-            "${Provider.of<PlayerProvider>(context, listen: true).state.name}, "),
+        title: const Text("Jogadores"),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -43,11 +42,14 @@ class _PlayerListViewState extends State<PlayerListView> {
           ),
         ],
       ),
+      // TODO ADD CREATE FUNCTION
+      floatingActionButton: null,
       body: Consumer<PlayerProvider>(
           builder: (context, playerProvider, child) {
             if(playerProvider.state == ProviderState.ready) {
               Map<int, Player> playerList = playerProvider.items;
               Map<int, Country> countryList = playerProvider.countryProvider.items;
+              // TODO ADD REMOVE FUNCTION
               return ListView.builder(
                 itemCount: playerList.length,
                 itemBuilder: (context, index) {
