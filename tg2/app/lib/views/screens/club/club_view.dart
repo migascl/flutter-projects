@@ -40,6 +40,15 @@ class _ClubViewState extends State<ClubView> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              tooltip: 'Refresh',
+              onPressed: () {
+                Provider.of<StadiumProvider>(context, listen: false).get();
+              },
+            ),
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const [
@@ -58,7 +67,7 @@ class _ClubViewState extends State<ClubView> {
           Container(
               color: widget.club.color,
               height: 200,
-              padding: EdgeInsets.fromLTRB(16, 86, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 86, 16, 16),
               alignment: Alignment.centerLeft,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -87,10 +96,10 @@ class _ClubViewState extends State<ClubView> {
                   // TODO ADD CLUB STATS
                   ),
                   Container(
-                    // TODO ADD CLUB CONTRATS
+                    // TODO ADD CLUB CONTRACTS
                   ),
                   Container(
-                      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                       child: Consumer2<CountryProvider, StadiumProvider>(
                           builder: (context, countryProvider, stadiumProvider, child) {
                             if(stadiumProvider.state == ProviderState.ready) {
@@ -124,7 +133,7 @@ class _ClubViewState extends State<ClubView> {
                                 ],
                               );
                             } else {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             }
                           }
                           )
