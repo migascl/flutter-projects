@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
@@ -44,7 +45,13 @@ class Main extends StatelessWidget {
               return PlayerProvider(countryProvider);
             }
         ),
-        // TODO ADD EXAM PROVIDER
+        ChangeNotifierProxyProvider<PlayerProvider, ExamProvider>(
+            create: (context) => ExamProvider(Provider.of<PlayerProvider>(context, listen: false)),
+            update: (context, playerProvider, examProvider) {
+              print("Notifier Player Update");
+              return ExamProvider(playerProvider);
+            }
+        ),
         // TODO ADD CONTRACT PROVIDER
         // TODO ADD MATCH PROVIDER
       ],
