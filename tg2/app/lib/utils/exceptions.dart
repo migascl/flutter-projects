@@ -1,16 +1,13 @@
-class ResponseException implements Exception {
+// This exception is thrown when an error occurs during an API request
+  class ApiRequestException implements Exception {
+  late String _message;
 
-  ResponseException(String s);
-}
-
-class EmptyDataException implements Exception {
-  final String message;
-
-  EmptyDataException(
-      {this.message = "Response body is empty."});
+  ApiRequestException([String message = "Response body is empty."]) {
+    _message = message;
+  }
 
   @override
   String toString() {
-    return message;
+    return _message;
   }
 }
