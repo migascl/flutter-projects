@@ -1,14 +1,9 @@
-// Library Imports
-import 'dart:async';
-import 'package:tg2/utils/api/api_endpoints.dart';
-import 'package:tg2/utils/api/api_service.dart';
-
-// A read-only model for the Country entity
+// Model for Country entity (Read only)
 class Country {
   // Variables
-  late int _id;
-  late String _name;
-  late String _iso;
+  final int _id;
+  final String _name;
+  final String _iso;
 
   // Constructors
   Country(this._id, this._name, this._iso);

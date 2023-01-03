@@ -6,8 +6,6 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 
-import '../utils/exceptions.dart';
-
 // Country provider class
 class CountryProvider extends ChangeNotifier {
   Map<int, Country> _items = {};
