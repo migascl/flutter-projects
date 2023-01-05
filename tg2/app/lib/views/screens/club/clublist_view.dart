@@ -4,6 +4,7 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import '../../../models/club_model.dart';
+import 'club_view.dart';
 
 // This page lists all clubs
 class ClubListView extends StatefulWidget {
@@ -17,8 +18,8 @@ class _ClubListViewState extends State<ClubListView> {
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  // Method to
-  Future _refresh() async {
+  // Method to reload providers used by the page
+  Future _loadPageData() async {
     try{
       await Provider.of<ClubProvider>(context, listen: false).get();
     } catch (e) {
@@ -36,7 +37,7 @@ class _ClubListViewState extends State<ClubListView> {
     print("ClubList/V: Initialized State!");
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refresh();
+      _loadPageData();
     });
   }
 
@@ -49,17 +50,25 @@ class _ClubListViewState extends State<ClubListView> {
         ),
         body: RefreshIndicator(
             key: _refreshIndicatorKey,
-            onRefresh: _refresh,
+            onRefresh: _loadPageData,
             child: Consumer2<ClubProvider, MatchProvider>(builder: (context, clubProvider, matchProvider, child) {
               if(matchProvider.items.isEmpty && matchProvider.state == ProviderState.ready) return ListView(children: [Text("Não existem nenhum clube.")]);
               if(matchProvider.state != ProviderState.empty) {
-                List<Club> list = clubProvider.items.values.toList();
+                var _list = List.from(clubProvider.items.entries.map((e) => {
+                  'club': e.value,
+                  'matches' : matchProvider.getByClub(e.value).length,
+                  'points' : matchProvider.getClubPoints(e.value)
+                }));
+                // Sort clubs by who has the highest points and matches
+                _list
+                  ..sort((b, a) => a['points'].compareTo(b['points']))
+                  ..sort((b, a) => a['matches'].compareTo(b['matches']));
                 return ListView.builder(
-                  itemCount: list.length,
+                  itemCount: _list.length,
                   itemBuilder: (context, index) {
-                    Club club = list[index];
-                    int totalMatches = matchProvider.getByClub(club).length;
-                    int totalPoints = matchProvider.getClubPoints(club);
+                    Club club = _list[index]['club'];
+                    int totalMatches = _list[index]['matches'];
+                    int totalPoints = _list[index]['points'];
                     return Column(
                       children: [
                         ListTile(
@@ -72,7 +81,12 @@ class _ClubListViewState extends State<ClubListView> {
                           title: Text(club.name),
                           subtitle: Text("$totalMatches, $totalPoints"),
                           onTap: () {
-                            // TODO CLUB NAVIGATION
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => ClubView(club: club),
+                                maintainState: false,
+                              ),
+                            );
                           },
                         ),
                         const Divider(height: 2.0),
