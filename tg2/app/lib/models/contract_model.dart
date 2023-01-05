@@ -21,4 +21,8 @@ class Contract {
 
   // Getters
   int? get id => _id;
+  bool get needsRenovation {
+    DateTime date = DateTime.now();
+    return DateTime(date.year, date.month + 6, date.day).isAfter(period.end)  ? true : false;
+  }
 }
