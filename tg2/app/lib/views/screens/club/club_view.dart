@@ -1,20 +1,15 @@
-// Library Imports
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
-import 'package:tg2/utils/constants.dart';
-import 'package:tg2/models/club_model.dart';
-import 'package:tg2/models/country_model.dart';
-import 'package:tg2/models/stadium_model.dart';
-import 'package:tg2/models/contract_model.dart';
-import 'package:tg2/models/player_model.dart';
-import 'package:tg2/models/match_model.dart';
-import 'package:tg2/views/screens/player/player_view.dart';
+import '../../../models/club_model.dart';
+import '../../../models/match_model.dart';
+import '../../../models/contract_model.dart';
+import '../../../utils/constants.dart';
 
-// This page shows club's information
+// This page lists all clubs
 class ClubView extends StatefulWidget {
   const ClubView({super.key, required this.club});
 
@@ -25,12 +20,23 @@ class ClubView extends StatefulWidget {
 }
 
 class _ClubViewState extends State<ClubView> {
+  late Club _club = widget.club;
 
-  void loadPageData() {
-    Provider.of<StadiumProvider>(context, listen: false).get();
-    Provider.of<ClubProvider>(context, listen: false).get();
-    Provider.of<MatchProvider>(context, listen: false).get();
-    Provider.of<ContractProvider>(context, listen: false).get();
+  // Method to reload providers used by the page
+  Future _loadPageData() async {
+    try{
+      await Provider.of<StadiumProvider>(context, listen: false).get();
+      await Provider.of<ClubProvider>(context, listen: false).get();
+      await Provider.of<ContractProvider>(context, listen: false).get();
+      await Provider.of<MatchProvider>(context, listen: false).get();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocorreu um erro. Tente novamente.'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   // Page view controls
@@ -47,29 +53,33 @@ class _ClubViewState extends State<ClubView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadPageData();
+      _loadPageData();
+      setState(() {
+        _club = Provider.of<ClubProvider>(context, listen: false).items[widget.club.id]!;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh_rounded),
-              tooltip: 'Refresh',
-              onPressed: () {
-                loadPageData();
-              },
-            ),
-          ],
-        ),
-        // TODO IMPROVE PLAYER HEADER STYLE
-        body: Column(children: [
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'Refresh',
+            onPressed: () {
+              _loadPageData();
+            },
+          ),
+        ],
+      ),
+      // TODO IMPROVE PLAYER HEADER STYLE
+      body: Consumer<ClubProvider>(builder: (context, clubProvider, child) {
+        return Column(children: [
           // Page header
           Container(
               color: widget.club.color,
@@ -79,19 +89,15 @@ class _ClubViewState extends State<ClubView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Image(
-                    height: 64,
-                    image: NetworkImage(widget.club.picture),
-                  ),
+                  Container(child: (_club.picture != null) ? Image(image: NetworkImage(_club.picture!), height: 64,) : null ),
                   Text(
                     widget.club.name,
                     style: TextStyle(
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.normal,
                         fontSize: 24,
-                        color: widget.club.color.computeLuminance() > 0.5
-                            ? Colors.black
-                            : Colors.white),
+                        color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white
+                    ),
                   )
                 ],
               )),
@@ -101,40 +107,24 @@ class _ClubViewState extends State<ClubView> {
                 controller: _pageController,
                 children: [
                   // Club season statistics
-                  Consumer<MatchProvider>(builder: (context, matchProvider, child) {
-                    if(matchProvider.state == ProviderState.ready) {
-                      // List of matches the club participated on (Either home or away)
-                      Map<int, Match> matchList = Map.fromEntries(matchProvider.items.entries.expand((element) => [
-                        if (element.value.clubHomeID == widget.club.id || element.value.clubAwayID == widget.club.id)
-                          MapEntry(element.key, element.value)
-                      ]));
-                      if(matchList.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
-                      // Club total points
-                      int points = 0;
-                      for (var item in matchList.values) {
-                        if(item.clubHomeID == widget.club.id) {
-                          points += item.homeScore;
-                          break;
-                        }
-                        if(item.clubAwayID == widget.club.id) {
-                          points += item.awayScore;
-                          break;
-                        }
-                      }
+                  Consumer<MatchProvider>(builder: (context, provider, child) {
+                    if(provider.state == ProviderState.ready) {
+                      if(provider.items.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
+                      var _list = provider.getByClub(_club).values.toList();
                       return Column(
                         children: [
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Column(children: [
-                                  const Text("Jogos Total"),
-                                  Text("${matchList.length}"),
+                                  const Text("Jogos Totais"),
+                                  Text("${_list.length}"),
                                 ]),
                                 Column(children: [
                                   const Text("Pontos Total"),
-                                  Text("$points"),
+                                  Text("${provider.getClubPoints(_club)}"),
                                 ]),
-                          ]),
+                              ]),
                           const Text("Jogos"),
                           MediaQuery.removePadding(
                             removeTop: true,
@@ -142,51 +132,19 @@ class _ClubViewState extends State<ClubView> {
                             child: ListView.builder(
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
-                              itemCount: matchList.length,
+                              itemCount: _list.length,
                               itemBuilder: (context, index) {
-                                Match match = matchList.values.elementAt(index);
-                                Club clubHome = matchProvider.clubProvider.items[match.clubHomeID]!;
-                                Club clubAway = matchProvider.clubProvider.items[match.clubAwayID]!;
+                                Match match = _list[index];
                                 return Column(
                                   children: [
                                     ListTile(
                                       title: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              if(clubHome.id != widget.club.id){
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) => ClubView(club: clubHome),
-                                                    maintainState: false,
-                                                  ),
-                                                );
-                                              }
-                                            }, // Image tapped
-                                            child: Image(
-                                              image: NetworkImage(clubHome.picture),
-                                              height: 48,
-                                            ),
-                                          ),
-                                          Text("${match.homeScore} : ${match.awayScore}"),
-                                          GestureDetector(
-                                            onTap: () {
-                                              if(clubAway.id != widget.club.id){
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) => ClubView(club: clubAway),
-                                                    maintainState: false,
-                                                  ),
-                                                );
-                                              }
-                                            }, // Image tapped
-                                            child: Image(
-                                              image: NetworkImage(clubAway.picture),
-                                              height: 48,
-                                            ),
-                                          ),
-                                        ]
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(child: (match.clubHome.picture != null) ? Image(image: NetworkImage(match.clubHome.picture!), height: 48) : null),
+                                            Text("${match.homeScore} : ${match.awayScore}"),
+                                            Container(child: (match.clubAway.picture != null) ? Image(image: NetworkImage(match.clubAway.picture!), height: 48) : null),
+                                          ]
                                       ),
                                     ),
                                     const Divider(height: 2.0),
@@ -202,71 +160,26 @@ class _ClubViewState extends State<ClubView> {
                     }
                   }),
                   // Club team list
-                  Consumer<ContractProvider>(builder: (context, contractProvider, child) {
-                    if(contractProvider.state == ProviderState.ready) {
-                      Map<int, Contract> contractList = Map.fromEntries(contractProvider.items.entries.expand((element) => [
-                        if (element.value.clubID == widget.club.id) MapEntry(element.key, element.value)
-                      ]));
-                      if(contractList.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
+                  Consumer<ContractProvider>(builder: (context, provider, child) {
+                    if(provider.state == ProviderState.ready) {
+                      if(provider.items.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
+                      List<Contract> list = provider.items.values.toList();
                       return MediaQuery.removePadding(
                           context: context,
                           removeTop: true,
                           child: ListView.builder(
-                            itemCount: contractList.length,
+                            itemCount: list.length,
                             itemBuilder: (context, index) {
-                              Contract contract = contractList.values.elementAt(index);
-                              Player player = contractProvider.playerProvider.items[contract.playerID]!;
+                              Contract contract = list[index];
                               return Column(
                                 children: [
                                   ListTile(
-                                    leading: Image(
-                                      image: NetworkImage(player.picture),
-                                      height: 32,
-                                    ),
-                                    title: Text("${contract.number}. ${player.nickname ?? player.name}"),
+                                    leading: Container(child: (contract.player.picture != null) ? Image(image: NetworkImage(contract.player.picture!), height: 32,) : null ),
+                                    title: Text("${contract.number}. ${contract.player.nickname ?? contract.player.name}"),
                                     subtitle: Text(contract.position.name),
-                                    trailing: PopupMenuButton<int>(
-                                        onSelected: (int value) {
-                                          // Remove player
-                                          if(value == 0) {
-                                            showDialog<String>(
-                                                context: context,
-                                                builder: (BuildContext context) => AlertDialog(
-                                                  title: const Text('Atenção!'),
-                                                  content: Text("Tem a certeza que pretende eliminar contracto #${contract.id} ?\n"
-                                                      "Esta operação não irreversível!"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        contractProvider.delete(contract).then((value) => loadPageData());
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Sim'),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Não'),
-                                                    ),
-                                                  ],
-                                                ));
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                                          const PopupMenuItem<int>(
-                                            value: 0,
-                                            child: Text('Remover'),
-                                          ),
-                                        ]
-                                    ),
+                                    trailing: (contract.needsRenovation) ? Text("Necessita de renovação!") : null,
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) => PlayerView(player: player),
-                                          maintainState: false,
-                                        ),
-                                      );
+                                      // TODO NAVIGATE TO PLAYER
                                     },
                                   ),
                                   const Divider(height: 2.0),
@@ -281,10 +194,8 @@ class _ClubViewState extends State<ClubView> {
                   // Club information
                   Container(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                      child: Consumer<StadiumProvider>(builder: (context, stadiumProvider, child) {
-                        if(stadiumProvider.state == ProviderState.ready) {
-                          Stadium stadium = stadiumProvider.items[widget.club.stadiumID]!;
-                          Country country = stadiumProvider.countryProvider.items[stadium.countryID]!;
+                      child: Consumer<ClubProvider>(builder: (context, provider, child) {
+                        if(provider.state == ProviderState.ready) {
                           return MediaQuery.removePadding(
                               context: context,
                               removeTop: true,
@@ -296,22 +207,22 @@ class _ClubViewState extends State<ClubView> {
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(stadium.name),
-                                        Text("${stadium.address}, ${country.name}")
+                                        Text(_club.name),
+                                        Text("${_club.stadium?.name}, ${_club.stadium?.country.name}")
                                       ],
                                     ),
                                   ),
-                                  ListTile(
+                                  if (_club.phone != null) ListTile(
                                     title: const Text("Telefone"),
-                                    subtitle: Text(widget.club.phone),
+                                    subtitle: Text(_club.phone!),
                                   ),
-                                  ListTile(
+                                  if (_club.fax != null) ListTile(
                                     title: const Text("Fax"),
-                                    subtitle: Text(widget.club.fax),
+                                    subtitle: Text(_club.fax!),
                                   ),
-                                  ListTile(
+                                  if (_club.email != null) ListTile(
                                     title: const Text("Email"),
-                                    subtitle: Text(widget.club.email),
+                                    subtitle: Text(_club.email!),
                                   ),
                                 ],
                               )
@@ -321,14 +232,16 @@ class _ClubViewState extends State<ClubView> {
                         }
                       })
                   ),
-              ],
-              onPageChanged: (page) {
-                setState(() {
-                  _selectedIndex = page;
-                });
-              },
-            )),
-        ]),
+                ],
+                onPageChanged: (page) {
+                  setState(() {
+                    _selectedIndex = page;
+                  });
+                },
+              )),
+          ]);
+        }
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
