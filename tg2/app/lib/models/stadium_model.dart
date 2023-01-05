@@ -1,20 +1,16 @@
-// Model for the Stadium entity. Supports read & write.
+import 'country_model.dart';
+
+// Model for the Stadium entity. (Read & Write)
 class Stadium {
   // Variables
-  late int id;
   late String name;
   late String address;
-  late int countryID;
+  late Country country;
+  final int? _id; // Only used when getting from JSON
 
-  // Constructors
-  Stadium(this.id, this.name, this.address, this.countryID);
-  Stadium.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        address = json['address'],
-        countryID = json['country_id'];
+  // Constructor
+  Stadium(this.name, this.address, this.country, [this._id]);
 
-  // Parse model to Json
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'address': address, 'country_id': countryID};
+  // Getters
+  int? get id => _id;
 }

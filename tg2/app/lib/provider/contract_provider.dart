@@ -1,19 +1,21 @@
-// Library imports
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
-import 'package:tg2/provider/club_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/utils/constants.dart';
 import '../models/contract_model.dart';
+import '../models/position_model.dart';
 import '../utils/api/api_endpoints.dart';
 import '../utils/api/api_service.dart';
+import '../utils/constants.dart';
+import '../utils/daterange_converter.dart';
+import 'club_provider.dart';
 
 // Contract provider class
 class ContractProvider extends ChangeNotifier {
+  // Variables
   late PlayerProvider _playerProvider;
   late ClubProvider _clubProvider;
-  Map<int, Contract> _items = {};
   ProviderState _state = ProviderState.empty;
+  Map<int, Contract> _items = {};
 
   // Automatically fetch data when initialized
   ContractProvider(this._playerProvider, this._clubProvider) {
@@ -21,45 +23,45 @@ class ContractProvider extends ChangeNotifier {
     get();
   }
 
-  PlayerProvider get playerProvider => _playerProvider;
-  ClubProvider get clubProvider => _clubProvider;
+  // Getters
   ProviderState get state => _state;
   Map<int, Contract> get items => _items;
 
-  Future<void> get() async {
-    try {
-      if(_state == ProviderState.busy || playerProvider.state != ProviderState.ready || clubProvider.state != ProviderState.ready) return;
-      print("Contract/P: Getting all...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      final response = await ApiService().get(ApiEndpoints.contract);
-      _items = { for (var item in response) item['id'] : Contract.fromJson(item) };
-      print("Contract/P: Fetched successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
-    } catch (e) {
-      print("Contract/P: Error fetching! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
-    }
+  // Setters
+  set playerProvider(PlayerProvider provider) {
+    _playerProvider = provider;
+    notifyListeners();
+  }
+  set clubProvider(ClubProvider provider) {
+    _clubProvider = provider;
+    notifyListeners();
   }
 
-  Future<bool> delete(Contract contract) async {
+  // Methods
+  Future get() async {
     try {
-      if(_state == ProviderState.busy) return false;
-      print("Contract/P: Deleting contract ${contract.id}...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      await ApiService().delete(ApiEndpoints.contract, contract.id);
-      print("Contract/P: Deleted contract ${contract.id} successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
-      return true;
+      if(_state != ProviderState.busy) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Contract/P: Getting all...");
+        final response = await ApiService().get(ApiEndpoints.contract);
+        _items =
+        { for (var json in response) json['id']: Contract(
+          _playerProvider.items[json['player_id']]!,
+          _clubProvider.items[json['club_id']]!,
+          json['number'],
+          Position.values[json['position_id']],
+          DateRangeConverter().decoder(json['period']),
+          json['document'],
+          json['id'],
+        )};
+        print("Contract/P: Fetched successfully!");
+      }
     } catch (e) {
-      print("Contract/P: Error deleting contract ${contract.id}! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
+      print("Contract/P: Error fetching! $e");
+      rethrow;
     }
-    return false;
+    _state = ProviderState.ready;
+    notifyListeners();
   }
 }

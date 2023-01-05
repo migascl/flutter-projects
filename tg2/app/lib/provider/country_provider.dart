@@ -1,40 +1,44 @@
-// Library imports
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:tg2/models/country_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
-import 'package:tg2/utils/constants.dart';
 
-// Country provider class
+import '../utils/constants.dart';
+
+// Country provider
 class CountryProvider extends ChangeNotifier {
-  Map<int, Country> _items = {};
+  // Variables
   ProviderState _state = ProviderState.empty;
+  static Map<int, Country> _items = {};
 
   // Automatically fetch data when initialized
   CountryProvider() {
     print("Country/P: Initialized");
-    get();
+    _get();
   }
 
+  // Getters
   ProviderState get state => _state;
   Map<int, Country> get items => _items;
 
-  Future<void> get() async {
+  // Methods
+  Future _get() async {
     try {
-      if(_state == ProviderState.busy) return;
-      print("Country/P: Getting all...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      final response = await ApiService().get(ApiEndpoints.country);
-      _items = { for (var item in response) item['id'] : Country.fromJson(item) };
-      print("Country/P: Fetched successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
+      if(_state != ProviderState.busy) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Country/P: Getting all...");
+        final response = await ApiService().get(ApiEndpoints.country);
+        _items =
+        { for (var json in response) json['id']: Country(json['id'], json['name'])};
+        print("Country/P: Fetched successfully!");
+      }
     } catch (e) {
       print("Country/P: Error fetching! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
+      rethrow;
     }
+    _state = ProviderState.ready;
+    notifyListeners();
   }
 }

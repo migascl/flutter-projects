@@ -1,18 +1,17 @@
-// Library imports
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
-import 'package:tg2/utils/constants.dart';
-import 'package:tg2/utils/exceptions.dart';
+import '../utils/constants.dart';
 
 // Club provider class
 class ClubProvider extends ChangeNotifier {
+  // Variables
   late StadiumProvider _stadiumProvider;
-  Map<int, Club> _items = {};
   ProviderState _state = ProviderState.empty;
+  static Map<int, Club> _items = {};
 
   // Automatically fetch data when initialized
   ClubProvider(this._stadiumProvider) {
@@ -20,25 +19,41 @@ class ClubProvider extends ChangeNotifier {
     get();
   }
 
-  StadiumProvider get stadiumProvider => _stadiumProvider;
+  // Getters
   ProviderState get state => _state;
   Map<int, Club> get items => _items;
 
-  Future<void> get() async {
+  // Setters
+  set stadiumProvider(StadiumProvider provider) {
+    _stadiumProvider = provider;
+    notifyListeners();
+  }
+
+  // Methods
+  Future get() async {
     try {
-      if(_state == ProviderState.busy || stadiumProvider.state != ProviderState.ready) return;
-      print("Club/P: Getting all...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      final response = await ApiService().get(ApiEndpoints.club);
-      _items = { for (var item in response) item['id'] : Club.fromJson(item) };
-      print("Club/P: Fetched successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
+      if(_state != ProviderState.busy) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Club/P: Getting all...");
+        final response = await ApiService().get(ApiEndpoints.club);
+        _items = { for (var json in response) json['id'] : Club(
+            json['name'],
+            json['playing'],
+            _stadiumProvider.items[json['stadium_id']]!,
+            json['phone'],
+            json['fax'],
+            json['email'],
+            Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1], json['color_rgb'][2]),
+            json['picture'],
+            json['id']
+        )};
+      }
     } catch (e) {
       print("Club/P: Error fetching! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
+      rethrow;
     }
+    _state = ProviderState.ready;
+    notifyListeners();
   }
 }

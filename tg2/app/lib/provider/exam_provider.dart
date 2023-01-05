@@ -1,17 +1,16 @@
-// Library imports
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/utils/constants.dart';
 import '../models/exam_model.dart';
 import '../utils/api/api_endpoints.dart';
 import '../utils/api/api_service.dart';
+import '../utils/constants.dart';
 
 // Exam provider class
 class ExamProvider extends ChangeNotifier {
   late PlayerProvider _playerProvider;
-  Map<int, Exam> _items = {};
   ProviderState _state = ProviderState.empty;
+  Map<int, Exam> _items = {};
 
   // Automatically fetch data when initialized
   ExamProvider(this._playerProvider) {
@@ -19,44 +18,36 @@ class ExamProvider extends ChangeNotifier {
     get();
   }
 
-  PlayerProvider get playerProvider => _playerProvider;
+  // Getters
   ProviderState get state => _state;
   Map<int, Exam> get items => _items;
 
-  Future<void> get() async {
-    try {
-      if(_state == ProviderState.busy || playerProvider.state != ProviderState.ready) return;
-      print("Exam/P: Getting all...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      final response = await ApiService().get(ApiEndpoints.exam);
-      _items = { for (var item in response) item['id'] : Exam.fromJson(item) };
-      print("Exam/P: Fetched successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
-    } catch (e) {
-      print("Exam/P: Error fetching! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
-    }
+  // Setters
+  set playerProvider(PlayerProvider provider) {
+    _playerProvider = provider;
+    notifyListeners();
   }
 
-  Future<bool> delete(Exam exam) async {
+  Future get() async {
     try {
-      if(_state == ProviderState.busy) return false;
-      print("Exam/P: Deleting exam ${exam.id}...");
-      _state = ProviderState.busy;
-      notifyListeners();
-      await ApiService().delete(ApiEndpoints.exam, exam.id);
-      print("Exam/P: Deleted exam ${exam.id} successfully!");
-      _state = ProviderState.ready;
-      notifyListeners();
-      return true;
+      if(_state != ProviderState.busy) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Exam/P: Getting all...");
+        final response = await ApiService().get(ApiEndpoints.exam);
+        _items = { for (var json in response) json['id']: Exam(
+          _playerProvider.items[json['player_id']]!,
+          DateTime.parse(json['date'].toString()),
+          json['result'],
+          json['id'],
+        )};
+        print("Exam/P: Fetched successfully!");
+      }
     } catch (e) {
-      print("Exam/P: Error deleting exam ${exam.id}! $e");
-      _state = ProviderState.empty;
-      notifyListeners();
+      print("Exam/P: Error fetching! $e");
+      rethrow;
     }
-    return false;
+    _state = ProviderState.ready;
+    notifyListeners();
   }
 }
