@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
 
 // Model for the Club entity. (Read & write)
@@ -17,7 +18,7 @@ class Club {
   // Constructors
   Club(
       this.name, this.playing,
-      [this.stadium, this.phone, this.fax, this.email, this.color, this.picture, this._id]
+      [this.stadium, this.phone, this.fax, this.email, this.color = Colors.blue, this.picture, this._id]
       );
 
   // Getters
