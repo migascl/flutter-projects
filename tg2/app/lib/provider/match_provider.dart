@@ -43,6 +43,14 @@ class MatchProvider extends ChangeNotifier {
     }
     return points;
   }
+  List<int> getMatchweeks() {
+    int currentMatchweek = _items.entries.last.value.matchweek;
+    List<int> matchweeks = List<int>.empty(growable: true);
+    for (var i = 1; i <= currentMatchweek; i++) {
+      matchweeks.add(i);
+    }
+    return matchweeks;
+  }
 
   // Setters
   set stadiumProvider(StadiumProvider provider) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/views/screens/match/matchlist_view.dart';
 import 'club/clublist_view.dart';
 
 // TODO IMPLEMENT DRAWER BASED NAVIGATION
@@ -43,7 +44,17 @@ class _HomeViewState extends State<HomeView> {
                   },
                   child: Text("Clubes")),
               // TODO ADD NAVIGATION TO PLAYER LIST
-              // TODO ADD NAVIGATION TO MATCH LIST
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const MatchListView(),
+                        maintainState: false,
+                      ),
+                    );
+                  },
+                  child: Text("Jornadas")),
             ],)
         ));
   }
