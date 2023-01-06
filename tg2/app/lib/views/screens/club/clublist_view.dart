@@ -18,12 +18,12 @@ class ClubListView extends StatefulWidget {
 }
 
 class _ClubListViewState extends State<ClubListView> {
-
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _clubListRefreshKey =
+      GlobalKey<RefreshIndicatorState>();
 
   // Method to reload providers used by the page
   Future _loadPageData() async {
-    try{
+    try {
       await Provider.of<ClubProvider>(context, listen: false).get();
       await Provider.of<MatchProvider>(context, listen: false).get();
     } catch (e) {
@@ -46,20 +46,20 @@ class _ClubListViewState extends State<ClubListView> {
   Widget build(BuildContext context) {
     print("ClubList/V: Building...");
     return Scaffold(
-        appBar: AppBar(
-            title: Text("Clubes")
-        ),
+        appBar: AppBar(title: Text("Clubes")),
         body: RefreshIndicator(
-            key: _refreshIndicatorKey,
+            key: _clubListRefreshKey,
             onRefresh: _loadPageData,
-            child: Consumer2<ClubProvider, MatchProvider>(builder: (context, clubProvider, matchProvider, child) {
-              if(matchProvider.state == ProviderState.ready && clubProvider.state == ProviderState.ready) {
+            child: Consumer2<ClubProvider, MatchProvider>(
+                builder: (context, clubProvider, matchProvider, child) {
+              if (matchProvider.state == ProviderState.ready &&
+                  clubProvider.state == ProviderState.ready) {
                 // Query data from clubs and matches to sort them by who has the most points and matches
                 var _list = List.from(clubProvider.items.entries.map((e) => {
-                  'club': e.value,
-                  'matches' : matchProvider.getByClub(e.value).length,
-                  'points' : matchProvider.getClubPoints(e.value)
-                }));
+                      'club': e.value,
+                      'matches': matchProvider.getByClub(e.value).length,
+                      'points': matchProvider.getClubPoints(e.value)
+                    }));
                 _list
                   ..sort((b, a) => a['points'].compareTo(b['points']))
                   ..sort((b, a) => a['matches'].compareTo(b['matches']));
@@ -73,18 +73,19 @@ class _ClubListViewState extends State<ClubListView> {
                     return Column(
                       children: [
                         ListTile(
-                          leading: (club.picture != null) ?
-                          Image(
-                            image: NetworkImage(club.picture!),
-                            height: 32,
-                          ) :
-                          null,
+                          leading: (club.picture != null)
+                              ? Image(
+                                  image: NetworkImage(club.picture!),
+                                  height: 32,
+                                )
+                              : null,
                           title: Text(club.name),
                           subtitle: Text("$totalMatches, $totalPoints"),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (BuildContext context) => ClubView(club: club),
+                                builder: (BuildContext context) =>
+                                    ClubView(club: club),
                                 maintainState: true,
                               ),
                             );
@@ -97,7 +98,6 @@ class _ClubListViewState extends State<ClubListView> {
                 );
               }
               return Container();
-            }))
-    );
+            })));
   }
 }
