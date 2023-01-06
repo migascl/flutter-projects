@@ -1,0 +1,7 @@
+# Files and directories created by npm.
+/node_modules/
+/package-lock.json
+
+# Files and directories created by IntelliJ.
+/.idea/
+/app.iml
