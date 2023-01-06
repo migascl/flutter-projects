@@ -4,7 +4,8 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
-import 'package:tg2/views/widgets/contract_view.dart';
+import 'package:tg2/views/screens/contract_view.dart';
+import 'package:tg2/views/screens/match/match_view.dart';
 import '../../../models/club_model.dart';
 import '../../../models/match_model.dart';
 import '../../../models/contract_model.dart';
@@ -145,6 +146,12 @@ class _ClubViewState extends State<ClubView> {
                                             Container(child: (match.clubAway.picture != null) ? Image(image: NetworkImage(match.clubAway.picture!), height: 48) : null),
                                           ]
                                       ),
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (context) => MatchView(match: match)
+                                        );
+                                      },
                                     ),
                                     const Divider(height: 2.0),
                                   ],
@@ -180,9 +187,7 @@ class _ClubViewState extends State<ClubView> {
                                     onTap: () {
                                       showModalBottomSheet(
                                         context: context,
-                                        builder: (context) {
-                                          return ContractView(contract: contract);
-                                        },
+                                        builder: (context) => ContractView(contract: contract)
                                       );
                                     },
                                   ),
