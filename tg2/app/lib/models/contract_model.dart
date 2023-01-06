@@ -21,6 +21,7 @@ class Contract {
 
   // Getters
   int? get id => _id;
+  // Calculate if contract will need renovating in the next 6 months
   bool get needsRenovation {
     DateTime date = DateTime.now();
     return DateTime(date.year, date.month + 6, date.day).isAfter(period.end)  ? true : false;

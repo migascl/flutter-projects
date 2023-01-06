@@ -4,16 +4,18 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
+import 'package:tg2/views/widgets/contract_view.dart';
 import '../../../models/club_model.dart';
 import '../../../models/match_model.dart';
 import '../../../models/contract_model.dart';
 import '../../../utils/constants.dart';
 
+// TODO ADD DROPDOWN REFRESH
 // This page lists all clubs
 class ClubView extends StatefulWidget {
   const ClubView({super.key, required this.club});
 
-  final Club club;
+  final Club club; // This club is used as a preloader for the actual club info from the provider
 
   @override
   State<ClubView> createState() => _ClubViewState();
@@ -77,9 +79,10 @@ class _ClubViewState extends State<ClubView> {
           ),
         ],
       ),
-      // TODO IMPROVE PLAYER HEADER STYLE
+
       body: Consumer<ClubProvider>(builder: (context, clubProvider, child) {
         return Column(children: [
+          // TODO IMPROVE PLAYER HEADER STYLE
           // Page header
           Container(
               color: widget.club.color,
@@ -163,7 +166,7 @@ class _ClubViewState extends State<ClubView> {
                   Consumer<ContractProvider>(builder: (context, provider, child) {
                     if(provider.state == ProviderState.ready) {
                       if(provider.items.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
-                      List<Contract> list = provider.items.values.toList();
+                      List<Contract> list = provider.items.values.where((element) => element.club.id == _club.id).toList();
                       return MediaQuery.removePadding(
                           context: context,
                           removeTop: true,
@@ -179,7 +182,12 @@ class _ClubViewState extends State<ClubView> {
                                     subtitle: Text(contract.position.name),
                                     trailing: (contract.needsRenovation) ? Text("Necessita de renovação!") : null,
                                     onTap: () {
-                                      // TODO NAVIGATE TO PLAYER
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return ContractView(contract: contract);
+                                        },
+                                      );
                                     },
                                   ),
                                   const Divider(height: 2.0),
@@ -207,8 +215,8 @@ class _ClubViewState extends State<ClubView> {
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(_club.name),
-                                        Text("${_club.stadium?.name}, ${_club.stadium?.country.name}")
+                                        Text(_club.stadium!.name),
+                                        Text("${_club.stadium!.address}, ${_club.stadium?.country.name}")
                                       ],
                                     ),
                                   ),
