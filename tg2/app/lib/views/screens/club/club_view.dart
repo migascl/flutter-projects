@@ -27,7 +27,6 @@ class _ClubViewState extends State<ClubView> {
   // Method to reload providers used by the page
   Future _loadPageData() async {
     try{
-      await Provider.of<StadiumProvider>(context, listen: false).get();
       await Provider.of<ClubProvider>(context, listen: false).get();
       await Provider.of<ContractProvider>(context, listen: false).get();
       await Provider.of<MatchProvider>(context, listen: false).get();
@@ -54,11 +53,8 @@ class _ClubViewState extends State<ClubView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadPageData();
-      setState(() {
-        _club = Provider.of<ClubProvider>(context, listen: false).items[widget.club.id]!;
-      });
+    setState(() {
+      _club = Provider.of<ClubProvider>(context, listen: false).items[widget.club.id]!;
     });
   }
 

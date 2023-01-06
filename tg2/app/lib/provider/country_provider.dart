@@ -15,7 +15,6 @@ class CountryProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   CountryProvider() {
     print("Country/P: Initialized");
-    _get();
   }
 
   // Getters
@@ -23,7 +22,7 @@ class CountryProvider extends ChangeNotifier {
   Map<int, Country> get items => _items;
 
   // Methods
-  Future _get() async {
+  Future get() async {
     try {
       if(_state != ProviderState.busy) {
         _state = ProviderState.busy;
@@ -38,7 +37,7 @@ class CountryProvider extends ChangeNotifier {
       print("Country/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }

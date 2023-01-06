@@ -20,7 +20,6 @@ class ContractProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   ContractProvider(this._playerProvider, this._clubProvider) {
     print("Contract/P: Initialized");
-    get();
   }
 
   // Getters
@@ -40,7 +39,7 @@ class ContractProvider extends ChangeNotifier {
   // Methods
   Future get() async {
     try {
-      if(_state != ProviderState.busy) {
+      if(_state != ProviderState.busy && (_playerProvider.state == ProviderState.ready && _clubProvider.state == ProviderState.ready)) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Getting all...");
@@ -61,7 +60,7 @@ class ContractProvider extends ChangeNotifier {
       print("Contract/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }

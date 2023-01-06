@@ -17,7 +17,6 @@ class PlayerProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   PlayerProvider(this._countryProvider) {
     print("Player/P: Initialized");
-    get();
   }
 
   // Getters
@@ -33,7 +32,7 @@ class PlayerProvider extends ChangeNotifier {
   // Methods
   Future<void> get() async {
     try {
-      if(_state != ProviderState.busy) {
+      if(_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Player/P: Getting all...");
@@ -55,7 +54,7 @@ class PlayerProvider extends ChangeNotifier {
       print("Player/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }

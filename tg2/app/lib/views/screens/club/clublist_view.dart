@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
+import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
+import 'package:tg2/provider/player_provider.dart';
+import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import '../../../models/club_model.dart';
 import 'club_view.dart';
@@ -22,6 +25,7 @@ class _ClubListViewState extends State<ClubListView> {
   Future _loadPageData() async {
     try{
       await Provider.of<ClubProvider>(context, listen: false).get();
+      await Provider.of<MatchProvider>(context, listen: false).get();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -36,9 +40,6 @@ class _ClubListViewState extends State<ClubListView> {
   void initState() {
     print("ClubList/V: Initialized State!");
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadPageData();
-    });
   }
 
   @override
@@ -52,17 +53,17 @@ class _ClubListViewState extends State<ClubListView> {
             key: _refreshIndicatorKey,
             onRefresh: _loadPageData,
             child: Consumer2<ClubProvider, MatchProvider>(builder: (context, clubProvider, matchProvider, child) {
-              if(matchProvider.items.isEmpty && matchProvider.state == ProviderState.ready) return ListView(children: [Text("Não existem nenhum clube.")]);
-              if(matchProvider.state != ProviderState.empty) {
+              if(matchProvider.state == ProviderState.ready && clubProvider.state == ProviderState.ready) {
+                // Query data from clubs and matches to sort them by who has the most points and matches
                 var _list = List.from(clubProvider.items.entries.map((e) => {
                   'club': e.value,
                   'matches' : matchProvider.getByClub(e.value).length,
                   'points' : matchProvider.getClubPoints(e.value)
                 }));
-                // Sort clubs by who has the highest points and matches
                 _list
                   ..sort((b, a) => a['points'].compareTo(b['points']))
                   ..sort((b, a) => a['matches'].compareTo(b['matches']));
+                // TODO BETTER STYLING
                 return ListView.builder(
                   itemCount: _list.length,
                   itemBuilder: (context, index) {
@@ -84,7 +85,7 @@ class _ClubListViewState extends State<ClubListView> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) => ClubView(club: club),
-                                maintainState: false,
+                                maintainState: true,
                               ),
                             );
                           },

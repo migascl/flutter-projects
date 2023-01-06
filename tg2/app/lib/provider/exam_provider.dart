@@ -15,7 +15,6 @@ class ExamProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   ExamProvider(this._playerProvider) {
     print("Exam/P: Initialized");
-    get();
   }
 
   // Getters
@@ -30,7 +29,7 @@ class ExamProvider extends ChangeNotifier {
 
   Future get() async {
     try {
-      if(_state != ProviderState.busy) {
+      if(_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Getting all...");
@@ -47,7 +46,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }

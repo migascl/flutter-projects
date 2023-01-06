@@ -19,7 +19,6 @@ class MatchProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   MatchProvider(this._stadiumProvider, this._clubProvider) {
     print("Match/P: Initialized");
-    get();
   }
 
   // Getters
@@ -58,7 +57,7 @@ class MatchProvider extends ChangeNotifier {
   // Methods
   Future get() async {
     try {
-      if(_state != ProviderState.busy) {
+      if(_state != ProviderState.busy && (_stadiumProvider.state == ProviderState.ready && _clubProvider.state == ProviderState.ready)) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Match/P: Getting all...");
@@ -80,7 +79,7 @@ class MatchProvider extends ChangeNotifier {
       print("Match/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }

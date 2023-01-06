@@ -16,7 +16,6 @@ class StadiumProvider extends ChangeNotifier {
   // Automatically fetch data when initialized
   StadiumProvider(this._countryProvider) {
     print("Stadium/P: Initialized");
-    get();
   }
 
   // Getters
@@ -32,7 +31,7 @@ class StadiumProvider extends ChangeNotifier {
   // Methods
   Future get() async {
     try {
-      if(_state != ProviderState.busy) {
+      if(_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Stadium/P: Getting all...");
@@ -49,7 +48,7 @@ class StadiumProvider extends ChangeNotifier {
       print("Stadium/P: Error fetching! $e");
       rethrow;
     }
-    _state = ProviderState.ready;
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
 }
