@@ -10,7 +10,7 @@ class ContractView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("ContractVie/V: Building...");
+    print("Contract/V: Building...");
     return Column(
       children: [
         Text(contract.player.name),
