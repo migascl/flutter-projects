@@ -6,6 +6,7 @@ import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
+import 'package:tg2/views/widgets/matchtile.dart';
 import '../../../models/club_model.dart';
 import '../../../models/match_model.dart';
 import '../../../models/contract_model.dart';
@@ -137,22 +138,7 @@ class _ClubViewState extends State<ClubView> {
                                 Match match = _list[index];
                                 return Column(
                                   children: [
-                                    ListTile(
-                                      title: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Container(child: (match.clubHome.picture != null) ? Image(image: NetworkImage(match.clubHome.picture!), height: 48) : null),
-                                            Text("${match.homeScore} : ${match.awayScore}"),
-                                            Container(child: (match.clubAway.picture != null) ? Image(image: NetworkImage(match.clubAway.picture!), height: 48) : null),
-                                          ]
-                                      ),
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                            context: context,
-                                            builder: (context) => MatchView(match: match)
-                                        );
-                                      },
-                                    ),
+                                    MatchTile(match: match),
                                     const Divider(height: 2.0),
                                   ],
                                 );
