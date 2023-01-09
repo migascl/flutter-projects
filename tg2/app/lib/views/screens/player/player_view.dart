@@ -47,6 +47,9 @@ class _PlayerViewState extends State<PlayerView> {
   void initState() {
     print("Player/V: Initialized State!");
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadPageData();
+    });
   }
 
   @override

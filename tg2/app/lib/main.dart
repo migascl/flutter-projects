@@ -27,79 +27,81 @@ class Main extends StatelessWidget {
       // Each provider is an entity in the API and follows the hierarchy set by the database
       // Entities composed of different entities are defined as Proxy Providers so their data is refreshed
       // in every parent change notification
-      // TODO -> MAYBE DIFFERENT PROVIDER APPROACH (BASED ON PAGES)
       providers: [
-        ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
+        ChangeNotifierProvider<CountryProvider>(
+            create: (context) => CountryProvider()),
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
-            create: (context) => StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) => StadiumProvider(
+                Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, stadiumProvider) {
               print("Stadium/P: Update");
-              if(stadiumProvider == null) throw Exception;
-              stadiumProvider.countryProvider = countryProvider;
-              stadiumProvider.get();
+              if (stadiumProvider == null) throw Exception;
+              stadiumProvider
+                ..countryProvider = countryProvider
+                ..get();
               return stadiumProvider;
-            }
-        ),
+            }),
         ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
-            create: (context) => ClubProvider(Provider.of<StadiumProvider>(context, listen: false)),
+            create: (context) => ClubProvider(
+                Provider.of<StadiumProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider) {
               print("Club/P: Update");
-              if(clubProvider == null) throw Exception;
-              clubProvider.stadiumProvider = stadiumProvider;
-              clubProvider.get();
+              if (clubProvider == null) throw Exception;
+              clubProvider
+                ..stadiumProvider = stadiumProvider
+                ..get();
               return clubProvider;
-            }
-        ),
-        ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider, MatchProvider>(
+            }),
+        ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider,
+                MatchProvider>(
             create: (context) => MatchProvider(
                 Provider.of<StadiumProvider>(context, listen: false),
-                Provider.of<ClubProvider>(context, listen: false)
-            ),
+                Provider.of<ClubProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider, matchProvider) {
               print("Match/P: Update");
-              if(matchProvider == null) throw Exception;
+              if (matchProvider == null) throw Exception;
               matchProvider
-                  ..stadiumProvider = stadiumProvider
-                  ..clubProvider = clubProvider;
-              matchProvider.get();
+                ..stadiumProvider = stadiumProvider
+                ..clubProvider = clubProvider
+                ..get();
               return matchProvider;
-            }
-        ),
+            }),
         ChangeNotifierProxyProvider<CountryProvider, PlayerProvider>(
-            create: (context) => PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) => PlayerProvider(
+                Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, playerProvider) {
               print("Player/P: Update");
-              if(playerProvider == null) throw Exception;
-              playerProvider.countryProvider = countryProvider;
-              playerProvider.get();
+              if (playerProvider == null) throw Exception;
+              playerProvider
+                ..countryProvider = countryProvider
+                ..get();
               return playerProvider;
-            }
-        ),
-        ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider, ContractProvider>(
+            }),
+        ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider,
+                ContractProvider>(
             create: (context) => ContractProvider(
                 Provider.of<PlayerProvider>(context, listen: false),
-                Provider.of<ClubProvider>(context, listen: false)
-            ),
+                Provider.of<ClubProvider>(context, listen: false)),
             update: (context, playerProvider, clubProvider, contractProvider) {
               print("Contract/P: Update");
-              if(contractProvider == null) throw Exception;
+              if (contractProvider == null) throw Exception;
               contractProvider
                 ..playerProvider = playerProvider
-                ..clubProvider = clubProvider;
-              contractProvider.get();
+                ..clubProvider = clubProvider
+                ..get();
               return contractProvider;
-            }
-        ),
+            }),
         ChangeNotifierProxyProvider<PlayerProvider, ExamProvider>(
-            create: (context) => ExamProvider(Provider.of<PlayerProvider>(context, listen: false)),
+            create: (context) => ExamProvider(
+                Provider.of<PlayerProvider>(context, listen: false)),
             update: (context, playerProvider, examProvider) {
               print("Club/P: Update");
-              if(examProvider == null) throw Exception;
-              examProvider.playerProvider = playerProvider;
-              examProvider.get();
+              if (examProvider == null) throw Exception;
+              examProvider
+                ..playerProvider = playerProvider
+                ..get();
               return examProvider;
-            }
-        ),
+            }),
       ],
       child: MaterialApp(
         title: 'TG2',
@@ -125,7 +127,7 @@ class _StartUpView extends State<StartUpView> {
   // Once succeeded, user is sent to Home screen
   // If connection fails, an alert dialog will be displayed and give the possibility of trying again
   Future _attemptConnection() async {
-    try{
+    try {
       await ApiService().get(ApiEndpoints.root);
       // Navigate to Home screen
       Navigator.pushReplacement(
@@ -140,19 +142,19 @@ class _StartUpView extends State<StartUpView> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) => AlertDialog(
-            title: const Text('Ocorreu um erro!'),
-            content: Text(
-                'Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _attemptConnection();
-                },
-                child: const Text('Tentar Novamente'),
-              ),
-            ],
-          ));
+                title: const Text('Ocorreu um erro!'),
+                content: Text(
+                    'Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _attemptConnection();
+                    },
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
+              ));
     }
   }
 
@@ -169,5 +171,4 @@ class _StartUpView extends State<StartUpView> {
     print("StartUp/V: Building...");
     return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
-
 }

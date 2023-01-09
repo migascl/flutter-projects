@@ -62,6 +62,7 @@ class _MatchListViewState extends State<MatchListView> {
                   ],
                   bottom: TabBar(
                     tabs: tabs,
+                    isScrollable: true,
                     onTap: (index) {
                       setState(() {
                         _currentTab = index;
@@ -91,7 +92,7 @@ class _MatchListViewState extends State<MatchListView> {
               ));
         }
         return Scaffold(
-          appBar: AppBar(title: Text("Clubes")),
+          appBar: AppBar(title: Text("Jornadas")),
         );
       },
     );

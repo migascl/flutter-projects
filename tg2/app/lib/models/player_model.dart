@@ -10,6 +10,7 @@ class Player {
   late int height;
   late int weight;
   String? picture;
+  // TODO ADD SCHOOLING LEVEL
   final int? _id; // Only used when getting from JSON
 
   // Constructor

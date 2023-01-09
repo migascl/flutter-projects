@@ -52,8 +52,8 @@ class _ClubListViewState extends State<ClubListView> {
             onRefresh: _loadPageData,
             child: Consumer2<ClubProvider, MatchProvider>(
                 builder: (context, clubProvider, matchProvider, child) {
-              if (matchProvider.state == ProviderState.ready &&
-                  clubProvider.state == ProviderState.ready) {
+              if (matchProvider.state != ProviderState.empty &&
+                  clubProvider.state != ProviderState.empty) {
                 // Query data from clubs and matches to sort them by who has the most points and matches
                 var _list = List.from(clubProvider.items.entries.map((e) => {
                       'club': e.value,
