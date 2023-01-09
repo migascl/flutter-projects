@@ -56,4 +56,21 @@ class ExamProvider extends ChangeNotifier {
     (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
   }
+
+  Future delete(Exam exam) async {
+    try {
+      if(_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Exam/P: Deleting all exam ${exam.id}...");
+        await ApiService().delete(ApiEndpoints.exam, exam.toJson());
+        print("Exam/P: Deleted successfully!");
+      }
+    } catch (e) {
+      print("Exam/P: Error deleting! $e");
+      rethrow;
+    }
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+    notifyListeners();
+  }
 }
