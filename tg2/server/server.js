@@ -76,6 +76,13 @@ express.patch('/exam', (req,res) => {
     }).then(r => res.json(r));
 
 });
+express.delete('/exam', (req,res) => {
+    const { id } = req.body
+    connection.none('DELETE FROM exam WHERE id = $/id/', {
+        id: id,
+    }).then(r => res.json(r));
+
+});
 
 express.get('/position', (req, res) => connection.any('SELECT * FROM position')
     .then((data) => res.json(data))
