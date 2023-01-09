@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tg2/provider/player_provider.dart';
 import '../models/exam_model.dart';
+import '../models/player_model.dart';
 import '../utils/api/api_endpoints.dart';
 import '../utils/api/api_service.dart';
 import '../utils/constants.dart';
@@ -20,6 +21,12 @@ class ExamProvider extends ChangeNotifier {
   // Getters
   ProviderState get state => _state;
   Map<int, Exam> get items => _items;
+  Map<int, Exam> getByPlayer(Player player) {
+    return Map.fromEntries(_items.entries.where((element) => element.value.player.id == player.id));
+  }
+  Map<int, Exam> getByDate(DateTimeRange date) {
+    return Map.fromEntries(_items.entries.where((element) => element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
+  }
 
   // Setters
   set playerProvider(PlayerProvider provider) {
