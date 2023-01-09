@@ -1,3 +1,6 @@
+// TODO IMPLEMENT CRUD
+// TODO IMPLEMENT CRUD FOR IMAGE FILES
+
 const bodyParser = require('body-parser');
 
 const express = require('express')();
@@ -11,7 +14,6 @@ const dbhost = "localhost";
 const dbport = "5432";
 const dbname = "tg2";
 const connection = pgp('postgres://' + dbusername + ":" + dbpassword + "@" + dbhost + ":" + dbport + "/" + dbname)
-
 
 express.listen(port, () => {
     console.log(`Server listening on the port  ${port}`);
@@ -55,6 +57,25 @@ express.get('/exam', (req, res) => connection.any('SELECT * FROM exam')
     .then((data) => res.json(data))
     .catch((error) => console.log('ERROR:', error))
 );
+express.post('/exam', (req,res) => {
+    const { player_id, date, result } = req.body
+    connection.none('INSERT INTO exam(player_id, date, result) VALUES($/player_id/, $/date/, $/result/)', {
+        player_id: player_id,
+        date: date,
+        result: result
+    }).then(r => res.status(200));
+
+});
+express.patch('/exam', (req,res) => {
+    const { id, player_id, date, result } = req.body
+    connection.none('UPDATE exam SET player_id = $/player_id/, date = $/date/, result = $/result/ WHERE id = $/id/', {
+        id: id,
+        player_id: player_id,
+        date: date,
+        result: result
+    }).then(r => res.json(r));
+
+});
 
 express.get('/position', (req, res) => connection.any('SELECT * FROM position')
     .then((data) => res.json(data))
