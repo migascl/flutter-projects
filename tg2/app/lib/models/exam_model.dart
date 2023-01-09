@@ -13,4 +13,11 @@ class Exam {
 
   // Getters
   int? get id => _id;
+
+  Map<String, dynamic> toJson() => {
+    'id': _id,
+    'player_id': player.id,
+    'date': '${date.year}-${date.month}-${date.day}',
+    'result': result
+  };
 }
