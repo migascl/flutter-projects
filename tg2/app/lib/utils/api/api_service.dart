@@ -13,7 +13,22 @@ class ApiService {
     var response = await http
         .get(Uri.parse(_apiUrl + endpoint.endpoint))
         .timeout(const Duration(seconds: 5));
-    if (response.statusCode == 200 || response.statusCode == 204)
+    if (response.statusCode == 200)
+      return jsonDecode(response.body);
+    throw ApiRequestException(
+        "Api request returned status code ${response.statusCode}");
+  }
+
+  Future<dynamic> delete(ApiEndpoints endpoint, Map<String, dynamic> query) async {
+    print(jsonEncode(query));
+    var response = await http
+        .delete(Uri.parse(_apiUrl + endpoint.endpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(query))
+        .timeout(const Duration(seconds: 5));
+    if (response.statusCode == 200)
       return jsonDecode(response.body);
     throw ApiRequestException(
         "Api request returned status code ${response.statusCode}");
