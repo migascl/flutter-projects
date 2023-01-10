@@ -19,10 +19,43 @@ class ApiService {
         "Api request returned status code ${response.statusCode}");
   }
 
+  // Api DELETE method, it receives an endpoint and a JSON body from a model to delete by ID
   Future<dynamic> delete(ApiEndpoints endpoint, Map<String, dynamic> query) async {
     print(jsonEncode(query));
     var response = await http
         .delete(Uri.parse(_apiUrl + endpoint.endpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(query))
+        .timeout(const Duration(seconds: 5));
+    if (response.statusCode == 200)
+      return jsonDecode(response.body);
+    throw ApiRequestException(
+        "Api request returned status code ${response.statusCode}");
+  }
+
+  // Api POST method, it receives an endpoint and a JSON body from a model
+  Future<dynamic> post(ApiEndpoints endpoint, Map<String, dynamic> query) async {
+    print(jsonEncode(query));
+    var response = await http
+        .post(Uri.parse(_apiUrl + endpoint.endpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(query))
+        .timeout(const Duration(seconds: 5));
+    if (response.statusCode == 200)
+      return jsonDecode(response.body);
+    throw ApiRequestException(
+        "Api request returned status code ${response.statusCode}");
+  }
+
+  // Api PATCH method, it receives an endpoint and a JSON body from a model
+  Future<dynamic> patch(ApiEndpoints endpoint, Map<String, dynamic> query) async {
+    print(jsonEncode(query));
+    var response = await http
+        .patch(Uri.parse(_apiUrl + endpoint.endpoint),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
