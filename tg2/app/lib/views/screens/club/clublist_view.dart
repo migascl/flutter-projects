@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
-import '../../../models/club_model.dart';
+import 'package:tg2/models/club_model.dart';
 import 'club_view.dart';
 
 // This page lists all clubs
@@ -63,7 +63,6 @@ class _ClubListViewState extends State<ClubListView> {
                 list
                   ..sort((b, a) => a['matches'].compareTo(b['matches']))
                   ..sort((b, a) => a['points'].compareTo(b['points']));
-                // TODO BETTER STYLING
                 return Column(children: [
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

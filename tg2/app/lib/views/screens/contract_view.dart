@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/contract_model.dart';
+import 'club/club_view.dart';
 
 // TODO STYLING
 // This widgets shows a contract's information

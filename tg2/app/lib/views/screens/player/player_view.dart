@@ -8,7 +8,6 @@ import 'package:tg2/models/player_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/views/screens/exam_modify_view.dart';
-
 import '../contract_view.dart';
 
 // This page shows player's information
