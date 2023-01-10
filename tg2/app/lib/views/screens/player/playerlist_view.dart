@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/views/screens/player/player_view.dart';
-import 'package:tg2/models/country_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/utils/constants.dart';
 
@@ -26,13 +25,12 @@ class _PlayerListViewState extends State<PlayerListView> {
   final GlobalKey<RefreshIndicatorState> _playerListRefreshKey =
       GlobalKey<RefreshIndicatorState>();
 
-  List<_ExamFilters> _filters = [];
+  final List<_ExamFilters> _filters = [];
   DateTimeRange _filterPeriod = DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
 
   void addFilter(_ExamFilters filter) {
     setState(() => _filters.add(filter));
   }
-
   void removeFilter(_ExamFilters filter) {
     setState(() => _filters.remove(filter));
   }
@@ -56,16 +54,12 @@ class _PlayerListViewState extends State<PlayerListView> {
     final DateTimeRange? result = await showDateRangePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.input,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(1970, 1, 1),
       lastDate: DateTime.now(),
       currentDate: DateTime.now(),
     );
 
-    if (result != null) {
-      setState(() {
-        _filterPeriod = result;
-      });
-    }
+    if (result != null) setState(() => _filterPeriod = result);
   }
 
   @override
@@ -76,8 +70,6 @@ class _PlayerListViewState extends State<PlayerListView> {
 
   @override
   Widget build(BuildContext context) {
-    print(_filters);
-    print(_filterPeriod.toString());
     print("PlayerList/V: Building...");
     return Scaffold(
         appBar: AppBar(
