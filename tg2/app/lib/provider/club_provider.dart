@@ -29,6 +29,7 @@ class ClubProvider extends ChangeNotifier {
   }
 
   // Methods
+  // Method for getting all clubs from database and filling them to the list
   Future get() async {
     try {
       if(_state != ProviderState.busy && _stadiumProvider.state == ProviderState.ready) {

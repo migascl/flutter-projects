@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
 
-// Model for the Club entity. (Read & write)
+// Model for the Club entity.
 class Club {
   // Variables
   late String name;

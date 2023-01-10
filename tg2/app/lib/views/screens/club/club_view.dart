@@ -110,8 +110,8 @@ class _ClubViewState extends State<ClubView> {
                   // Club season statistics
                   Consumer<MatchProvider>(builder: (context, provider, child) {
                     if(provider.state == ProviderState.ready) {
-                      if(provider.items.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
-                      var _list = provider.getByClub(_club).values.toList();
+                      List<Match> _list = provider.getByClub(_club).values.toList();
+                      if(_list.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
                       return Column(
                         children: [
                           Row(
@@ -154,8 +154,10 @@ class _ClubViewState extends State<ClubView> {
                   // Club team list
                   Consumer<ContractProvider>(builder: (context, provider, child) {
                     if(provider.state == ProviderState.ready) {
-                      if(provider.items.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
-                      List<Contract> list = provider.items.values.where((element) => element.club.id == _club.id).toList();
+                      List<Contract> list = provider.items.values.where((element) =>
+                        element.club.id == _club.id && element.period.start.isAfter(DateTime(2022, 08))
+                      ).toList();
+                      if(list.isEmpty) return const Center(child: Text("Não existem jogadores neste clube."));
                       return MediaQuery.removePadding(
                           context: context,
                           removeTop: true,
