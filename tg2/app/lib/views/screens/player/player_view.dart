@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/exam_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
-import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
-import 'package:tg2/views/screens/club/club_view.dart';
+import 'package:tg2/views/screens/exam_modify_view.dart';
 
 import '../contract_view.dart';
 
@@ -68,6 +65,15 @@ class _PlayerViewState extends State<PlayerView> {
               onPressed: () => _loadPageData()),
         ],
       ),
+      floatingActionButton: _selectedIndex == 2 ? FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => showDialog(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) => ExamModifyView(player: _player)
+          ),
+        )
+        : null,
       // TODO IMPROVE PLAYER HEADER STYLE
       body: Column(children: [
         // Page header
@@ -176,9 +182,7 @@ class _PlayerViewState extends State<PlayerView> {
               if (examProvider.state == ProviderState.ready) {
                 List<Exam> list = List.from(examProvider.items.values
                     .where((element) => element.player.id == _player.id));
-                if (list.isEmpty)
-                  return const Center(
-                      child: Text("Jogador não realizou nenhum exame."));
+                if (list.isEmpty) return const Center(child: Text("Jogador não realizou nenhum exame."));
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
@@ -198,6 +202,29 @@ class _PlayerViewState extends State<PlayerView> {
                                       "Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
                                 ],
                               ),
+                              trailing: PopupMenuButton(
+                                    // Callback that sets the selected popup menu item.
+                                    onSelected: (int value) {
+                                      if(value == 0) {
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) => ExamModifyView(exam: exam, player: _player)
+                                        );
+                                      }
+                                      if(value == 1) examProvider.delete(exam);
+                                    },
+                                    itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                      const PopupMenuItem<int>(
+                                        value: 0,
+                                        child: Text('Editar'),
+                                      ),
+                                      const PopupMenuItem<int>(
+                                        value: 1,
+                                        child: Text('Remover'),
+                                      ),
+                                    ],
+                                  )
                             ),
                             const Divider(height: 2.0),
                           ],
