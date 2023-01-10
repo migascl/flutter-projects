@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
-import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
-import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import '../../../models/club_model.dart';
 import 'club_view.dart';
@@ -55,21 +52,24 @@ class _ClubListViewState extends State<ClubListView> {
               if (matchProvider.state != ProviderState.empty &&
                   clubProvider.state != ProviderState.empty) {
                 // Query data from clubs and matches to sort them by who has the most points and matches
-                var _list = List.from(clubProvider.items.entries.map((e) => {
-                      'club': e.value,
-                      'matches': matchProvider.getByClub(e.value).length,
-                      'points': matchProvider.getClubPoints(e.value)
-                    }));
-                _list
+                var list = List.from(clubProvider.items.values
+                    .where((element) => element.playing == true)
+                    .map((e) => {
+                      'club': e,
+                      'matches': matchProvider.getByClub(e).length,
+                      'points': matchProvider.getClubPoints(e)
+                    })
+                );
+                list
                   ..sort((b, a) => a['points'].compareTo(b['points']))
                   ..sort((b, a) => a['matches'].compareTo(b['matches']));
                 // TODO BETTER STYLING
                 return ListView.builder(
-                  itemCount: _list.length,
+                  itemCount: list.length,
                   itemBuilder: (context, index) {
-                    Club club = _list[index]['club'];
-                    int totalMatches = _list[index]['matches'];
-                    int totalPoints = _list[index]['points'];
+                    Club club = list[index]['club'];
+                    int totalMatches = list[index]['matches'];
+                    int totalPoints = list[index]['points'];
                     return Column(
                       children: [
                         ListTile(
