@@ -65,6 +65,7 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Deleting exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Deleted exam ${exam.id} successfully!");
+        get();
       }
     } catch (e) {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
@@ -82,6 +83,7 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Inserting new exam...");
         await ApiService().post(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Exam inserted successfully!");
+        get();
       }
     } catch (e) {
       print("Exam/P: Error inserting! $e");
@@ -99,6 +101,7 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Patching exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Patched exam ${exam.id} successfully!");
+        get();
       }
     } catch (e) {
       print("Exam/P: Error patching exam ${exam.id}! $e");
