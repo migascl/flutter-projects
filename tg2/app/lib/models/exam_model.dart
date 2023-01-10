@@ -10,6 +10,7 @@ class Exam {
 
   // Constructor
   Exam(this.player, this.date, this.result, [this._id]);
+  Exam.empty([this._id]);
 
   // Getters
   int? get id => _id;
@@ -17,7 +18,7 @@ class Exam {
   Map<String, dynamic> toJson() => {
     'id': _id,
     'player_id': player.id,
-    'date': '${date.year}-${date.month}-${date.day}',
+    'date': date.toIso8601String(),
     'result': result
   };
 }

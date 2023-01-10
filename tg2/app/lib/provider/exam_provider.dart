@@ -62,12 +62,46 @@ class ExamProvider extends ChangeNotifier {
       if(_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
-        print("Exam/P: Deleting all exam ${exam.id}...");
+        print("Exam/P: Deleting exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
-        print("Exam/P: Deleted successfully!");
+        print("Exam/P: Deleted exam ${exam.id} successfully!");
       }
     } catch (e) {
-      print("Exam/P: Error deleting! $e");
+      print("Exam/P: Error deleting exam ${exam.id}! $e");
+      rethrow;
+    }
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+    notifyListeners();
+  }
+
+  Future post(Exam exam) async {
+    try {
+      if(_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Exam/P: Inserting new exam...");
+        await ApiService().post(ApiEndpoints.exam, exam.toJson());
+        print("Exam/P: Exam inserted successfully!");
+      }
+    } catch (e) {
+      print("Exam/P: Error inserting! $e");
+      rethrow;
+    }
+    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+    notifyListeners();
+  }
+
+  Future patch(Exam exam) async {
+    try {
+      if(_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Exam/P: Patching exam ${exam.id}...");
+        await ApiService().delete(ApiEndpoints.exam, exam.toJson());
+        print("Exam/P: Patched exam ${exam.id} successfully!");
+      }
+    } catch (e) {
+      print("Exam/P: Error patching exam ${exam.id}! $e");
       rethrow;
     }
     (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
