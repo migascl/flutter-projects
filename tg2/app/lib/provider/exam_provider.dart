@@ -65,7 +65,6 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Deleting exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Deleted exam ${exam.id} successfully!");
-        get();
       }
     } catch (e) {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
@@ -73,6 +72,7 @@ class ExamProvider extends ChangeNotifier {
     }
     (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
+    await get();
   }
 
   Future post(Exam exam) async {
@@ -83,7 +83,6 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Inserting new exam...");
         await ApiService().post(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Exam inserted successfully!");
-        get();
       }
     } catch (e) {
       print("Exam/P: Error inserting! $e");
@@ -91,6 +90,7 @@ class ExamProvider extends ChangeNotifier {
     }
     (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
+    await get();
   }
 
   Future patch(Exam exam) async {
@@ -99,9 +99,8 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Patching exam ${exam.id}...");
-        await ApiService().delete(ApiEndpoints.exam, exam.toJson());
+        await ApiService().patch(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Patched exam ${exam.id} successfully!");
-        get();
       }
     } catch (e) {
       print("Exam/P: Error patching exam ${exam.id}! $e");
@@ -109,5 +108,6 @@ class ExamProvider extends ChangeNotifier {
     }
     (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
     notifyListeners();
+    await get();
   }
 }
