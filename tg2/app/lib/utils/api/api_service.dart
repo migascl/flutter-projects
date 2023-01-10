@@ -21,7 +21,6 @@ class ApiService {
 
   // Api DELETE method, it receives an endpoint and a JSON body from a model to delete by ID
   Future<dynamic> delete(ApiEndpoints endpoint, Map<String, dynamic> query) async {
-    print(jsonEncode(query));
     var response = await http
         .delete(Uri.parse(_apiUrl + endpoint.endpoint),
         headers: <String, String>{
@@ -37,7 +36,6 @@ class ApiService {
 
   // Api POST method, it receives an endpoint and a JSON body from a model
   Future<dynamic> post(ApiEndpoints endpoint, Map<String, dynamic> query) async {
-    print(jsonEncode(query));
     var response = await http
         .post(Uri.parse(_apiUrl + endpoint.endpoint),
         headers: <String, String>{
@@ -53,7 +51,6 @@ class ApiService {
 
   // Api PATCH method, it receives an endpoint and a JSON body from a model
   Future<dynamic> patch(ApiEndpoints endpoint, Map<String, dynamic> query) async {
-    print(jsonEncode(query));
     var response = await http
         .patch(Uri.parse(_apiUrl + endpoint.endpoint),
         headers: <String, String>{
