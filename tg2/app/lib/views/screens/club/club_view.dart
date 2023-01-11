@@ -3,16 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
-import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/views/screens/contract_view.dart';
-import 'package:tg2/views/screens/match/match_view.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
 import '../../../models/club_model.dart';
 import '../../../models/match_model.dart';
 import '../../../models/contract_model.dart';
 import '../../../utils/constants.dart';
 
-// TODO ADD DROPDOWN REFRESH
 // This page lists all clubs
 class ClubView extends StatefulWidget {
   const ClubView({super.key, required this.club});
@@ -80,26 +77,46 @@ class _ClubViewState extends State<ClubView> {
 
       body: Consumer<ClubProvider>(builder: (context, clubProvider, child) {
         return Column(children: [
-          // TODO IMPROVE PLAYER HEADER STYLE
           // Page header
           Container(
               color: widget.club.color,
-              height: 200,
-              padding: const EdgeInsets.fromLTRB(16, 86, 16, 16),
-              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.fromLTRB(32, 86, 32, 32),
+              alignment: Alignment.topLeft,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(child: (_club.picture != null) ? Image(image: NetworkImage(_club.picture!), height: 64,) : null ),
-                  Text(
-                    widget.club.name,
-                    style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.normal,
-                        fontSize: 24,
-                        color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white
-                    ),
-                  )
+                  Container(
+                    child: (_club.picture != null)
+                        ? Image(image: NetworkImage(_club.picture!), height: 72)
+                        : null
+                  ),
+                  const SizedBox(width: 32),
+                  Expanded(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.club.name,
+                        softWrap: true,
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.normal,
+                            fontSize: 24,
+                            color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.club.stadium!.country.name,
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16,
+                            color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black54 : Colors.white70
+                        ),
+                      ),
+                    ]
+                  ))
                 ],
               )),
           // Page body
@@ -110,42 +127,78 @@ class _ClubViewState extends State<ClubView> {
                   // Club season statistics
                   Consumer<MatchProvider>(builder: (context, provider, child) {
                     if(provider.state == ProviderState.ready) {
-                      List<Match> _list = provider.getByClub(_club).values.toList();
-                      if(_list.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
-                      return Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Column(children: [
-                                  const Text("Jogos Totais"),
-                                  Text("${_list.length}"),
-                                ]),
-                                Column(children: [
-                                  const Text("Pontos Total"),
-                                  Text("${provider.getClubPoints(_club)}"),
-                                ]),
-                              ]),
-                          const Text("Jogos"),
-                          MediaQuery.removePadding(
-                            removeTop: true,
-                            context: context,
-                            child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: _list.length,
-                              itemBuilder: (context, index) {
-                                Match match = _list[index];
-                                return Column(
-                                  children: [
-                                    MatchTile(match: match),
-                                    const Divider(height: 2.0),
-                                  ],
-                                );
-                              },
-                            ),
+                      List<Match> list = provider.getByClub(_club).values.toList();
+                      if(list.isEmpty) return const Center(child: Text("Este clube ainda não participou em nenhum jogo."));
+                      return Container(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Card(child: Container(
+                                    margin: const EdgeInsets.all(16),
+                                    child: Column(children: [
+                                      const Text("Jogos Totais",
+                                        style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text("${list.length}",
+                                        style: const TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 32
+                                        ),
+                                      ),
+                                    ])
+                                  )),
+                                  Card(child: Container(
+                                      margin: const EdgeInsets.all(16),
+                                      child: Column(children: [
+                                        const Text("Pontos Total",
+                                          style: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 18
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text("${provider.getClubPoints(_club)}",
+                                          style: const TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 32
+                                          ),
+                                        ),
+                                      ])
+                                  )),
+                                ]
+                              ),
+                              const Text("Jogos"),
+                              MediaQuery.removePadding(
+                                removeTop: true,
+                                context: context,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    Match match = list[index];
+                                    return Column(
+                                      children: [
+                                        MatchTile(match: match),
+                                        const Divider(height: 2.0),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              )
+                            ],
                           )
-                        ],
                       );
                     } else {
                       return const Center(child: CircularProgressIndicator(),);
