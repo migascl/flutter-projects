@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/match_model.dart';
 import '../screens/match/match_view.dart';
-import 'image.dart';
 
 // TODO STYLING
 class MatchTile extends StatelessWidget {

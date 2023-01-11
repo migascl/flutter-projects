@@ -4,7 +4,6 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/models/club_model.dart';
-import '../../widgets/image.dart';
 import 'club_view.dart';
 
 // This page lists all clubs
