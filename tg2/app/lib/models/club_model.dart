@@ -13,7 +13,7 @@ class Club {
   String? fax;
   String? email;
   Color? color;
-  NetworkImage? _picture;
+  NetworkImage? picture;
   final int? _id; // Only used when getting from JSON
 
   // Constructors
@@ -23,18 +23,9 @@ class Club {
       this.fax,
       this.email,
       this.color = Colors.blue,
-      this._picture,
+      this.picture,
       this._id]);
 
   // Getters
   int? get id => _id;
-  NetworkImage? get picture {
-    if (_picture != null) return _picture;
-    return null;
-  }
-
-  // Setters
-  set picture(NetworkImage? image) {
-    _picture = image;
-  }
 }
