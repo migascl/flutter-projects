@@ -32,29 +32,34 @@ class PlayerProvider extends ChangeNotifier {
   // Methods
   Future<void> get() async {
     try {
-      if(_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy &&
+          _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Player/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.player);
-        _items =
-        { for (var json in response) json['id'] : Player(
-          json['name'],
-          _countryProvider.items[json['country_id']]!,
-          DateTime.parse(json['birthday'].toString()),
-          json['height'],
-          json['weight'],
-          json['nickname'],
-          json['picture'],
-          json['id'],
-        )};
+        _items = {
+          for (var json in response)
+            json['id']: Player(
+              json['name'],
+              _countryProvider.items[json['country_id']]!,
+              DateTime.parse(json['birthday'].toString()),
+              json['height'],
+              json['weight'],
+              json['nickname'],
+              NetworkImage(apiUrl + json['picture']),
+              json['id'],
+            )
+        };
         print("Player/P: Fetched successfully!");
       }
     } catch (e) {
       print("Player/P: Error fetching! $e");
       rethrow;
     }
-    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+    (_items.isEmpty)
+        ? _state = ProviderState.empty
+        : _state = ProviderState.ready;
     notifyListeners();
   }
 }

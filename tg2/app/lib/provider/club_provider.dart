@@ -32,29 +32,35 @@ class ClubProvider extends ChangeNotifier {
   // Method for getting all clubs from database and filling them to the list
   Future get() async {
     try {
-      if(_state != ProviderState.busy && _stadiumProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy &&
+          _stadiumProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Club/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.club);
-        _items = { for (var json in response) json['id'] : Club(
-            json['name'],
-            json['playing'],
-            _stadiumProvider.items[json['stadium_id']]!,
-            json['phone'],
-            json['fax'],
-            json['email'],
-            Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1], json['color_rgb'][2]),
-            json['picture'],
-            json['id']
-        )};
+        _items = {
+          for (var json in response)
+            json['id']: Club(
+                json['name'],
+                json['playing'],
+                _stadiumProvider.items[json['stadium_id']]!,
+                json['phone'],
+                json['fax'],
+                json['email'],
+                Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1],
+                    json['color_rgb'][2]),
+                NetworkImage(apiUrl + json['picture']),
+                json['id'])
+        };
         print("Club/P: Fetched successfully!");
       }
     } catch (e) {
       print("Club/P: Error fetching! $e");
       rethrow;
     }
-    (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+    (_items.isEmpty)
+        ? _state = ProviderState.empty
+        : _state = ProviderState.ready;
     notifyListeners();
   }
 }

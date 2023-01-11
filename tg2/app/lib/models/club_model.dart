@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
+import 'package:tg2/utils/constants.dart';
 
 // Model for the Club entity.
 class Club {
@@ -12,15 +13,28 @@ class Club {
   String? fax;
   String? email;
   Color? color;
-  String? picture;
+  NetworkImage? _picture;
   final int? _id; // Only used when getting from JSON
 
   // Constructors
-  Club(
-      this.name, this.playing,
-      [this.stadium, this.phone, this.fax, this.email, this.color = Colors.blue, this.picture, this._id]
-      );
+  Club(this.name, this.playing,
+      [this.stadium,
+      this.phone,
+      this.fax,
+      this.email,
+      this.color = Colors.blue,
+      this._picture,
+      this._id]);
 
   // Getters
   int? get id => _id;
+  NetworkImage? get picture {
+    if (_picture != null) return _picture;
+    return null;
+  }
+
+  // Setters
+  set picture(NetworkImage? image) {
+    _picture = image;
+  }
 }

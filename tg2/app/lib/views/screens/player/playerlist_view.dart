@@ -26,11 +26,13 @@ class _PlayerListViewState extends State<PlayerListView> {
       GlobalKey<RefreshIndicatorState>();
 
   final List<_ExamFilters> _filters = [];
-  DateTimeRange _filterPeriod = DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
+  DateTimeRange _filterPeriod =
+      DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
 
   void addFilter(_ExamFilters filter) {
     setState(() => _filters.add(filter));
   }
+
   void removeFilter(_ExamFilters filter) {
     setState(() => _filters.remove(filter));
   }
@@ -79,41 +81,52 @@ class _PlayerListViewState extends State<PlayerListView> {
                 icon: const Icon(Icons.sort_rounded),
                 tooltip: 'Filtrar',
                 onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Filtros'),
-                      content: StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) => Wrap(
-                          children: [
-                            const Text('Realizou Testes?'),
-                            Row(
-                              children: [
-                                Text("Sim"),
-                                Switch(
-                                    value: _filters.contains(_ExamFilters.hasTests),
-                                    onChanged: (bool value) => setState(() =>
-                                    _filters.contains(_ExamFilters.hasTests) ? removeFilter(_ExamFilters.hasTests) : addFilter(_ExamFilters.hasTests))
-                                ),
-                                Text("Não"),
-                                Switch(
-                                    value: _filters.contains(_ExamFilters.noTests),
-                                    onChanged: (bool value) => setState(() =>
-                                    _filters.contains(_ExamFilters.noTests) ? removeFilter(_ExamFilters.noTests) : addFilter(_ExamFilters.noTests)
-                                    ),
-                                ),
-                                IconButton(
-                                    onPressed: () => _showDatePicker(),
-                                    icon: Icon(Icons.calendar_month_rounded)
-                                )
-                              ],
-                            ),
-                          ],
-                        )
-                    ));
-                  }
-                )
-            )
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: const Text('Filtros'),
+                          content: StatefulBuilder(
+                              builder: (BuildContext context,
+                                      StateSetter setState) =>
+                                  Wrap(
+                                    children: [
+                                      const Text('Realizou Testes?'),
+                                      Row(
+                                        children: [
+                                          Text("Sim"),
+                                          Switch(
+                                              value: _filters.contains(
+                                                  _ExamFilters.hasTests),
+                                              onChanged: (bool value) =>
+                                                  setState(() => _filters
+                                                          .contains(_ExamFilters
+                                                              .hasTests)
+                                                      ? removeFilter(
+                                                          _ExamFilters.hasTests)
+                                                      : addFilter(_ExamFilters
+                                                          .hasTests))),
+                                          Text("Não"),
+                                          Switch(
+                                            value: _filters
+                                                .contains(_ExamFilters.noTests),
+                                            onChanged: (bool value) => setState(
+                                                () => _filters.contains(
+                                                        _ExamFilters.noTests)
+                                                    ? removeFilter(
+                                                        _ExamFilters.noTests)
+                                                    : addFilter(
+                                                        _ExamFilters.noTests)),
+                                          ),
+                                          IconButton(
+                                              onPressed: () =>
+                                                  _showDatePicker(),
+                                              icon: Icon(
+                                                  Icons.calendar_month_rounded))
+                                        ],
+                                      ),
+                                    ],
+                                  )));
+                    }))
           ],
         ),
         body: RefreshIndicator(
@@ -124,16 +137,19 @@ class _PlayerListViewState extends State<PlayerListView> {
             // Wait until provider is ready
             if (examProvider.state == ProviderState.ready) {
               Map<int, Player> _list = {};
-              for(var player in playerProvider.items.values) {
-                if(_filters.isEmpty) {
+              for (var player in playerProvider.items.values) {
+                if (_filters.isEmpty) {
                   _list.putIfAbsent(player.id!, () => player);
                   continue;
                 }
-                List<Exam> _exams = examProvider.getByDate(_filterPeriod).values.toList();
-                if(_filters.contains(_ExamFilters.hasTests) && _exams.any((element) => element.player.id == player.id)) {
+                List<Exam> _exams =
+                    examProvider.getByDate(_filterPeriod).values.toList();
+                if (_filters.contains(_ExamFilters.hasTests) &&
+                    _exams.any((element) => element.player.id == player.id)) {
                   _list.putIfAbsent(player.id!, () => player);
                 }
-                if(_filters.contains(_ExamFilters.noTests) && !_exams.any((element) => element.player.id == player.id)) {
+                if (_filters.contains(_ExamFilters.noTests) &&
+                    !_exams.any((element) => element.player.id == player.id)) {
                   _list.putIfAbsent(player.id!, () => player);
                 }
               }
@@ -146,7 +162,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                       ListTile(
                           leading: (player.picture != null)
                               ? Image(
-                                  image: NetworkImage(player.picture!),
+                                  image: player.picture!,
                                   height: 32,
                                 )
                               : null,

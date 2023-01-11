@@ -55,36 +55,36 @@ class _ClubListViewState extends State<ClubListView> {
                 var list = List.from(clubProvider.items.values
                     .where((element) => element.playing == true)
                     .map((e) => {
-                      'club': e,
-                      'matches': matchProvider.getByClub(e).length,
-                      'points': matchProvider.getClubPoints(e)
-                    })
-                );
+                          'club': e,
+                          'matches': matchProvider.getByClub(e).length,
+                          'points': matchProvider.getClubPoints(e)
+                        }));
                 list
                   ..sort((b, a) => a['matches'].compareTo(b['matches']))
                   ..sort((b, a) => a['points'].compareTo(b['points']));
                 return Column(children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Expanded(child: Text("Nome")),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 48,
-                          child: const Text("Jogos"),
-                        ),
-                        SizedBox(width: 8),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 48,
-                          child: const Text("Pontos"),
-                        ),
-                      ],
-                    )
-                  ),
-                  Expanded(child: ListView.builder(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Expanded(child: Text("Nome")),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 48,
+                            child: const Text("Jogos"),
+                          ),
+                          SizedBox(width: 8),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 48,
+                            child: const Text("Pontos"),
+                          ),
+                        ],
+                      )),
+                  Expanded(
+                      child: ListView.builder(
                     itemCount: list.length,
                     itemBuilder: (context, index) {
                       Club club = list[index]['club'];
@@ -94,11 +94,10 @@ class _ClubListViewState extends State<ClubListView> {
                         children: [
                           ListTile(
                             leading: Container(
-                              width: 48,
-                              child: (club.picture != null)
-                                  ? Image(image: NetworkImage(club.picture!), height: 48)
-                                  : null
-                            ),
+                                width: 48,
+                                child: (club.picture != null)
+                                    ? Image(image: club.picture!, height: 48)
+                                    : null),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

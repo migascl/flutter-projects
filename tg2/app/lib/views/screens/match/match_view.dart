@@ -11,20 +11,21 @@ class MatchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("Match/V: Building...");
-    return Column(
-      children: [
-        Text(match.date.toString()),
-        Text(match.stadium.name),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(child: (match.clubHome.picture != null) ? Image(image: NetworkImage(match.clubHome.picture!), height: 48) : null),
-              Text("${match.homeScore} : ${match.awayScore}"),
-              Container(child: (match.clubAway.picture != null) ? Image(image: NetworkImage(match.clubAway.picture!), height: 48) : null),
-            ]
-        ),
-        Text("${match.duration} minutos"),
-      ]
-    );
+    return Column(children: [
+      Text(match.date.toString()),
+      Text(match.stadium.name),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Container(
+            child: (match.clubHome.picture != null)
+                ? Image(image: match.clubHome.picture!, height: 48)
+                : null),
+        Text("${match.homeScore} : ${match.awayScore}"),
+        Container(
+            child: (match.clubAway.picture != null)
+                ? Image(image: match.clubAway.picture!, height: 48)
+                : null),
+      ]),
+      Text("${match.duration} minutos"),
+    ]);
   }
 }

@@ -64,15 +64,16 @@ class _PlayerViewState extends State<PlayerView> {
               onPressed: () => _loadPageData()),
         ],
       ),
-      floatingActionButton: _selectedIndex == 2 ? FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => showDialog(
-          context: context,
-          barrierDismissible: false, // user must tap button!
-          builder: (BuildContext context) => ExamModifyView(player: _player)
-          ),
-        )
-        : null,
+      floatingActionButton: _selectedIndex == 2
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () => showDialog(
+                  context: context,
+                  barrierDismissible: false, // user must tap button!
+                  builder: (BuildContext context) =>
+                      ExamModifyView(player: _player)),
+            )
+          : null,
       // TODO IMPROVE PLAYER HEADER STYLE
       body: Column(children: [
         // Page header
@@ -87,7 +88,7 @@ class _PlayerViewState extends State<PlayerView> {
                 Container(
                     child: (_player.picture != null)
                         ? Image(
-                            image: NetworkImage(_player.picture!),
+                            image: _player.picture!,
                             height: 64,
                           )
                         : null),
@@ -152,8 +153,7 @@ class _PlayerViewState extends State<PlayerView> {
                             ListTile(
                               leading: (contract.club.picture != null)
                                   ? Image(
-                                      image:
-                                          NetworkImage(contract.club.picture!),
+                                      image: contract.club.picture!,
                                       height: 32,
                                     )
                                   : null,
@@ -181,7 +181,9 @@ class _PlayerViewState extends State<PlayerView> {
               if (examProvider.state == ProviderState.ready) {
                 List<Exam> list = List.from(examProvider.items.values
                     .where((element) => element.player.id == _player.id));
-                if (list.isEmpty) return const Center(child: Text("Jogador não realizou nenhum exame."));
+                if (list.isEmpty)
+                  return const Center(
+                      child: Text("Jogador não realizou nenhum exame."));
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
@@ -192,39 +194,41 @@ class _PlayerViewState extends State<PlayerView> {
                         return Column(
                           children: [
                             ListTile(
-                              title: Text("Exame #${exam.id}"),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Data: ${exam.date}"),
-                                  Text(
-                                      "Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
-                                ],
-                              ),
-                              trailing: PopupMenuButton(
-                                    // Callback that sets the selected popup menu item.
-                                    onSelected: (int value) {
-                                      if(value == 0) {
-                                        showDialog(
+                                title: Text("Exame #${exam.id}"),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Data: ${exam.date}"),
+                                    Text(
+                                        "Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
+                                  ],
+                                ),
+                                trailing: PopupMenuButton(
+                                  // Callback that sets the selected popup menu item.
+                                  onSelected: (int value) {
+                                    if (value == 0) {
+                                      showDialog(
                                           context: context,
-                                          barrierDismissible: false, // user must tap button!
-                                          builder: (BuildContext context) => ExamModifyView(exam: exam, player: _player)
-                                        );
-                                      }
-                                      if(value == 1) examProvider.delete(exam);
-                                    },
-                                    itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                                      const PopupMenuItem<int>(
-                                        value: 0,
-                                        child: Text('Editar'),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 1,
-                                        child: Text('Remover'),
-                                      ),
-                                    ],
-                                  )
-                            ),
+                                          barrierDismissible:
+                                              false, // user must tap button!
+                                          builder: (BuildContext context) =>
+                                              ExamModifyView(
+                                                  exam: exam, player: _player));
+                                    }
+                                    if (value == 1) examProvider.delete(exam);
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<int>>[
+                                    const PopupMenuItem<int>(
+                                      value: 0,
+                                      child: Text('Editar'),
+                                    ),
+                                    const PopupMenuItem<int>(
+                                      value: 1,
+                                      child: Text('Remover'),
+                                    ),
+                                  ],
+                                )),
                             const Divider(height: 2.0),
                           ],
                         );
