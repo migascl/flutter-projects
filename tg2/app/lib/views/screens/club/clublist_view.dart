@@ -4,6 +4,7 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/models/club_model.dart';
+import '../../widgets/image.dart';
 import 'club_view.dart';
 
 // This page lists all clubs
@@ -63,72 +64,95 @@ class _ClubListViewState extends State<ClubListView> {
                   ..sort((b, a) => a['matches'].compareTo(b['matches']))
                   ..sort((b, a) => a['points'].compareTo(b['points']));
                 return Column(children: [
-                  Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Row(
+                  ListTile(
+                      dense: true,
+                      title: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Expanded(child: Text("Nome")),
+                          Expanded(
+                              child: Text("Nome",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
                           Container(
-                            alignment: Alignment.center,
-                            width: 48,
-                            child: const Text("Jogos"),
-                          ),
-                          SizedBox(width: 8),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              alignment: Alignment.center,
+                              width: 48,
+                              child: Text("Jogos",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
                           Container(
-                            alignment: Alignment.center,
-                            width: 48,
-                            child: const Text("Pontos"),
-                          ),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              alignment: Alignment.center,
+                              width: 48,
+                              child: Text("Pontos",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
                         ],
                       )),
                   Expanded(
-                      child: ListView.builder(
+                      child: ListView.separated(
                     itemCount: list.length,
                     itemBuilder: (context, index) {
                       Club club = list[index]['club'];
                       int totalMatches = list[index]['matches'];
                       int totalPoints = list[index]['points'];
-                      return Column(
-                        children: [
-                          ListTile(
-                            leading: Container(
-                                width: 48,
-                                child: (club.picture != null)
-                                    ? Image(image: club.picture!, height: 48)
-                                    : null),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(child: Text(club.name)),
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalMatches.toString()),
-                                ),
-                                SizedBox(width: 8),
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalPoints.toString()),
-                                ),
-                              ],
+                      return Column(children: [
+                        ListTile(
+                          leading: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: FadeInImage(
+                              image: club.picture!,
+                              placeholder: AssetImage(
+                                  "assets/images/placeholder-club.jpg"),
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                    "assets/images/placeholder-club.jpg",
+                                    fit: BoxFit.contain);
+                              },
+                              fit: BoxFit.contain,
                             ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ClubView(club: club),
-                                  maintainState: true,
-                                ),
-                              );
-                            },
                           ),
-                          const Divider(height: 2.0),
-                        ],
-                      );
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                  child: Text(club.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall)),
+                              Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  child: Text(totalMatches.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge)),
+                              Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  child: Text(totalPoints.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge)),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    ClubView(club: club),
+                                maintainState: true,
+                              ),
+                            );
+                          },
+                        )
+                      ]);
                     },
+                    separatorBuilder: (context, index) => const Divider(),
                   ))
                 ]);
               }

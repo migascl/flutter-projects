@@ -82,42 +82,53 @@ class _ClubViewState extends State<ClubView> {
           Container(
               color: widget.club.color,
               padding: const EdgeInsets.fromLTRB(32, 86, 32, 32),
+              height: 200,
               alignment: Alignment.topLeft,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                      child: (_club.picture != null)
-                          ? Image(image: _club.picture!, height: 72)
-                          : null),
-                  const SizedBox(width: 32),
+                    height: double.infinity,
+                    child: AspectRatio(
+                      aspectRatio: 1 / 1,
+                      child: FadeInImage(
+                        image: _club.picture!,
+                        placeholder:
+                            AssetImage("assets/images/placeholder-club.jpg"),
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                              "assets/images/placeholder-club.jpg",
+                              fit: BoxFit.contain);
+                        },
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   Expanded(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                        Text(
-                          widget.club.name,
-                          softWrap: true,
-                          style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.normal,
-                              fontSize: 24,
-                              color: widget.club.color!.computeLuminance() > 0.5
-                                  ? Colors.black
-                                  : Colors.white),
-                        ),
+                        Text(widget.club.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.merge(TextStyle(
+                                    color:
+                                        widget.club.color!.computeLuminance() >
+                                                0.5
+                                            ? Colors.black
+                                            : Colors.white))),
                         const SizedBox(height: 8),
-                        Text(
-                          widget.club.stadium!.country.name,
-                          style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.normal,
-                              fontSize: 16,
-                              color: widget.club.color!.computeLuminance() > 0.5
-                                  ? Colors.black54
-                                  : Colors.white70),
-                        ),
+                        Text(widget.club.stadium!.country.name,
+                            style: Theme.of(context).textTheme.subtitle1?.merge(
+                                TextStyle(
+                                    color:
+                                        widget.club.color!.computeLuminance() >
+                                                0.5
+                                            ? Colors.black54
+                                            : Colors.white70))),
                       ]))
                 ],
               )),
@@ -130,13 +141,16 @@ class _ClubViewState extends State<ClubView> {
               Consumer<MatchProvider>(builder: (context, provider, child) {
                 if (provider.state == ProviderState.ready) {
                   List<Match> list = provider.getByClub(_club).values.toList();
-                  if (list.isEmpty)
-                    return const Center(
+                  if (list.isEmpty) {
+                    return Center(
                         child: Text(
-                            "Este clube ainda não participou em nenhum jogo."));
-                  return Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      "Este clube ainda não participou em nenhum jogo.",
+                      style: Theme.of(context).textTheme.caption,
+                    ));
+                  }
+                  return SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                       child: Column(
                         children: [
                           Row(
@@ -146,62 +160,55 @@ class _ClubViewState extends State<ClubView> {
                                     child: Container(
                                         margin: const EdgeInsets.all(16),
                                         child: Column(children: [
-                                          const Text(
-                                            "Jogos Totais",
-                                            style: TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 18),
-                                          ),
+                                          Text("Jogos Totais",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            "${list.length}",
-                                            style: const TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 32),
-                                          ),
+                                          Text("${list.length}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5),
                                         ]))),
                                 Card(
                                     child: Container(
                                         margin: const EdgeInsets.all(16),
                                         child: Column(children: [
-                                          const Text(
-                                            "Pontos Total",
-                                            style: TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 18),
-                                          ),
+                                          Text("Pontos Total",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1),
                                           const SizedBox(height: 8),
                                           Text(
-                                            "${provider.getClubPoints(_club)}",
-                                            style: const TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 32),
-                                          ),
+                                              "${provider.getClubPoints(_club)}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5),
                                         ]))),
                               ]),
-                          const Text("Jogos"),
+                          const SizedBox(height: 32),
+                          Text("Histórico de Jogos",
+                              style: Theme.of(context).textTheme.subtitle1),
+                          const SizedBox(height: 16),
                           MediaQuery.removePadding(
-                            removeTop: true,
-                            context: context,
-                            child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: list.length,
-                              itemBuilder: (context, index) {
-                                Match match = list[index];
-                                return Column(
-                                  children: [
-                                    MatchTile(match: match),
-                                    const Divider(height: 2.0),
-                                  ],
-                                );
-                              },
-                            ),
-                          )
+                              removeTop: true,
+                              context: context,
+                              child: Card(
+                                child: Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: ListView.separated(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      itemCount: list.length,
+                                      itemBuilder: (context, index) {
+                                        Match match = list[index];
+                                        return MatchTile(match: match);
+                                      },
+                                      separatorBuilder: (context, index) =>
+                                          const Divider(),
+                                    )),
+                              ))
                         ],
                       ));
                 } else {
@@ -215,8 +222,7 @@ class _ClubViewState extends State<ClubView> {
                 if (provider.state == ProviderState.ready) {
                   List<Contract> list = provider.items.values
                       .where((element) =>
-                          element.club.id == _club.id &&
-                          element.period.start.isAfter(DateTime(2022, 08)))
+                          element.club.id == _club.id && element.active)
                       .toList();
                   if (list.isEmpty)
                     return const Center(
