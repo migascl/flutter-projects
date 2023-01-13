@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/exceptions.dart';
@@ -11,7 +12,7 @@ class ApiService {
   // It throws errors if the response times out, status code is not valid or response body is empty
   Future<dynamic> get(ApiEndpoints endpoint) async {
     var response = await http
-        .get(Uri.parse(apiUrl + endpoint.endpoint))
+        .get(Uri.parse(dotenv.env['API_URL']! + endpoint.endpoint))
         .timeout(const Duration(seconds: 5));
     if (response.statusCode == 200) return jsonDecode(response.body);
     throw ApiRequestException(
@@ -22,7 +23,7 @@ class ApiService {
   Future<dynamic> delete(
       ApiEndpoints endpoint, Map<String, dynamic> query) async {
     var response = await http
-        .delete(Uri.parse(apiUrl + endpoint.endpoint),
+        .delete(Uri.parse(dotenv.env['API_URL']! + endpoint.endpoint),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -37,7 +38,7 @@ class ApiService {
   Future<dynamic> post(
       ApiEndpoints endpoint, Map<String, dynamic> query) async {
     var response = await http
-        .post(Uri.parse(apiUrl + endpoint.endpoint),
+        .post(Uri.parse(dotenv.env['API_URL']! + endpoint.endpoint),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -52,7 +53,7 @@ class ApiService {
   Future<dynamic> patch(
       ApiEndpoints endpoint, Map<String, dynamic> query) async {
     var response = await http
-        .patch(Uri.parse(apiUrl + endpoint.endpoint),
+        .patch(Uri.parse(dotenv.env['API_URL']! + endpoint.endpoint),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },

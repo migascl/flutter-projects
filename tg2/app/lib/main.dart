@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
@@ -12,7 +13,9 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/views/screens/home_view.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load();
+
   runApp(const Main());
 }
 
