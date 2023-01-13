@@ -9,3 +9,8 @@ build/
 # Files and directories created by IntelliJ.
 /.idea/
 /app.iml
+
+# Environment Variables
+/.env
+/.env.production
+/.env.development
