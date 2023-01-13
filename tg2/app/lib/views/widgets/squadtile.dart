@@ -23,7 +23,7 @@ class SquadTile extends StatelessWidget {
             child: (contract.player.picture != null)
                 ? Image(
                     image: contract.player.picture!,
-                    height: 32,
+                    height: (dense) ? 32 : 48,
                   )
                 : null),
         title: Text(
