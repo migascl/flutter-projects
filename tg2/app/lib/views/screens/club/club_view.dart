@@ -5,9 +5,11 @@ import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
+import 'package:tg2/views/widgets/squadtile.dart';
+
 import '../../../models/club_model.dart';
-import '../../../models/match_model.dart';
 import '../../../models/contract_model.dart';
+import '../../../models/match_model.dart';
 import '../../../utils/constants.dart';
 
 // This page lists all clubs
@@ -47,7 +49,8 @@ class _ClubViewState extends State<ClubView> {
     setState(() {
       _selectedIndex = value;
     });
-    _pageController.jumpToPage(value);
+    _pageController.animateToPage(value,
+        duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
   }
 
   @override
@@ -108,7 +111,7 @@ class _ClubViewState extends State<ClubView> {
                   Expanded(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                         Text(widget.club.name,
                             style: Theme.of(context)
@@ -224,43 +227,29 @@ class _ClubViewState extends State<ClubView> {
                       .where((element) =>
                           element.club.id == _club.id && element.active)
                       .toList();
-                  if (list.isEmpty)
+                  if (list.isEmpty) {
                     return const Center(
                         child: Text("Não existem jogadores neste clube."));
+                  }
                   return MediaQuery.removePadding(
                       context: context,
                       removeTop: true,
-                      child: ListView.builder(
+                      child: ListView.separated(
                         itemCount: list.length,
                         itemBuilder: (context, index) {
                           Contract contract = list[index];
-                          return Column(
-                            children: [
-                              ListTile(
-                                leading: Container(
-                                    child: (contract.player.picture != null)
-                                        ? Image(
-                                            image: contract.player.picture!,
-                                            height: 32,
-                                          )
-                                        : null),
-                                title: Text(
-                                    "${contract.number}. ${contract.player.nickname ?? contract.player.name}"),
-                                subtitle: Text(contract.position.name),
-                                trailing: (contract.needsRenovation)
-                                    ? Text("Necessita de renovação!")
-                                    : null,
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) =>
-                                          ContractView(contract: contract));
-                                },
-                              ),
-                              const Divider(height: 2.0),
-                            ],
+                          return SquadTile(
+                            contract: contract,
+                            showAlert: true,
+                            onTap: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) =>
+                                      ContractView(contract: contract));
+                            },
                           );
                         },
+                        separatorBuilder: (context, index) => const Divider(),
                       ));
                 } else {
                   return const Center(

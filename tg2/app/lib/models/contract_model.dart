@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/models/position_model.dart';
-import 'package:tg2/utils/daterange_converter.dart';
 
 import 'club_model.dart';
 
@@ -29,6 +28,8 @@ class Contract {
         ? true
         : false;
   }
+
+  Duration get remainingTime => period.end.difference(DateTime.now());
 
   // Calculate if contract will need renovating in the next 6 months
   bool get needsRenovation {
