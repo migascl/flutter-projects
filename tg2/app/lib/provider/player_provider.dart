@@ -1,7 +1,10 @@
 // Library imports
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/player_model.dart';
+
 import '../utils/api/api_endpoints.dart';
 import '../utils/api/api_service.dart';
 import '../utils/constants.dart';
@@ -47,7 +50,7 @@ class PlayerProvider extends ChangeNotifier {
               json['height'],
               json['weight'],
               json['nickname'],
-              NetworkImage(apiUrl + json['picture']),
+              NetworkImage(dotenv.env['API_URL']! + json['picture']),
               json['id'],
             )
         };

@@ -1,9 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
+
 import '../utils/constants.dart';
 
 // Club provider class
@@ -49,7 +52,7 @@ class ClubProvider extends ChangeNotifier {
                 json['email'],
                 Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1],
                     json['color_rgb'][2]),
-                NetworkImage(apiUrl + json['picture']),
+                NetworkImage(dotenv.env['API_URL']! + json['picture']),
                 json['id'])
         };
         print("Club/P: Fetched successfully!");
