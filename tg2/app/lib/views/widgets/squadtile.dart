@@ -4,15 +4,21 @@ import 'package:tg2/models/contract_model.dart';
 // Club's squad player tile. It displays basic player information from a contract.
 class SquadTile extends StatelessWidget {
   const SquadTile(
-      {super.key, required this.contract, this.showAlert = false, this.onTap});
+      {super.key,
+      required this.contract,
+      this.dense = false,
+      this.showAlert = false,
+      this.onTap});
 
   final Contract contract;
+  final bool dense;
   final bool showAlert; // Flag to show contract alerts (i.e. expiration)
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+        dense: dense,
         leading: Container(
             child: (contract.player.picture != null)
                 ? Image(
