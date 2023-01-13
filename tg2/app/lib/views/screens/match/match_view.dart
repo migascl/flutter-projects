@@ -284,7 +284,7 @@ class _MatchSquadList extends StatelessWidget {
         ),
       ),
       Text(
-        (reversed) ? "Equipa Casa" : "Equipa Fora",
+        (reversed) ? "Equipa Fora" : "Equipa Casa",
         style: Theme.of(context).textTheme.titleLarge,
       ),
     ];
@@ -303,20 +303,18 @@ class _MatchSquadList extends StatelessWidget {
                   spacing: 8,
                   children: list)),
           Card(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: squad.length,
-                itemBuilder: (context, index) {
-                  return SquadTile(
-                    contract: squad[index],
-                    dense: true,
-                  );
-                },
-              ),
+            child: ListView.separated(
+              primary: false,
+              shrinkWrap: true,
+              controller: scrollController,
+              itemCount: squad.length,
+              itemBuilder: (context, index) {
+                return SquadTile(
+                  contract: squad[index],
+                  dense: true,
+                );
+              },
+              separatorBuilder: (context, index) => const Divider(),
             ),
           ),
         ],
