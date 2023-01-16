@@ -53,7 +53,7 @@ class _MatchListViewState extends State<MatchListView> {
               length: tabs.length,
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Jornadas'),
+                  title: const Text('Jogos'),
                   actions: [
                     IconButton(
                         icon: const Icon(Icons.refresh_rounded),
@@ -71,28 +71,26 @@ class _MatchListViewState extends State<MatchListView> {
                   ),
                 ),
                 body: TabBarView(
-                    children:
-                        List.from(matchProvider.getMatchweeks().map((element) {
-                  List<Match> matchweeks = matchProvider.items.values
-                      .where((match) => match.matchweek == element)
-                      .toList();
-                  return ListView.builder(
-                    itemCount: matchweeks.length,
-                    itemBuilder: (context, index) {
-                      Match match = matchweeks[index];
-                      return Column(
-                        children: [
-                          MatchTile(match: match),
-                          const Divider(height: 2.0),
-                        ],
-                      );
-                    },
-                  );
-                }))),
+                  children:
+                      List.from(matchProvider.getMatchweeks().map((element) {
+                    List<Match> matches = matchProvider.items.values
+                        .where((match) => match.matchweek == element)
+                        .toList();
+                    return ListView.separated(
+                      itemCount: matches.length,
+                      itemBuilder: (context, index) {
+                        Match match = matches[index];
+                        return MatchTile(match: match);
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    );
+                  })),
+                ),
               ));
         }
         return Scaffold(
-          appBar: AppBar(title: Text("Jornadas")),
+          appBar: AppBar(title: const Text("Jogos")),
         );
       },
     );
