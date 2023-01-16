@@ -252,7 +252,34 @@ class _PlayerViewState extends State<PlayerView> {
                                               ExamModifyView(
                                                   exam: exam, player: _player));
                                     }
-                                    if (value == 1) examProvider.delete(exam);
+                                    if (value == 1) {
+                                      showDialog<String>(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              AlertDialog(
+                                                title: const Text('Atenção!'),
+                                                content: Text(
+                                                    "Tem a certeza que pretende eliminar exame ${exam.id} ?\n"
+                                                    "Esta operação não irreversível!"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      examProvider.delete(exam);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Sim'),
+                                                  ),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Não'),
+                                                  ),
+                                                ],
+                                              ));
+                                    }
                                   },
                                   itemBuilder: (BuildContext context) =>
                                       <PopupMenuEntry<int>>[
