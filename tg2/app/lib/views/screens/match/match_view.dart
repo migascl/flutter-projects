@@ -9,6 +9,8 @@ import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/views/widgets/squadtile.dart';
 
+import '../../widgets/futureimage.dart';
+
 // This widgets shows a match's information
 class MatchView extends StatefulWidget {
   const MatchView({super.key, required this.match});
@@ -107,23 +109,12 @@ class _MatchViewState extends State<MatchView> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  SizedBox(
+                                  FutureImage(
+                                    image: widget.match.clubHome.picture!,
+                                    errorImageUri:
+                                        'assets/images/placeholder-club.png',
                                     height: 64,
-                                    child: AspectRatio(
-                                      aspectRatio: 1 / 1,
-                                      child: FadeInImage(
-                                        image: widget.match.clubHome.picture!,
-                                        placeholder: const AssetImage(
-                                            "assets/images/placeholder-club.jpg"),
-                                        imageErrorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Image.asset(
-                                              "assets/images/placeholder-club.jpg",
-                                              fit: BoxFit.contain);
-                                        },
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
+                                    aspectRatio: 1 / 1,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(widget.match.clubHome.name,
@@ -187,23 +178,12 @@ class _MatchViewState extends State<MatchView> {
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                  SizedBox(
+                                  FutureImage(
+                                    image: widget.match.clubAway.picture!,
+                                    errorImageUri:
+                                        'assets/images/placeholder-club.png',
                                     height: 64,
-                                    child: AspectRatio(
-                                      aspectRatio: 1 / 1,
-                                      child: FadeInImage(
-                                        image: widget.match.clubAway.picture!,
-                                        placeholder: const AssetImage(
-                                            "assets/images/placeholder-club.jpg"),
-                                        imageErrorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Image.asset(
-                                              "assets/images/placeholder-club.jpg",
-                                              fit: BoxFit.contain);
-                                        },
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
+                                    aspectRatio: 1 / 1,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(widget.match.clubAway.name,
@@ -266,20 +246,11 @@ class _MatchSquadList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> list = [
-      SizedBox(
+      FutureImage(
+        image: club.picture!,
+        errorImageUri: 'assets/images/placeholder-club.png',
         height: 32,
-        child: AspectRatio(
-          aspectRatio: 1 / 1,
-          child: FadeInImage(
-            image: club.picture!,
-            placeholder: const AssetImage("assets/images/placeholder-club.jpg"),
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Image.asset("assets/images/placeholder-club.jpg",
-                  fit: BoxFit.contain);
-            },
-            fit: BoxFit.contain,
-          ),
-        ),
+        aspectRatio: 1 / 1,
       ),
       Text(
         (reversed) ? "Equipa Fora" : "Equipa Casa",
@@ -295,7 +266,7 @@ class _MatchSquadList extends StatelessWidget {
             (reversed) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 8,
