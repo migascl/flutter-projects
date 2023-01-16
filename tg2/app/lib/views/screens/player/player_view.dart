@@ -133,7 +133,8 @@ class _PlayerViewState extends State<PlayerView> {
                 ),
                 ListTile(
                   title: const Text("Data de Nascimento"),
-                  subtitle: Text("${_player.birthday} (${_player.age} anos)"),
+                  subtitle: Text(
+                      "${DateUtilities().toYMD(_player.birthday)} (${_player.age} anos)"),
                 ),
                 ListTile(
                   title: const Text("Altura"),
