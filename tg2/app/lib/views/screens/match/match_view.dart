@@ -7,6 +7,7 @@ import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/widgets/squadtile.dart';
 
 import '../../widgets/futureimage.dart';
@@ -61,7 +62,7 @@ class _MatchViewState extends State<MatchView> {
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                   image: DecorationImage(
-                    image: AssetImage("assets/images/match-bg.jpg"),
+                    image: AssetImage("assets/images/match-bg.png"),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -75,7 +76,8 @@ class _MatchViewState extends State<MatchView> {
                           children: [
                             const Icon(Icons.calendar_month_rounded,
                                 size: 18, color: Colors.white),
-                            Text("${widget.match.date.toUtc()}",
+                            Text(
+                                "${DateUtilities().toYMD(widget.match.date)} ${DateUtilities().toHM(widget.match.date)}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall

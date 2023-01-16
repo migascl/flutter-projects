@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/contract_model.dart';
+import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 
 // This widgets shows a contract's information
@@ -134,15 +135,14 @@ class ContractView extends StatelessWidget {
                           style: Theme.of(context).textTheme.subtitle1),
                       const SizedBox(height: 8),
                       Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 8,
                         children: [
-                          Text(
-                              "${contract.period.start.year}-${contract.period.start.month}-${contract.period.start.day}",
+                          Text(DateUtilities().toYMD(contract.period.start),
                               style: Theme.of(context).textTheme.headline6),
                           Text("a",
                               style: Theme.of(context).textTheme.subtitle1),
-                          Text(
-                              "${contract.period.end.year}-${contract.period.end.month}-${contract.period.end.day}",
+                          Text(DateUtilities().toYMD(contract.period.end),
                               style: Theme.of(context).textTheme.headline6),
                         ],
                       ),

@@ -7,7 +7,7 @@ import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/utils/daterange_converter.dart';
+import 'package:tg2/utils/dateutils.dart';
 
 import 'club_provider.dart';
 
@@ -58,7 +58,7 @@ class ContractProvider extends ChangeNotifier {
               _clubProvider.items[json['club_id']]!,
               json['number'],
               Position.values[json['position_id']],
-              DateRangeConverter().decoder(json['period']),
+              DateUtilities().decoder(json['period']),
               json['document'],
               json['id'],
             )

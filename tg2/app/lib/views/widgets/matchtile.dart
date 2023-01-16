@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/match_model.dart';
+import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
 
 import 'futureimage.dart';
@@ -15,7 +16,8 @@ class MatchTile extends StatelessWidget {
     return ListTile(
         title: Column(
           children: [
-            Text("${match.date.toUtc()}",
+            Text(
+                "${DateUtilities().toYMD(match.date)} ${DateUtilities().toHM(match.date)}",
                 style: Theme.of(context).textTheme.caption),
             const SizedBox(height: 8),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
