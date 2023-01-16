@@ -1,7 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
-import 'package:tg2/utils/constants.dart';
 
 // Model for the Club entity.
 class Club {

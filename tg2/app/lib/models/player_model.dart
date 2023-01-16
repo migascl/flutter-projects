@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/constants.dart';
 import 'country_model.dart';
 
 // Model for the Player entity. (Read & write).

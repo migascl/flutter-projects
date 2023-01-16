@@ -2,15 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/models/club_model.dart';
+import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/views/widgets/squadtile.dart';
 
-import '../../../models/club_model.dart';
-import '../../../models/contract_model.dart';
-
-// TODO STYLING
 // This widgets shows a match's information
 class MatchView extends StatefulWidget {
   const MatchView({super.key, required this.match});

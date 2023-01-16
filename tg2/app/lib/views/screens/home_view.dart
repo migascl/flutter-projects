@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/country_provider.dart';
-import 'package:tg2/provider/match_provider.dart';
-import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/views/screens/match/matchlist_view.dart';
 import 'package:tg2/views/screens/player/playerlist_view.dart';
+
 import 'club/clublist_view.dart';
 
 // TODO IMPLEMENT DRAWER BASED NAVIGATION

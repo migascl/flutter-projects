@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/match_model.dart';
+import 'package:tg2/views/screens/match/match_view.dart';
 
-import '../screens/match/match_view.dart';
-
-// TODO STYLING
+// Match tile. It displays basic match information.
 class MatchTile extends StatelessWidget {
   const MatchTile({super.key, required this.match});
 
@@ -25,7 +24,7 @@ class MatchTile extends StatelessWidget {
                   child: FadeInImage(
                     image: match.clubHome.picture!,
                     placeholder:
-                        AssetImage("assets/images/placeholder-club.jpg"),
+                        const AssetImage("assets/images/placeholder-club.jpg"),
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset("assets/images/placeholder-club.jpg",
                           fit: BoxFit.contain);
@@ -52,7 +51,7 @@ class MatchTile extends StatelessWidget {
                   child: FadeInImage(
                     image: match.clubAway.picture!,
                     placeholder:
-                        AssetImage("assets/images/placeholder-club.jpg"),
+                        const AssetImage("assets/images/placeholder-club.jpg"),
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset("assets/images/placeholder-club.jpg",
                           fit: BoxFit.contain);

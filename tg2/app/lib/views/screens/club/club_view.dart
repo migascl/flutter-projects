@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
+import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
 import 'package:tg2/views/widgets/squadtile.dart';
@@ -30,6 +31,7 @@ class _ClubViewState extends State<ClubView> {
   Future _loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
+      await Provider.of<PlayerProvider>(context, listen: false).get();
       await Provider.of<ContractProvider>(context, listen: false).get();
       await Provider.of<MatchProvider>(context, listen: false).get();
     } catch (e) {
@@ -228,8 +230,11 @@ class _ClubViewState extends State<ClubView> {
                           element.club.id == _club.id && element.active)
                       .toList();
                   if (list.isEmpty) {
-                    return const Center(
-                        child: Text("Não existem jogadores neste clube."));
+                    return Center(
+                        child: Text(
+                      "Não existem jogadores neste clube.",
+                      style: Theme.of(context).textTheme.caption,
+                    ));
                   }
                   return MediaQuery.removePadding(
                       context: context,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
-import 'package:tg2/models/match_model.dart';
 import 'package:tg2/utils/constants.dart';
-import '../../widgets/matchtile.dart';
+import 'package:tg2/views/widgets/matchtile.dart';
 
 // This page lists all matches
 class MatchListView extends StatefulWidget {

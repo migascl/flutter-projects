@@ -1,13 +1,12 @@
-// Library imports
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/player_model.dart';
+import 'package:tg2/utils/api/api_endpoints.dart';
+import 'package:tg2/utils/api/api_service.dart';
+import 'package:tg2/utils/constants.dart';
 
-import '../utils/api/api_endpoints.dart';
-import '../utils/api/api_service.dart';
-import '../utils/constants.dart';
 import 'country_provider.dart';
 
 // Player provider class

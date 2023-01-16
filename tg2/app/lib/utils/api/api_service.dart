@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/exceptions.dart';
-
-import '../constants.dart';
 
 class ApiService {
   // Api GET method, it receives an endpoint and fetches all results
