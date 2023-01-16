@@ -240,6 +240,9 @@ class _ClubViewState extends State<ClubView> {
                             showAlert: true,
                             onTap: () {
                               showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  isDismissible: true,
+                                  backgroundColor: Colors.transparent,
                                   context: context,
                                   builder: (context) =>
                                       ContractView(contract: contract));
