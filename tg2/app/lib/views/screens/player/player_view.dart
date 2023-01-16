@@ -122,6 +122,7 @@ class _PlayerViewState extends State<PlayerView> {
           controller: _pageController,
           children: [
             // Player information view
+            // TODO ADD SCHOOLING TILE
             ListView(
               padding: const EdgeInsets.all(8),
               children: [
@@ -259,8 +260,7 @@ class _PlayerViewState extends State<PlayerView> {
                                               AlertDialog(
                                                 title: const Text('Atenção!'),
                                                 content: Text(
-                                                    "Tem a certeza que pretende eliminar exame ${exam.id} ?\n"
-                                                    "Esta operação não irreversível!"),
+                                                    "Tem a certeza que pretende eliminar exame ${exam.id}? Esta operação não é reversível!"),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () {
@@ -268,14 +268,16 @@ class _PlayerViewState extends State<PlayerView> {
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
-                                                    child: const Text('Sim'),
+                                                    child:
+                                                        const Text('Eliminar'),
                                                   ),
                                                   ElevatedButton(
                                                     onPressed: () {
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
-                                                    child: const Text('Não'),
+                                                    child:
+                                                        const Text('Cancelar'),
                                                   ),
                                                 ],
                                               ));

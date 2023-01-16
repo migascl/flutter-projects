@@ -80,6 +80,7 @@ class _PlayerListViewState extends State<PlayerListView> {
             IconButton(
                 icon: const Icon(Icons.sort_rounded),
                 tooltip: 'Filtrar',
+                // TODO IMPROVE PLAYER LIST FILTER STYLING
                 onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) {
@@ -166,7 +167,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                                 'assets/images/placeholder-player.png',
                             aspectRatio: 1 / 1,
                           ),
-                          title: Text(player.name),
+                          title: Text(player.nickname ?? player.name),
                           subtitle: Text(player.country.name),
                           onTap: () {
                             Navigator.of(context).push(

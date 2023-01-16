@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// TODO BORDER SUPPORT
 // This is a wrapper widget for loading images by providing a placeholder and fallback image
 // when trying to load any image provider (Asset, network...)
 // Also supports scaling and aspect ratios

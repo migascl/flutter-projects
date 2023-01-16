@@ -46,7 +46,7 @@ class _MatchViewState extends State<MatchView> {
             children: [
               // Handle
               Container(
-                padding: EdgeInsets.fromLTRB(0, 32, 0, 8),
+                padding: const EdgeInsets.fromLTRB(0, 32, 0, 8),
                 child: Divider(
                   thickness: 4,
                   color: Colors.white,
