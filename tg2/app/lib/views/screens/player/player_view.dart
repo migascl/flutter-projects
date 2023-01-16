@@ -154,8 +154,12 @@ class _PlayerViewState extends State<PlayerView> {
                     .where((element) => element.player.id == _player.id));
                 list.sort((a, b) => b.period.end.compareTo(a.period.end));
                 if (list.isEmpty) {
-                  return const Center(
-                      child: Text("Este jogador não contêm contratos."));
+                  return Center(
+                    child: Text(
+                      "Este jogador não contêm contratos.",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                  );
                 }
                 return MediaQuery.removePadding(
                     context: context,
@@ -214,9 +218,15 @@ class _PlayerViewState extends State<PlayerView> {
               if (examProvider.state == ProviderState.ready) {
                 List<Exam> list = List.from(examProvider.items.values
                     .where((element) => element.player.id == _player.id));
-                if (list.isEmpty)
-                  return const Center(
-                      child: Text("Jogador não realizou nenhum exame."));
+                list.sort((a, b) => b.date.compareTo(a.date));
+                if (list.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "Jogador não realizou nenhum exame.",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                  );
+                }
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
@@ -227,15 +237,9 @@ class _PlayerViewState extends State<PlayerView> {
                         return Column(
                           children: [
                             ListTile(
-                                title: Text("Exame #${exam.id}"),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Data: ${exam.date}"),
-                                    Text(
-                                        "Resultado: ${(exam.result) ? "Passou" : "Falhou"}")
-                                  ],
-                                ),
+                                title: Text("Exame ${exam.id}"),
+                                subtitle: Text(
+                                    "Data: ${DateUtilities().toYMD(exam.date)} | Resultado: ${(exam.result) ? "Passou" : "Falhou"}"),
                                 trailing: PopupMenuButton(
                                   // Callback that sets the selected popup menu item.
                                   onSelected: (int value) {
