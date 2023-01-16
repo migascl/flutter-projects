@@ -8,6 +8,8 @@ import 'package:tg2/utils/constants.dart';
 import 'package:tg2/views/screens/player/player_view.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 
+import '../../widgets/menudrawer.dart';
+
 enum _ExamFilters {
   hasTests,
   noTests,
@@ -130,6 +132,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                     }))
           ],
         ),
+        drawer: MenuDrawer(),
         body: RefreshIndicator(
           key: _playerListRefreshKey,
           onRefresh: _loadPageData,
@@ -178,7 +181,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                               ),
                             );
                           }),
-                      const Divider(height: 2.0)
+                      const Divider()
                     ],
                   );
                 },

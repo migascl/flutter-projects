@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +10,7 @@ import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
-import 'package:tg2/utils/api/api_endpoints.dart';
-import 'package:tg2/utils/api/api_service.dart';
-import 'package:tg2/views/screens/home_view.dart';
+import 'package:tg2/views/screens/match/matchlist_view.dart';
 
 Future main() async {
   await dotenv.load();
@@ -131,12 +130,15 @@ class _StartUpView extends State<StartUpView> {
   // If connection fails, an alert dialog will be displayed and give the possibility of trying again
   Future _attemptConnection() async {
     try {
-      await ApiService().get(ApiEndpoints.root);
+      await Provider.of<CountryProvider>(context, listen: false).get();
+      await Provider.of<StadiumProvider>(context, listen: false).get();
+      await Provider.of<ClubProvider>(context, listen: false).get();
+      await Provider.of<PlayerProvider>(context, listen: false).get();
       // Navigate to Home screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeView(),
+          builder: (context) => const MatchListView(),
           maintainState: false,
         ),
       );

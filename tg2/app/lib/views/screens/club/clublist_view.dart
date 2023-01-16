@@ -6,6 +6,7 @@ import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 
 import '../../widgets/futureimage.dart';
+import '../../widgets/menudrawer.dart';
 import 'club_view.dart';
 
 // This page lists all clubs
@@ -46,6 +47,7 @@ class _ClubListViewState extends State<ClubListView> {
     print("ClubList/V: Building...");
     return Scaffold(
         appBar: AppBar(title: Text("Clubes")),
+        drawer: MenuDrawer(),
         body: RefreshIndicator(
             key: _clubListRefreshKey,
             onRefresh: _loadPageData,

@@ -5,6 +5,7 @@ import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
+import 'package:tg2/views/widgets/menudrawer.dart';
 
 // This page lists all matches
 class MatchListView extends StatefulWidget {
@@ -53,7 +54,7 @@ class _MatchListViewState extends State<MatchListView> {
               length: tabs.length,
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Jogos'),
+                  title: const Text('Jornada'),
                   actions: [
                     IconButton(
                         icon: const Icon(Icons.refresh_rounded),
@@ -70,6 +71,7 @@ class _MatchListViewState extends State<MatchListView> {
                     },
                   ),
                 ),
+                drawer: MenuDrawer(),
                 body: TabBarView(
                   children:
                       List.from(matchProvider.getMatchweeks().map((element) {
@@ -90,7 +92,8 @@ class _MatchListViewState extends State<MatchListView> {
               ));
         }
         return Scaffold(
-          appBar: AppBar(title: const Text("Jogos")),
+          appBar: AppBar(title: const Text("Jornada")),
+          drawer: MenuDrawer(),
         );
       },
     );
