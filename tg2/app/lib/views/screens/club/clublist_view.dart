@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/models/club_model.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/models/club_model.dart';
+
+import '../../widgets/futureimage.dart';
 import 'club_view.dart';
 
 // This page lists all clubs
@@ -97,19 +99,10 @@ class _ClubListViewState extends State<ClubListView> {
                       int totalPoints = list[index]['points'];
                       return Column(children: [
                         ListTile(
-                          leading: AspectRatio(
+                          leading: FutureImage(
+                            image: club.picture!,
+                            errorImageUri: 'assets/images/placeholder-club.png',
                             aspectRatio: 1 / 1,
-                            child: FadeInImage(
-                              image: club.picture!,
-                              placeholder: AssetImage(
-                                  "assets/images/placeholder-club.jpg"),
-                              imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                    "assets/images/placeholder-club.jpg",
-                                    fit: BoxFit.contain);
-                              },
-                              fit: BoxFit.contain,
-                            ),
                           ),
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

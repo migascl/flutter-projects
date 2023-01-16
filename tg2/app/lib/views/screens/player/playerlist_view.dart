@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tg2/models/exam_model.dart';
+import 'package:tg2/models/player_model.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/views/screens/player/player_view.dart';
-import 'package:tg2/models/player_model.dart';
 import 'package:tg2/utils/constants.dart';
-
-import '../../../models/exam_model.dart';
+import 'package:tg2/views/screens/player/player_view.dart';
+import 'package:tg2/views/widgets/futureimage.dart';
 
 enum _ExamFilters {
   hasTests,
@@ -160,12 +160,12 @@ class _PlayerListViewState extends State<PlayerListView> {
                   return Column(
                     children: [
                       ListTile(
-                          leading: (player.picture != null)
-                              ? Image(
-                                  image: player.picture!,
-                                  height: 32,
-                                )
-                              : null,
+                          leading: FutureImage(
+                            image: player.picture!,
+                            errorImageUri:
+                                'assets/images/placeholder-player.png',
+                            aspectRatio: 1 / 1,
+                          ),
                           title: Text(player.name),
                           subtitle: Text(player.country.name),
                           onTap: () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/contract_model.dart';
+import 'package:tg2/views/widgets/futureimage.dart';
 
 // Club's squad player tile. It displays basic player information from a contract.
 class SquadTile extends StatelessWidget {
@@ -19,13 +20,12 @@ class SquadTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
         dense: dense,
-        leading: Container(
-            child: (contract.player.picture != null)
-                ? Image(
-                    image: contract.player.picture!,
-                    height: (dense) ? 32 : 48,
-                  )
-                : null),
+        leading: FutureImage(
+          image: contract.player.picture!,
+          errorImageUri: 'assets/images/placeholder-player.png',
+          height: (dense) ? 32 : 48,
+          aspectRatio: 1 / 1,
+        ),
         title: Text(
             "${contract.number}. ${contract.player.nickname ?? contract.player.name}"),
         subtitle: Text(contract.position.name),
@@ -39,7 +39,8 @@ class SquadTile extends StatelessWidget {
                   Icons.warning_rounded,
                   size: 32,
                   color: Colors.amber,
-                ))
+                ),
+              )
             : null,
         onTap: () => onTap?.call());
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
 
+import 'futureimage.dart';
+
 // Match tile. It displays basic match information.
 class MatchTile extends StatelessWidget {
   const MatchTile({super.key, required this.match});
@@ -17,21 +19,11 @@ class MatchTile extends StatelessWidget {
                 style: Theme.of(context).textTheme.caption),
             const SizedBox(height: 8),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              SizedBox(
+              FutureImage(
+                image: match.clubHome.picture!,
+                errorImageUri: 'assets/images/placeholder-club.png',
                 height: 48,
-                child: AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: FadeInImage(
-                    image: match.clubHome.picture!,
-                    placeholder:
-                        const AssetImage("assets/images/placeholder-club.jpg"),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset("assets/images/placeholder-club.jpg",
-                          fit: BoxFit.contain);
-                    },
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                aspectRatio: 1 / 1,
               ),
               Row(
                 children: [
@@ -44,21 +36,11 @@ class MatchTile extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge),
                 ],
               ),
-              SizedBox(
+              FutureImage(
+                image: match.clubAway.picture!,
+                errorImageUri: 'assets/images/placeholder-club.png',
                 height: 48,
-                child: AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: FadeInImage(
-                    image: match.clubAway.picture!,
-                    placeholder:
-                        const AssetImage("assets/images/placeholder-club.jpg"),
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset("assets/images/placeholder-club.jpg",
-                          fit: BoxFit.contain);
-                    },
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                aspectRatio: 1 / 1,
               ),
             ]),
           ],

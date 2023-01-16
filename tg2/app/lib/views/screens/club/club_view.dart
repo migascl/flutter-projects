@@ -12,6 +12,7 @@ import '../../../models/club_model.dart';
 import '../../../models/contract_model.dart';
 import '../../../models/match_model.dart';
 import '../../../utils/constants.dart';
+import '../../widgets/futureimage.dart';
 
 // This page lists all clubs
 class ClubView extends StatefulWidget {
@@ -92,22 +93,10 @@ class _ClubViewState extends State<ClubView> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    height: double.infinity,
-                    child: AspectRatio(
-                      aspectRatio: 1 / 1,
-                      child: FadeInImage(
-                        image: _club.picture!,
-                        placeholder:
-                            AssetImage("assets/images/placeholder-club.jpg"),
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                              "assets/images/placeholder-club.jpg",
-                              fit: BoxFit.contain);
-                        },
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                  FutureImage(
+                    image: _club.picture!,
+                    errorImageUri: 'assets/images/placeholder-club.png',
+                    aspectRatio: 1 / 1,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -146,76 +135,79 @@ class _ClubViewState extends State<ClubView> {
               Consumer<MatchProvider>(builder: (context, provider, child) {
                 if (provider.state == ProviderState.ready) {
                   List<Match> list = provider.getByClub(_club).values.toList();
+                  list.sort((a, b) => b.date.compareTo(a.date));
                   if (list.isEmpty) {
                     return Center(
                         child: Text(
                       "Este clube ainda não participou em nenhum jogo.",
                       style: Theme.of(context).textTheme.caption,
                     ));
+                  } else {
+                    return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        child: Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Card(
+                                      child: Container(
+                                          margin: const EdgeInsets.all(16),
+                                          child: Column(children: [
+                                            Text("Jogos Totais",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1),
+                                            const SizedBox(height: 8),
+                                            Text("${list.length}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline5),
+                                          ]))),
+                                  Card(
+                                      child: Container(
+                                          margin: const EdgeInsets.all(16),
+                                          child: Column(children: [
+                                            Text("Pontos Total",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                                "${provider.getClubPoints(_club)}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline5),
+                                          ]))),
+                                ]),
+                            const SizedBox(height: 32),
+                            Text("Histórico de Jogos",
+                                style: Theme.of(context).textTheme.subtitle1),
+                            const SizedBox(height: 16),
+                            MediaQuery.removePadding(
+                                removeTop: true,
+                                context: context,
+                                child: Card(
+                                  child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: ListView.separated(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: list.length,
+                                        itemBuilder: (context, index) {
+                                          Match match = list[index];
+                                          return MatchTile(match: match);
+                                        },
+                                        separatorBuilder: (context, index) =>
+                                            const Divider(),
+                                      )),
+                                ))
+                          ],
+                        ));
                   }
-                  return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Card(
-                                    child: Container(
-                                        margin: const EdgeInsets.all(16),
-                                        child: Column(children: [
-                                          Text("Jogos Totais",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle1),
-                                          const SizedBox(height: 8),
-                                          Text("${list.length}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5),
-                                        ]))),
-                                Card(
-                                    child: Container(
-                                        margin: const EdgeInsets.all(16),
-                                        child: Column(children: [
-                                          Text("Pontos Total",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle1),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                              "${provider.getClubPoints(_club)}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5),
-                                        ]))),
-                              ]),
-                          const SizedBox(height: 32),
-                          Text("Histórico de Jogos",
-                              style: Theme.of(context).textTheme.subtitle1),
-                          const SizedBox(height: 16),
-                          MediaQuery.removePadding(
-                              removeTop: true,
-                              context: context,
-                              child: Card(
-                                child: Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 8),
-                                    child: ListView.separated(
-                                      primary: false,
-                                      shrinkWrap: true,
-                                      itemCount: list.length,
-                                      itemBuilder: (context, index) {
-                                        Match match = list[index];
-                                        return MatchTile(match: match);
-                                      },
-                                      separatorBuilder: (context, index) =>
-                                          const Divider(),
-                                    )),
-                              ))
-                        ],
-                      ));
                 } else {
                   return const Center(
                     child: CircularProgressIndicator(),
