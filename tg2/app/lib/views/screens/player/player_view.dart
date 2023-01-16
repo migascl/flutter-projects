@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tg2/provider/player_provider.dart';
-import 'package:tg2/utils/constants.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/exam_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
+import 'package:tg2/provider/player_provider.dart';
+import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/screens/exam_modify_view.dart';
+
+import '../../widgets/futureimage.dart';
 import '../contract_view.dart';
 
 // This page shows player's information
@@ -21,7 +24,7 @@ class PlayerView extends StatefulWidget {
 }
 
 class _PlayerViewState extends State<PlayerView> {
-  late Player _player = widget.player;
+  late final Player _player = widget.player;
 
   void _loadPageData() {
     Provider.of<PlayerProvider>(context, listen: false).get();
@@ -74,33 +77,43 @@ class _PlayerViewState extends State<PlayerView> {
                       ExamModifyView(player: _player)),
             )
           : null,
-      // TODO IMPROVE PLAYER HEADER STYLE
       body: Column(children: [
         // Page header
         Container(
             color: Colors.blue,
+            padding: const EdgeInsets.fromLTRB(32, 86, 32, 32),
             height: 200,
-            padding: const EdgeInsets.fromLTRB(16, 86, 16, 16),
-            alignment: Alignment.center,
+            alignment: Alignment.topLeft,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                    child: (_player.picture != null)
-                        ? Image(
-                            image: _player.picture!,
-                            height: 64,
-                          )
-                        : null),
-                Text(
-                    _player.nickname ??
-                        _player.name, // Prioritize showing nickname on header
-                    style: const TextStyle(
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.normal,
-                      fontSize: 24,
-                      color: Colors.white,
-                    ))
+                FutureImage(
+                  image: _player.picture!,
+                  errorImageUri: 'assets/images/placeholder-club.png',
+                  aspectRatio: 1 / 1,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                      Text(
+                        _player.nickname ?? _player.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.merge(const TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _player.country.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            ?.merge(const TextStyle(color: Colors.white70)),
+                      ),
+                    ]))
               ],
             )),
         // Page body
@@ -138,39 +151,58 @@ class _PlayerViewState extends State<PlayerView> {
               if (contractProvider.state == ProviderState.ready) {
                 List<Contract> list = List.from(contractProvider.items.values
                     .where((element) => element.player.id == _player.id));
-                if (list.isEmpty)
+                list.sort((a, b) => b.period.end.compareTo(a.period.end));
+                if (list.isEmpty) {
                   return const Center(
                       child: Text("Este jogador não contêm contratos."));
+                }
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
-                    child: ListView.builder(
+                    child: ListView.separated(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         Contract contract = list.elementAt(index);
                         return Column(
                           children: [
                             ListTile(
-                              leading: (contract.club.picture != null)
-                                  ? Image(
-                                      image: contract.club.picture!,
-                                      height: 32,
-                                    )
-                                  : null,
+                              leading: FutureImage(
+                                image: contract.club.picture!,
+                                errorImageUri:
+                                    'assets/images/placeholder-club.png',
+                                height: 48,
+                                aspectRatio: 1 / 1,
+                              ),
                               title: Text(contract.club.name),
                               subtitle: Text(
-                                  "Ínicio: ${contract.period.start}\nFim: ${contract.period.end}"),
-                              onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) =>
-                                        ContractView(contract: contract));
-                              },
+                                  "Ínicio: ${DateUtilities().toYMD(contract.period.start)} | Fim: ${DateUtilities().toYMD(contract.period.end)}"),
+                              // Show warning icon that shows a tooltip with remaining contract duration and expiry date
+                              trailing:
+                                  contract.needsRenovation && contract.active
+                                      ? Tooltip(
+                                          message:
+                                              'Contrato expira em ${contract.remainingTime.inDays} dias!\n(${contract.period.end.toLocal()})',
+                                          textAlign: TextAlign.center,
+                                          child: const Icon(
+                                            Icons.warning_rounded,
+                                            size: 32,
+                                            color: Colors.amber,
+                                          ),
+                                        )
+                                      : null,
+                              onTap: () => showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  isDismissible: true,
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (context) =>
+                                      ContractView(contract: contract)),
                             ),
-                            const Divider(height: 2.0),
                           ],
                         );
                       },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
                     ));
               } else {
                 return const Center(child: CircularProgressIndicator());
