@@ -68,6 +68,11 @@ class _ClubViewState extends State<ClubView> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: widget.club.color,
+        iconTheme: IconThemeData(
+            color: widget.club.color!.computeLuminance() > 0.5
+                ? Colors.black
+                : Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -82,12 +87,13 @@ class _ClubViewState extends State<ClubView> {
         children: [
           // Page header
           Card(
-            margin: const EdgeInsets.all(8),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
             color: widget.club.color,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(16))),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               height: MediaQuery.of(context).size.height * 0.2,
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -129,6 +135,7 @@ class _ClubViewState extends State<ClubView> {
               ),
             ),
           ),
+          const Divider(indent: 16, endIndent: 16),
           // Page body
           Expanded(
             child: PageView(
