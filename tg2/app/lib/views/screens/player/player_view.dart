@@ -26,10 +26,19 @@ class PlayerView extends StatefulWidget {
 class _PlayerViewState extends State<PlayerView> {
   late final Player _player = widget.player;
 
-  void _loadPageData() {
-    Provider.of<PlayerProvider>(context, listen: false).get();
-    Provider.of<ContractProvider>(context, listen: false).get();
-    Provider.of<ExamProvider>(context, listen: false).get();
+  Future _loadPageData() async {
+    try {
+      await Provider.of<PlayerProvider>(context, listen: false).get();
+      await Provider.of<ContractProvider>(context, listen: false).get();
+      await Provider.of<ExamProvider>(context, listen: false).get();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocorreu um erro. Tente novamente.'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   // Page view controls
@@ -40,7 +49,8 @@ class _PlayerViewState extends State<PlayerView> {
     setState(() {
       _selectedIndex = value;
     });
-    _pageController.jumpToPage(value);
+    _pageController.animateToPage(value,
+        duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
   }
 
   @override
@@ -79,11 +89,13 @@ class _PlayerViewState extends State<PlayerView> {
         children: [
           // Page header
           Card(
-            margin: const EdgeInsets.all(8),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+            color: Colors.blue,
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(16))),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               height: MediaQuery.of(context).size.height * 0.2,
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -105,7 +117,7 @@ class _PlayerViewState extends State<PlayerView> {
                         style: Theme.of(context)
                             .textTheme
                             .titleLarge
-                            ?.merge(const TextStyle(color: Colors.black)),
+                            ?.merge(const TextStyle(color: Colors.white)),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -113,7 +125,7 @@ class _PlayerViewState extends State<PlayerView> {
                         style: Theme.of(context)
                             .textTheme
                             .subtitle1
-                            ?.merge(const TextStyle(color: Colors.black54)),
+                            ?.merge(const TextStyle(color: Colors.white70)),
                       ),
                     ],
                   )
@@ -121,6 +133,7 @@ class _PlayerViewState extends State<PlayerView> {
               ),
             ),
           ),
+          const Divider(indent: 16, endIndent: 16),
           // Page body
           Expanded(
             child: PageView(
@@ -154,10 +167,6 @@ class _PlayerViewState extends State<PlayerView> {
                         ),
                         ListTile(
                           title: const Text("Peso"),
-                          subtitle: Text("${_player.weight} kg"),
-                        ),
-                        ListTile(
-                          title: const Text("Escolaridade"),
                           subtitle: Text("${_player.weight} kg"),
                         ),
                       ],
