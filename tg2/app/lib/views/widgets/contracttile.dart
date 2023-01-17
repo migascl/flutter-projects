@@ -26,13 +26,10 @@ class ContractTile extends StatefulWidget {
 }
 
 class _ContractTileState extends State<ContractTile> {
-  var _count = 0;
-  var _tapPosition;
-
-  void _showCustomMenu() {}
+  late Offset _tapPosition;
 
   void _storePosition(TapDownDetails details) {
-    setState(() => _tapPosition = details.globalPosition);
+    _tapPosition = details.globalPosition;
   }
 
   @override

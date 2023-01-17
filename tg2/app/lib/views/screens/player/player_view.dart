@@ -209,7 +209,7 @@ class _PlayerViewState extends State<PlayerView> {
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
-                    child: ListView.builder(
+                    child: ListView.separated(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         Exam exam = list.elementAt(index);
@@ -218,7 +218,7 @@ class _PlayerViewState extends State<PlayerView> {
                             ListTile(
                                 title: Text("Exame ${exam.id}"),
                                 subtitle: Text(
-                                    "Data: ${DateUtilities().toYMD(exam.date)} | Resultado: ${(exam.result) ? "Passou" : "Falhou"}"),
+                                    "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
                                 trailing: PopupMenuButton(
                                   // Callback that sets the selected popup menu item.
                                   onSelected: (int value) {
@@ -273,10 +273,10 @@ class _PlayerViewState extends State<PlayerView> {
                                     ),
                                   ],
                                 )),
-                            const Divider(height: 2.0),
                           ],
                         );
                       },
+                      separatorBuilder: (context, int index) => const Divider(),
                     ));
               } else {
                 return const Center(

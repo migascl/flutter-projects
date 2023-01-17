@@ -21,8 +21,8 @@ class _MatchListViewState extends State<MatchListView> {
   // Method to reload providers used by the page
   Future _loadPageData() async {
     try {
-      await Provider.of<ClubProvider>(context, listen: false).get();
-      await Provider.of<MatchProvider>(context, listen: false).get();
+      Provider.of<ClubProvider>(context, listen: false).get();
+      Provider.of<MatchProvider>(context, listen: false).get();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
