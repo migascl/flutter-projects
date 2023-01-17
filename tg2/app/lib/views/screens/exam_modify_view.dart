@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/models/exam_model.dart';
-import 'package:tg2/models/player_model.dart';
-import 'package:tg2/provider/exam_provider.dart';
 
-// TODO IMPROVE STYLING
+import '../../models/player_model.dart';
+import '../../provider/exam_provider.dart';
+import '../../utils/dateutils.dart';
+import '../../utils/exceptions.dart';
+
 class ExamModifyView extends StatefulWidget {
-  const ExamModifyView({super.key, this.exam, required this.player});
+  const ExamModifyView({super.key, this.initialValue, required this.player});
 
-  final Exam? exam;
+  final Exam? initialValue;
   final Player player;
 
   @override
@@ -17,18 +19,38 @@ class ExamModifyView extends StatefulWidget {
 
 class _ExamModifyViewState extends State<ExamModifyView> {
   TextEditingController dateFieldController = TextEditingController();
+  String? errorText;
 
   Exam exam = Exam.empty();
 
+  Future<void> _insertData() async {
+    if (dateFieldController.text.isEmpty) {
+      setState(() => errorText = "Campo necessário!");
+      return;
+    }
+    // If exam id is null, it means we're adding a new exam, updating otherwise.
+    if (exam.id == null) {
+      try {
+        await Provider.of<ExamProvider>(context, listen: false)
+            .post(exam)
+            .then((value) => Navigator.of(context).pop());
+      } on DuplicateException {
+        setState(() => errorText = "Jogador já fez exame nesta data.");
+      }
+    } else {
+      await Provider.of<ExamProvider>(context, listen: false)
+          .patch(exam)
+          .then((value) => Navigator.of(context).pop());
+    }
+  }
+
   @override
   void initState() {
-    if (widget.exam == null) {
+    if (widget.initialValue == null) {
       exam.result = false;
-      dateFieldController.text = "Clicar para Editar";
     } else {
-      exam = widget.exam!;
-      dateFieldController.text =
-          "${exam.date.year}-${exam.date.month}-${exam.date.day}";
+      exam = widget.initialValue!;
+      dateFieldController.text = DateUtilities().toYMD(exam.date);
     }
     exam.player = widget.player;
     super.initState();
@@ -37,37 +59,44 @@ class _ExamModifyViewState extends State<ExamModifyView> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: widget.exam == null
+      title: widget.initialValue == null
           ? const Text('Novo Exame')
-          : const Text('Modificar Exame'),
+          : Text('Modificar Exame ${exam.id}'),
       content: Wrap(
+        direction: Axis.horizontal,
         children: [
           CheckboxListTile(
-            title: Text("Passou?"),
+            title: const Text("Passou?"),
+            contentPadding: EdgeInsets.zero,
             value: exam.result,
             onChanged: (bool? value) => setState(() => exam.result = value!),
             controlAffinity: ListTileControlAffinity.leading,
           ),
           TextFormField(
-              controller: dateFieldController,
-              decoration: const InputDecoration(
-                  labelText: "Data", border: OutlineInputBorder()),
-              onTap: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                DateTime? result = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (result != null) {
-                  setState(() {
-                    exam.date = result;
-                    dateFieldController.text =
-                        "${exam.date.year}-${exam.date.month}-${exam.date.day}";
-                  });
-                }
-              })
+            controller: dateFieldController,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Data",
+              errorText: errorText,
+              border: const OutlineInputBorder(),
+            ),
+            onTap: () async {
+              FocusScope.of(context).requestFocus(FocusNode());
+              DateTime? result = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+              if (result != null) {
+                setState(() {
+                  errorText = null;
+                  exam.date = result;
+                  dateFieldController.text = DateUtilities().toYMD(exam.date);
+                });
+              }
+            },
+          ),
         ],
       ),
       actions: [
@@ -78,19 +107,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
           },
         ),
         ElevatedButton(
-          child: const Text('Guardar'),
-          onPressed: () {
-            if (exam.id == null) {
-              Provider.of<ExamProvider>(context, listen: false)
-                  .post(exam)
-                  .then((value) => Navigator.of(context).pop());
-            } else {
-              Provider.of<ExamProvider>(context, listen: false)
-                  .patch(exam)
-                  .then((value) => Navigator.of(context).pop());
-            }
-          },
-        ),
+            child: const Text('Guardar'), onPressed: () => _insertData()),
       ],
     );
   }

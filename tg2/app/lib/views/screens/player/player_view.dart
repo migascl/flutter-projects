@@ -36,6 +36,7 @@ class _PlayerViewState extends State<PlayerView> {
   // Page view controls
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+
   void _onTabTap(int value) {
     setState(() {
       _selectedIndex = value;
@@ -224,12 +225,15 @@ class _PlayerViewState extends State<PlayerView> {
                                   onSelected: (int value) {
                                     if (value == 0) {
                                       showDialog(
-                                          context: context,
-                                          barrierDismissible:
-                                              false, // user must tap button!
-                                          builder: (BuildContext context) =>
-                                              ExamModifyView(
-                                                  exam: exam, player: _player));
+                                        context: context,
+                                        barrierDismissible:
+                                            false, // user must tap button!
+                                        builder: (BuildContext context) =>
+                                            ExamModifyView(
+                                          initialValue: exam,
+                                          player: _player,
+                                        ),
+                                      ).then((value) => _loadPageData());
                                     }
                                     if (value == 1) {
                                       showDialog<String>(

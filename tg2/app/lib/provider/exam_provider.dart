@@ -7,6 +7,7 @@ import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/exceptions.dart';
 
 // Exam provider class
 class ExamProvider extends ChangeNotifier {
@@ -21,7 +22,9 @@ class ExamProvider extends ChangeNotifier {
 
   // Getters
   ProviderState get state => _state;
+
   Map<int, Exam> get items => _items;
+
   Map<int, Exam> getByPlayer(Player player) {
     return Map.fromEntries(_items.entries
         .where((element) => element.value.player.id == player.id));
@@ -77,16 +80,17 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Deleting exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Deleted exam ${exam.id} successfully!");
+        await get();
       }
     } catch (e) {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
+      await get();
       rethrow;
     }
     (_items.isEmpty)
         ? _state = ProviderState.empty
         : _state = ProviderState.ready;
     notifyListeners();
-    await get();
   }
 
   Future post(Exam exam) async {
@@ -96,18 +100,22 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Inserting new exam...");
-        await ApiService().post(ApiEndpoints.exam, exam.toJson());
-        print("Exam/P: Exam inserted successfully!");
+        if (_items.values.any((element) =>
+            element.date.isAtSameMomentAs(exam.date) &&
+            element.player.id == exam.player.id)) {
+          throw DuplicateException(
+              "Player ${exam.player.id} already had an exam in ${exam.date}");
+        } else {
+          await ApiService().post(ApiEndpoints.exam, exam.toJson());
+          print("Exam/P: Exam inserted successfully!");
+        }
+        await get();
       }
     } catch (e) {
       print("Exam/P: Error inserting! $e");
+      await get();
       rethrow;
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
-    await get();
   }
 
   Future patch(Exam exam) async {
@@ -119,6 +127,7 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Patching exam ${exam.id}...");
         await ApiService().patch(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Patched exam ${exam.id} successfully!");
+        await get();
       }
     } catch (e) {
       print("Exam/P: Error patching exam ${exam.id}! $e");
@@ -128,6 +137,5 @@ class ExamProvider extends ChangeNotifier {
         ? _state = ProviderState.empty
         : _state = ProviderState.ready;
     notifyListeners();
-    await get();
   }
 }
