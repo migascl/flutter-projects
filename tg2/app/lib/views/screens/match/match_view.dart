@@ -8,7 +8,7 @@ import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
-import 'package:tg2/views/widgets/squadtile.dart';
+import 'package:tg2/views/widgets/contracttile.dart';
 
 import '../../widgets/futureimage.dart';
 
@@ -280,8 +280,9 @@ class _MatchSquadList extends StatelessWidget {
               controller: scrollController,
               itemCount: squad.length,
               itemBuilder: (context, index) {
-                return SquadTile(
+                return ContractTile(
                   contract: squad[index],
+                  showClub: false,
                   dense: true,
                 );
               },

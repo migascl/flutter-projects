@@ -10,6 +10,7 @@ import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/screens/exam_modify_view.dart';
 
+import '../../widgets/contracttile.dart';
 import '../../widgets/futureimage.dart';
 import '../contract_view.dart';
 
@@ -169,42 +170,19 @@ class _PlayerViewState extends State<PlayerView> {
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         Contract contract = list.elementAt(index);
-                        return Column(
-                          children: [
-                            ListTile(
-                              leading: FutureImage(
-                                image: contract.club.picture!,
-                                errorImageUri:
-                                    'assets/images/placeholder-club.png',
-                                height: 48,
-                                aspectRatio: 1 / 1,
-                              ),
-                              title: Text(contract.club.name),
-                              subtitle: Text(
-                                  "Ínicio: ${DateUtilities().toYMD(contract.period.start)} | Fim: ${DateUtilities().toYMD(contract.period.end)}"),
-                              // Show warning icon that shows a tooltip with remaining contract duration and expiry date
-                              trailing:
-                                  contract.needsRenovation && contract.active
-                                      ? Tooltip(
-                                          message:
-                                              'Contrato expira em ${contract.remainingTime.inDays} dias!\n(${contract.period.end.toLocal()})',
-                                          textAlign: TextAlign.center,
-                                          child: const Icon(
-                                            Icons.warning_rounded,
-                                            size: 32,
-                                            color: Colors.amber,
-                                          ),
-                                        )
-                                      : null,
-                              onTap: () => showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  isDismissible: true,
-                                  backgroundColor: Colors.transparent,
-                                  context: context,
-                                  builder: (context) =>
-                                      ContractView(contract: contract)),
-                            ),
-                          ],
+                        return ContractTile(
+                          contract: contract,
+                          showClub: true,
+                          showAlert: true,
+                          onTap: () {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                isDismissible: true,
+                                backgroundColor: Colors.transparent,
+                                context: context,
+                                builder: (context) =>
+                                    ContractView(contract: contract));
+                          },
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) =>

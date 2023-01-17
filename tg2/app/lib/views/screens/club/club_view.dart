@@ -5,8 +5,8 @@ import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/views/screens/contract_view.dart';
+import 'package:tg2/views/widgets/contracttile.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
-import 'package:tg2/views/widgets/squadtile.dart';
 
 import '../../../models/club_model.dart';
 import '../../../models/contract_model.dart';
@@ -235,8 +235,9 @@ class _ClubViewState extends State<ClubView> {
                         itemCount: list.length,
                         itemBuilder: (context, index) {
                           Contract contract = list[index];
-                          return SquadTile(
+                          return ContractTile(
                             contract: contract,
+                            showClub: false,
                             showAlert: true,
                             onTap: () {
                               showModalBottomSheet(
