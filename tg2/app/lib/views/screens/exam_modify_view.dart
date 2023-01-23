@@ -7,6 +7,7 @@ import '../../provider/exam_provider.dart';
 import '../../utils/dateutils.dart';
 import '../../utils/exceptions.dart';
 
+// TODO IMPROVE STYLING
 class ExamModifyView extends StatefulWidget {
   const ExamModifyView({super.key, this.initialValue, required this.player});
 
@@ -62,40 +63,44 @@ class _ExamModifyViewState extends State<ExamModifyView> {
       title: widget.initialValue == null
           ? const Text('Novo Exame')
           : Text('Modificar Exame ${exam.id}'),
-      content: Wrap(
-        direction: Axis.horizontal,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CheckboxListTile(
-            title: const Text("Passou?"),
-            contentPadding: EdgeInsets.zero,
-            value: exam.result,
-            onChanged: (bool? value) => setState(() => exam.result = value!),
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-          TextFormField(
-            controller: dateFieldController,
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Data",
-              errorText: errorText,
-              border: const OutlineInputBorder(),
+          Flexible(
+            child: CheckboxListTile(
+              title: const Text("Passou?"),
+              contentPadding: EdgeInsets.zero,
+              value: exam.result,
+              onChanged: (bool? value) => setState(() => exam.result = value!),
+              controlAffinity: ListTileControlAffinity.leading,
             ),
-            onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              DateTime? result = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
-              if (result != null) {
-                setState(() {
-                  errorText = null;
-                  exam.date = result;
-                  dateFieldController.text = DateUtilities().toYMD(exam.date);
-                });
-              }
-            },
+          ),
+          Flexible(
+            child: TextFormField(
+              controller: dateFieldController,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: "Data",
+                errorText: errorText,
+                border: const OutlineInputBorder(),
+              ),
+              onTap: () async {
+                FocusScope.of(context).requestFocus(FocusNode());
+                DateTime? result = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                if (result != null) {
+                  setState(() {
+                    errorText = null;
+                    exam.date = result;
+                    dateFieldController.text = DateUtilities().toYMD(exam.date);
+                  });
+                }
+              },
+            ),
           ),
         ],
       ),
