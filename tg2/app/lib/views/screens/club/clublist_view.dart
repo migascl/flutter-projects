@@ -40,13 +40,16 @@ class _ClubListViewState extends State<ClubListView> {
   void initState() {
     print("ClubList/V: Initialized State!");
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadPageData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     print("ClubList/V: Building...");
     return Scaffold(
-        appBar: AppBar(title: Text("Clubes")),
+        appBar: AppBar(title: Text("Clubes"), elevation: 1),
         drawer: MenuDrawer(),
         body: RefreshIndicator(
             key: _clubListRefreshKey,
@@ -93,61 +96,63 @@ class _ClubListViewState extends State<ClubListView> {
                         ],
                       )),
                   Expanded(
-                      child: ListView.separated(
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      Club club = list[index]['club'];
-                      int totalMatches = list[index]['matches'];
-                      int totalPoints = list[index]['points'];
-                      return Column(children: [
-                        ListTile(
-                          leading: FutureImage(
-                            image: club.picture!,
-                            errorImageUri: 'assets/images/placeholder-club.png',
-                            aspectRatio: 1 / 1,
-                          ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                  child: Text(club.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall)),
-                              Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalMatches.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge)),
-                              Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalPoints.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge)),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ClubView(club: club),
-                                maintainState: true,
-                              ),
-                            );
-                          },
-                        )
-                      ]);
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                  ))
+                    child: ListView.separated(
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        Club club = list[index]['club'];
+                        int totalMatches = list[index]['matches'];
+                        int totalPoints = list[index]['points'];
+                        return Column(children: [
+                          ListTile(
+                            leading: FutureImage(
+                              image: club.picture!,
+                              errorImageUri:
+                                  'assets/images/placeholder-club.png',
+                              aspectRatio: 1 / 1,
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: Text(club.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall)),
+                                Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 4),
+                                    alignment: Alignment.center,
+                                    width: 48,
+                                    child: Text(totalMatches.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge)),
+                                Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 4),
+                                    alignment: Alignment.center,
+                                    width: 48,
+                                    child: Text(totalPoints.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge)),
+                              ],
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ClubView(club: club),
+                                  maintainState: true,
+                                ),
+                              );
+                            },
+                          )
+                        ]);
+                      },
+                      separatorBuilder: (context, index) => const Divider(),
+                    ),
+                  )
                 ]);
               }
               return Container();
