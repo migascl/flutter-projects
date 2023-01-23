@@ -7,12 +7,15 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/exceptions.dart';
 
 class ApiService {
+  static const Duration _debugDelay = Duration(seconds: 0);
+
   // Api GET method, it receives an endpoint and fetches all results
   // It throws errors if the response times out, status code is not valid or response body is empty
   Future<dynamic> get(ApiEndpoints endpoint) async {
     var response = await http
         .get(Uri.parse(dotenv.env['API_URL']! + endpoint.endpoint))
         .timeout(const Duration(seconds: 5));
+    await Future.delayed(_debugDelay);
     if (response.statusCode == 200) return jsonDecode(response.body);
     throw ApiRequestException(
         "Api request returned status code ${response.statusCode}");
@@ -28,6 +31,7 @@ class ApiService {
             },
             body: jsonEncode(query))
         .timeout(const Duration(seconds: 5));
+    await Future.delayed(_debugDelay);
     if (response.statusCode == 200) return jsonDecode(response.body);
     throw ApiRequestException(
         "Api request returned status code ${response.statusCode}");
@@ -43,6 +47,7 @@ class ApiService {
             },
             body: jsonEncode(query))
         .timeout(const Duration(seconds: 5));
+    await Future.delayed(_debugDelay);
     if (response.statusCode == 200) return jsonDecode(response.body);
     throw ApiRequestException(
         "Api request returned status code ${response.statusCode}");
@@ -58,6 +63,7 @@ class ApiService {
             },
             body: jsonEncode(query))
         .timeout(const Duration(seconds: 5));
+    await Future.delayed(_debugDelay);
     if (response.statusCode == 200) return jsonDecode(response.body);
     throw ApiRequestException(
         "Api request returned status code ${response.statusCode}");
