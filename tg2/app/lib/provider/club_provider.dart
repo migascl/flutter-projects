@@ -23,6 +23,7 @@ class ClubProvider extends ChangeNotifier {
 
   // Getters
   ProviderState get state => _state;
+
   Map<int, Club> get items => _items;
 
   // Setters
@@ -60,10 +61,11 @@ class ClubProvider extends ChangeNotifier {
     } catch (e) {
       print("Club/P: Error fetching! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      notifyListeners();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 }

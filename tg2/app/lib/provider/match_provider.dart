@@ -24,7 +24,9 @@ class MatchProvider extends ChangeNotifier {
 
   // Getters
   ProviderState get state => _state;
+
   Map<int, Match> get items => _items;
+
   Map<int, Match> getByClub(Club club) {
     return Map.fromEntries(_items.entries.expand((element) => [
           if (element.value.clubHome.id == club.id ||
@@ -97,10 +99,11 @@ class MatchProvider extends ChangeNotifier {
     } catch (e) {
       print("Match/P: Error fetching! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      notifyListeners();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 }

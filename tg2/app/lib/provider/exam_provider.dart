@@ -64,11 +64,12 @@ class ExamProvider extends ChangeNotifier {
     } catch (e) {
       print("Exam/P: Error fetching! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      notifyListeners();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 
   Future delete(Exam exam) async {
@@ -80,17 +81,16 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Deleting exam ${exam.id}...");
         await ApiService().delete(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Deleted exam ${exam.id} successfully!");
-        await get();
       }
     } catch (e) {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
-      await get();
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      await get();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 
   Future post(Exam exam) async {
@@ -109,12 +109,15 @@ class ExamProvider extends ChangeNotifier {
           await ApiService().post(ApiEndpoints.exam, exam.toJson());
           print("Exam/P: Exam inserted successfully!");
         }
-        await get();
       }
     } catch (e) {
       print("Exam/P: Error inserting! $e");
-      await get();
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      await get();
     }
   }
 
@@ -127,15 +130,15 @@ class ExamProvider extends ChangeNotifier {
         print("Exam/P: Patching exam ${exam.id}...");
         await ApiService().patch(ApiEndpoints.exam, exam.toJson());
         print("Exam/P: Patched exam ${exam.id} successfully!");
-        await get();
       }
     } catch (e) {
       print("Exam/P: Error patching exam ${exam.id}! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      await get();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 }

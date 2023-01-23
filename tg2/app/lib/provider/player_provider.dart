@@ -23,6 +23,7 @@ class PlayerProvider extends ChangeNotifier {
 
   // Getters
   ProviderState get state => _state;
+
   Map<int, Player> get items => _items;
 
   // Setters
@@ -58,10 +59,11 @@ class PlayerProvider extends ChangeNotifier {
     } catch (e) {
       print("Player/P: Error fetching! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      notifyListeners();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 }

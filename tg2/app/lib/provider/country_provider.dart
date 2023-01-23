@@ -19,6 +19,7 @@ class CountryProvider extends ChangeNotifier {
 
   // Getters
   ProviderState get state => _state;
+
   Map<int, Country> get items => _items;
 
   // Methods
@@ -38,10 +39,11 @@ class CountryProvider extends ChangeNotifier {
     } catch (e) {
       print("Country/P: Error fetching! $e");
       rethrow;
+    } finally {
+      (_items.isEmpty)
+          ? _state = ProviderState.empty
+          : _state = ProviderState.ready;
+      notifyListeners();
     }
-    (_items.isEmpty)
-        ? _state = ProviderState.empty
-        : _state = ProviderState.ready;
-    notifyListeners();
   }
 }
