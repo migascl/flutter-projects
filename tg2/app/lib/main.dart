@@ -29,7 +29,6 @@ class Main extends StatelessWidget {
       // Each provider is an entity in the API and follows the hierarchy set by the database
       // Entities composed of different entities are defined as Proxy Providers so their data is refreshed
       // in every parent change notification
-      // TODO IMPROVE LOADING FLOW
       providers: [
         ChangeNotifierProvider<CountryProvider>(
             create: (context) => CountryProvider()),
@@ -153,6 +152,7 @@ class _StartUpView extends State<StartUpView> {
                     onPressed: () {
                       Navigator.pop(context);
                       _attemptConnection();
+                      return;
                     },
                     child: const Text('Tentar Novamente'),
                   ),
@@ -166,7 +166,7 @@ class _StartUpView extends State<StartUpView> {
   void initState() {
     print("StartUp/V: Initialized State!");
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((context) {
       _attemptConnection();
     });
   }
