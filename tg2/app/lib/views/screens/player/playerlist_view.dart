@@ -89,6 +89,7 @@ class _PlayerListViewState extends State<PlayerListView> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Jogadores"),
+          elevation: 1,
           actions: [
             IconButton(
               icon: const Icon(Icons.sort_rounded),
