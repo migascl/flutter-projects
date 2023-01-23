@@ -14,6 +14,7 @@ import '../../widgets/contracttile.dart';
 import '../../widgets/futureimage.dart';
 import '../contract_view.dart';
 
+// TODO ADD SCHOOLING
 class PlayerView extends StatefulWidget {
   const PlayerView({super.key, required this.player});
 

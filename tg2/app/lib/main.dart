@@ -29,6 +29,7 @@ class Main extends StatelessWidget {
       // Each provider is an entity in the API and follows the hierarchy set by the database
       // Entities composed of different entities are defined as Proxy Providers so their data is refreshed
       // in every parent change notification
+      // TODO IMPROVE LOADING FLOW
       providers: [
         ChangeNotifierProvider<CountryProvider>(
             create: (context) => CountryProvider()),
@@ -130,18 +131,15 @@ class _StartUpView extends State<StartUpView> {
   // If connection fails, an alert dialog will be displayed and give the possibility of trying again
   Future _attemptConnection() async {
     try {
-      await Provider.of<CountryProvider>(context, listen: false).get();
-      await Provider.of<StadiumProvider>(context, listen: false).get();
-      await Provider.of<ClubProvider>(context, listen: false).get();
-      await Provider.of<PlayerProvider>(context, listen: false).get();
-      // Navigate to Home screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MatchListView(),
-          maintainState: false,
-        ),
-      );
+      await Provider.of<CountryProvider>(context, listen: false)
+          .get()
+          .then((value) => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MatchListView(),
+                  maintainState: false,
+                ),
+              ));
     } catch (e) {
       showDialog<String>(
           context: context,
@@ -167,8 +165,10 @@ class _StartUpView extends State<StartUpView> {
   @override
   void initState() {
     print("StartUp/V: Initialized State!");
-    _attemptConnection();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _attemptConnection();
+    });
   }
 
   @override

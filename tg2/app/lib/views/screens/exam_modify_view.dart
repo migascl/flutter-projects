@@ -7,7 +7,6 @@ import '../../provider/exam_provider.dart';
 import '../../utils/dateutils.dart';
 import '../../utils/exceptions.dart';
 
-// TODO IMPROVE STYLING
 class ExamModifyView extends StatefulWidget {
   const ExamModifyView({super.key, this.initialValue, required this.player});
 
