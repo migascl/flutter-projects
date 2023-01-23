@@ -11,53 +11,69 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
-  // Root of the application
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
           DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Text("Liga Portugal bwin"),
-                  Text("Época 2022-2023")
+              decoration: const BoxDecoration(color: Colors.blue),
+              child: Wrap(
+                children: [
+                  Text(
+                    "Liga Portugal bwin",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        ?.merge(TextStyle(color: Colors.white)),
+                  ),
+                  Text(
+                    "Época 2022-2023",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        ?.merge(TextStyle(color: Colors.white70)),
+                  )
                 ],
               )),
           ListTile(
-            leading: Icon(Icons.calendar_month_rounded),
-            title: Text("Jornada"),
-            onTap: () => Navigator.pushReplacement(
+            leading: const Icon(Icons.calendar_month_rounded),
+            title: const Text("Jornada"),
+            onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const MatchListView(),
-                maintainState: true,
+                maintainState: false,
               ),
             ),
           ),
           ListTile(
-            leading: Icon(Icons.group),
-            title: Text("Clubes"),
-            onTap: () => Navigator.pushReplacement(
+            leading: const Icon(Icons.group),
+            title: const Text("Clubes"),
+            onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const ClubListView(),
-                maintainState: true,
+                maintainState: false,
               ),
             ),
           ),
           ListTile(
-            leading: Icon(Icons.directions_run_rounded),
-            title: Text("Jogadores"),
-            onTap: () => Navigator.pushReplacement(
+            leading: const Icon(Icons.directions_run_rounded),
+            title: const Text("Jogadores"),
+            onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const PlayerListView(),
-                maintainState: true,
+                maintainState: false,
               ),
             ),
+          ),
+          Column(
+            children: [
+              Divider(),
+              Text("Miguel Cardoso Leirosa 2022/2023"),
+            ],
           ),
         ],
       ),
