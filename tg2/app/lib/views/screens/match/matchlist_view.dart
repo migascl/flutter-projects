@@ -16,9 +16,6 @@ class MatchListView extends StatefulWidget {
 }
 
 class _MatchListViewState extends State<MatchListView> {
-  final GlobalKey<RefreshIndicatorState> _matchListRefreshKey =
-      GlobalKey<RefreshIndicatorState>();
-
   int _currentTab = 0;
 
   // Method to reload providers used by the page
@@ -57,6 +54,12 @@ class _MatchListViewState extends State<MatchListView> {
               appBar: AppBar(
                 elevation: 1,
                 title: const Text('Jornada'),
+                actions: [
+                  IconButton(
+                      icon: const Icon(Icons.refresh_rounded),
+                      tooltip: 'Refresh',
+                      onPressed: () => _loadPageData()),
+                ],
                 bottom: TabBar(
                   tabs: tabs,
                   isScrollable: true,
@@ -74,27 +77,15 @@ class _MatchListViewState extends State<MatchListView> {
                   List<Match> matches = matchProvider.items.values
                       .where((match) => match.matchweek == element)
                       .toList();
-                  return Card(
-                    margin: const EdgeInsets.all(8),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16))),
-                    child: RefreshIndicator(
-                      key: _matchListRefreshKey,
-                      onRefresh: _loadPageData,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: matches.length,
-                          itemBuilder: (context, index) {
-                            Match match = matches[index];
-                            return MatchTile(match: match);
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(),
-                        ),
-                      ),
-                    ),
+                  return ListView.separated(
+                    primary: false,
+                    itemCount: matches.length,
+                    itemBuilder: (context, index) {
+                      Match match = matches[index];
+                      return MatchTile(match: match);
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
                   );
                 })),
               ),
