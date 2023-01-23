@@ -29,10 +29,8 @@ class _ClubViewState extends State<ClubView> {
   // Method to reload providers used by the page
   Future _loadPageData() async {
     try {
-      await Provider.of<ClubProvider>(context, listen: false).get();
-      await Provider.of<PlayerProvider>(context, listen: false).get();
-      await Provider.of<ContractProvider>(context, listen: false).get();
-      await Provider.of<MatchProvider>(context, listen: false).get();
+      await Provider.of<ClubProvider>(context, listen: false).get().then(
+          (value) => Provider.of<PlayerProvider>(context, listen: false).get());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

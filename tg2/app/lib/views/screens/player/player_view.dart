@@ -30,8 +30,6 @@ class _PlayerViewState extends State<PlayerView> {
   Future _loadPageData() async {
     try {
       await Provider.of<PlayerProvider>(context, listen: false).get();
-      await Provider.of<ContractProvider>(context, listen: false).get();
-      await Provider.of<ExamProvider>(context, listen: false).get();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
