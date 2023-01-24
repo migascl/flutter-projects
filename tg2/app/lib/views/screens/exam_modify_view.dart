@@ -29,18 +29,18 @@ class _ExamModifyViewState extends State<ExamModifyView> {
       return;
     }
     // If exam id is null, it means we're adding a new exam, updating otherwise.
-    if (exam.id == null) {
-      try {
+    try {
+      if (exam.id == null) {
         await Provider.of<ExamProvider>(context, listen: false)
             .post(exam)
             .then((value) => Navigator.of(context).pop());
-      } on DuplicateException {
-        setState(() => errorText = "Jogador já fez exame nesta data.");
+      } else {
+        await Provider.of<ExamProvider>(context, listen: false)
+            .patch(exam)
+            .then((value) => Navigator.of(context).pop());
       }
-    } else {
-      await Provider.of<ExamProvider>(context, listen: false)
-          .patch(exam)
-          .then((value) => Navigator.of(context).pop());
+    } on DuplicateException {
+      setState(() => errorText = "Jogador já fez exame nesta data.");
     }
   }
 

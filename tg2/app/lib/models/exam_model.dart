@@ -1,6 +1,8 @@
 import 'package:tg2/models/player_model.dart';
 
 // Model for the Exam entity
+// Constraints:
+// - A player can't have more than 1 exam in a single date
 class Exam {
   // Variables
   late Player player; // Exam patient player
