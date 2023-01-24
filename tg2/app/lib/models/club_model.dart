@@ -1,30 +1,29 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
 
-// Model for the Club entity.
+// Model for the Club entity
 class Club {
   // Variables
-  late String name;
-  late bool playing;
-  Stadium? stadium;
-  String? phone;
-  String? fax;
-  String? email;
-  Color? color;
-  NetworkImage? picture;
-  final int? _id; // Only used when getting from JSON
+  late String name; // Club's name
+  late bool playing; // Flag to determine if club is participating in the league
+  Stadium? stadium; // Club's stadium
+  String? phone; // Phone number
+  String? fax; // Fax number
+  String? email; // Email address
+  Color? color; // Club's brand color
+  NetworkImage? picture; // Club's logo
+  final int? _id; // Database id number (managed by provider)
 
   // Constructors
-  Club(this.name, this.playing,
+  Club(this.name,
+      this.playing,
       [this.stadium,
-      this.phone,
-      this.fax,
-      this.email,
-      this.color = Colors.blue,
-      this.picture,
-      this._id]);
+        this.phone,
+        this.fax,
+        this.email,
+        this.color = Colors.blue,
+        this.picture,
+        this._id]);
 
   // Getters
   int? get id => _id;

@@ -1,4 +1,4 @@
-// Enumerator for position entity
+// Enumerator for Position entity
 enum Position {
   goalkeeper(name: "Guarda-redes"),
   defender(name: "Defesa"),
@@ -7,5 +7,5 @@ enum Position {
 
   const Position({required this.name});
 
-  final String name;
+  final String name; // Position label name
 }

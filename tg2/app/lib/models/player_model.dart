@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:tg2/models/country_model.dart';
 
-import 'country_model.dart';
-
-// Model for the Player entity. (Read & write).
+// Model for the Player entity
 class Player {
   // Variables
-  late String name;
-  String? nickname;
-  late Country country;
-  late DateTime birthday;
-  late int height;
-  late int weight;
-  NetworkImage? _picture;
+  late String name; // Player's name
+  String? nickname; // Player's optional nickname
+  late Country country; // Player's nationality
+  late DateTime birthday; // Player's date of birth
+  late int height; // Player's height
+  late int weight; // Player's weight
+  NetworkImage? picture; // Player's profile picture
   // TODO ADD SCHOOLING LEVEL
-  final int? _id; // Only used when getting from JSON
+  final int? _id; // Database id number (managed by provider)
 
   // Constructor
   Player(this.name, this.country, this.birthday, this.height, this.weight,
-      [this.nickname, this._picture, this._id]);
+      [this.nickname, this.picture, this._id]);
 
   // Getters
   int? get id => _id;
-  NetworkImage? get picture {
-    if (_picture != null) return _picture;
-    return null;
-  }
 
+  // Runtime variable. Calculate player's age from birthday date
   int get age => DateTime.now().year - birthday.year;
-
-  // Setters
-  set picture(NetworkImage? image) {
-    _picture = image;
-  }
 }
