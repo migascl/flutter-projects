@@ -1,3 +1,6 @@
+// TODO COMPLETE ALL CRUD METHODS
+// TODO ASSETS POST METHOD
+// TODO ERROR & RESPONSE HANDLING
 const port = 3000; // API Port
 const dbusername = "postgres"; // User name
 const dbpassword = "1899"; // Password
@@ -121,7 +124,9 @@ app.post('/exam', (req,res) => {
         player_id: player_id,
         date: date,
         result: result
-    }).then(r => res.json(r));
+    })
+        .then(r => res.json(r))
+        .catch((error) => console.log('ERROR:', error));
 
 });
 app.patch('/exam', (req,res) => {
@@ -131,15 +136,18 @@ app.patch('/exam', (req,res) => {
         player_id: player_id,
         date: date,
         result: result
-    }).then(r => res.json(r));
+    })
+        .then(r => res.json(r))
+        .catch((error) => console.log('ERROR:', error));
 
 });
 app.delete('/exam', (req,res) => {
     const { id } = req.body
     connection.none('DELETE FROM exam WHERE id = $/id/', {
         id: id,
-    }).then(r => res.json(r))
-
+    })
+        .then(r => res.json(r))
+        .catch((error) => console.log('ERROR:', error));
 });
 
 // POSITION
