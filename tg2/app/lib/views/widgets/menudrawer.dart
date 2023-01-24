@@ -3,14 +3,10 @@ import 'package:tg2/views/screens/club/clublist_view.dart';
 import 'package:tg2/views/screens/match/matchlist_view.dart';
 import 'package:tg2/views/screens/player/playerlist_view.dart';
 
-class MenuDrawer extends StatefulWidget {
+// This widget is used as a scaffold drawer to navigate through pages
+class MenuDrawer extends StatelessWidget {
   const MenuDrawer({super.key});
 
-  @override
-  State<MenuDrawer> createState() => _MenuDrawerState();
-}
-
-class _MenuDrawerState extends State<MenuDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -18,22 +14,35 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: [
           DrawerHeader(
               decoration: const BoxDecoration(color: Colors.blue),
-              child: Wrap(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Liga Portugal bwin",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        ?.merge(TextStyle(color: Colors.white)),
+                  Wrap(
+                    children: [
+                      Text(
+                        "Liga Portugal bwin",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            ?.merge(const TextStyle(color: Colors.white)),
+                      ),
+                      Text(
+                        "Época 2022-2023",
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            ?.merge(const TextStyle(color: Colors.white70)),
+                      ),
+                    ],
                   ),
                   Text(
-                    "Época 2022-2023",
+                    "Miguel Leirosa 2022/2023",
                     style: Theme.of(context)
                         .textTheme
-                        .subtitle1
-                        ?.merge(TextStyle(color: Colors.white70)),
-                  )
+                        .overline
+                        ?.merge(const TextStyle(color: Colors.white70)),
+                  ),
                 ],
               )),
           ListTile(
@@ -68,12 +77,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 maintainState: false,
               ),
             ),
-          ),
-          Column(
-            children: [
-              Divider(),
-              Text("Miguel Cardoso Leirosa 2022/2023"),
-            ],
           ),
         ],
       ),
