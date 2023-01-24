@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
-
-import 'futureimage.dart';
+import 'package:tg2/views/widgets/futureimage.dart';
 
 // Match tile. It displays basic match information.
 class MatchTile extends StatelessWidget {
   const MatchTile({super.key, required this.match});
 
-  final Match match;
+  final Match match; // Widget match data
 
   @override
   Widget build(BuildContext context) {
