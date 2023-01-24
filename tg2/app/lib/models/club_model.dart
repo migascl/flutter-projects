@@ -3,7 +3,7 @@ import 'package:tg2/models/stadium_model.dart';
 
 // Model for the Club entity
 class Club {
-  // Variables
+  // ################################## VARIABLES ##################################
   late String name; // Club's name
   late bool playing; // Flag to determine if club is participating in the league
   Stadium? stadium; // Club's stadium
@@ -14,17 +14,16 @@ class Club {
   NetworkImage? picture; // Club's logo
   final int? _id; // Database id number (managed by provider)
 
-  // Constructors
-  Club(this.name,
-      this.playing,
+  // ################################## CONSTRUCTORS ##################################
+  Club(this.name, this.playing,
       [this.stadium,
-        this.phone,
-        this.fax,
-        this.email,
-        this.color = Colors.blue,
-        this.picture,
-        this._id]);
+      this.phone,
+      this.fax,
+      this.email,
+      this.color = Colors.blue,
+      this.picture,
+      this._id]);
 
-  // Getters
+  // ################################## GETTERS ##################################
   int? get id => _id;
 }

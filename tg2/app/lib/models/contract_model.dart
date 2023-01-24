@@ -5,7 +5,7 @@ import 'package:tg2/models/position_model.dart';
 
 // Model for the Contract entity
 class Contract {
-  // Variables
+  // ################################## VARIABLES ##################################
   late Player player; // Employee player
   late Club club; // Employer club
   late int number; // Shirt number
@@ -14,16 +14,12 @@ class Contract {
   late Map<String, dynamic> document; // Verification document
   final int? _id; // Database id number (managed by provider)
 
-  // Constructor
-  Contract(this.player,
-      this.club,
-      this.number,
-      this.position,
-      this.period,
+  // ################################## CONSTRUCTORS ##################################
+  Contract(this.player, this.club, this.number, this.position, this.period,
       this.document,
       [this._id]);
 
-  // Getters
+  // ################################## GETTERS ##################################
   int? get id => _id;
 
   // Runtime variable. Calculate remaining time of contract

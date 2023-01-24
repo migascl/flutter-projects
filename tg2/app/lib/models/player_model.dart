@@ -3,7 +3,7 @@ import 'package:tg2/models/country_model.dart';
 
 // Model for the Player entity
 class Player {
-  // Variables
+  // ################################## VARIABLES ##################################
   late String name; // Player's name
   String? nickname; // Player's optional nickname
   late Country country; // Player's nationality
@@ -14,11 +14,11 @@ class Player {
   // TODO ADD SCHOOLING LEVEL
   final int? _id; // Database id number (managed by provider)
 
-  // Constructor
+  // ################################## CONSTRUCTORS ##################################
   Player(this.name, this.country, this.birthday, this.height, this.weight,
       [this.nickname, this.picture, this._id]);
 
-  // Getters
+  // ################################## GETTERS ##################################
   int? get id => _id;
 
   // Runtime variable. Calculate player's age from birthday date

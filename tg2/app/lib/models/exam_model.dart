@@ -1,23 +1,23 @@
 import 'package:tg2/models/player_model.dart';
 
 // Model for the Exam entity
-// Constraints:
 // - A player can't have more than 1 exam in a single date
 class Exam {
-  // Variables
+  // ################################## VARIABLES ##################################
   late Player player; // Exam patient player
   late DateTime date; // Exam's date
   late bool result; // Exam's result
   final int? _id; // Database id number (managed by provider)
 
-  // Constructor
+  // ################################## CONSTRUCTORS ##################################
   Exam(this.player, this.date, this.result, [this._id]);
 
   Exam.empty([this._id]); // Used when creating new object through UI
 
-  // Getters
+  // ################################## GETTERS ##################################
   int? get id => _id;
 
+  // ################################## METHODS ##################################
   // Convert object into API readable JSON
   Map<String, dynamic> toJson() => {
         'id': _id,
