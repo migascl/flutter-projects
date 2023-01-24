@@ -75,6 +75,8 @@ class ContractView extends StatelessWidget {
                           errorImageUri: 'assets/images/placeholder-player.png',
                           height: 64,
                           aspectRatio: 1 / 1,
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.white,
                         ),
                         const SizedBox(height: 8),
                         Text(

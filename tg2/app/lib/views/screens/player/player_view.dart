@@ -104,6 +104,8 @@ class _PlayerViewState extends State<PlayerView> {
                     errorImageUri: 'assets/images/placeholder-player.png',
                     aspectRatio: 1 / 1,
                     height: double.infinity,
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.white,
                   ),
                   const SizedBox(width: 16),
                   Column(

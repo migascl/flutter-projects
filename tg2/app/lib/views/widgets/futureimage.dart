@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
-// TODO BORDER SUPPORT
-// This is a wrapper widget for loading images by providing a placeholder and fallback image
-// when trying to load any image provider (Asset, network...)
-// Also supports scaling and aspect ratios
+// This is a wrapper widget for loading images from any image provider (Asset, network...)
+// It supports placeholder and fallback images, scaling, aspect ratios, borders...
 class FutureImage extends StatefulWidget {
-  const FutureImage({
-    super.key,
-    required this.image,
-    this.errorImageUri,
-    this.height,
-    this.width,
-    this.aspectRatio,
-  });
+  const FutureImage(
+      {super.key,
+      required this.image,
+      this.errorImageUri,
+      this.height,
+      this.width,
+      this.aspectRatio,
+      this.borderRadius,
+      this.color});
 
   final ImageProvider image;
   final String? errorImageUri;
   final double? height;
   final double? width;
   final double? aspectRatio;
+  final BorderRadius? borderRadius;
+  final Color? color;
 
   @override
   State<FutureImage> createState() => _FutureImageState();
@@ -39,11 +40,17 @@ class _FutureImageState extends State<FutureImage> {
       placeholderFit: BoxFit.fill,
     );
 
-    return SizedBox(
-        height: widget.height,
-        width: widget.width,
-        child: (widget.aspectRatio != null)
-            ? AspectRatio(aspectRatio: widget.aspectRatio!, child: imageWidget)
-            : imageWidget);
+    return ClipRRect(
+        borderRadius: widget.borderRadius ?? BorderRadius.zero,
+        child: Container(
+            height: widget.height,
+            width: widget.width,
+            decoration: BoxDecoration(
+              color: widget.color,
+            ),
+            child: (widget.aspectRatio != null)
+                ? AspectRatio(
+                    aspectRatio: widget.aspectRatio!, child: imageWidget)
+                : imageWidget));
   }
 }

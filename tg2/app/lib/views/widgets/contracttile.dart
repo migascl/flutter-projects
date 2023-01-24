@@ -47,6 +47,7 @@ class _ContractTileState extends State<ContractTile> {
               : 'assets/images/placeholder-player.png',
           height: (widget.dense) ? 32 : 48,
           aspectRatio: 1 / 1,
+          borderRadius: (widget.showClub) ? null : BorderRadius.circular(100),
         ),
         title: (widget.showClub)
             ? Text(widget.contract.club.name)

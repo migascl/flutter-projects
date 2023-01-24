@@ -195,7 +195,7 @@ class _PlayerListViewState extends State<PlayerListView> {
             )
           ],
         ),
-        drawer: MenuDrawer(),
+        drawer: const MenuDrawer(),
         body: RefreshIndicator(
           key: _playerListRefreshKey,
           onRefresh: _loadPageData,
@@ -232,6 +232,8 @@ class _PlayerListViewState extends State<PlayerListView> {
                             errorImageUri:
                                 'assets/images/placeholder-player.png',
                             aspectRatio: 1 / 1,
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white,
                           ),
                           title: Text(player.nickname ?? player.name),
                           subtitle: Text(player.country.name),
