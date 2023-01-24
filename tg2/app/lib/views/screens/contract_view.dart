@@ -7,7 +7,7 @@ import 'package:tg2/views/widgets/futureimage.dart';
 class ContractView extends StatelessWidget {
   const ContractView({super.key, required this.contract});
 
-  final Contract contract;
+  final Contract contract; // Default Widget data
 
   @override
   Widget build(BuildContext context) {
