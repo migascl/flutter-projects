@@ -161,14 +161,13 @@ class _StartUpView extends State<StartUpView> {
     }
   }
 
-  // Attempt connection on initial state
   @override
   void initState() {
     print("StartUp/V: Initialized State!");
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((context) {
-      _attemptConnection();
-    });
+    // Instantiate connection attempt on initial state
+    WidgetsBinding.instance
+        .addPostFrameCallback((context) => _attemptConnection());
   }
 
   @override

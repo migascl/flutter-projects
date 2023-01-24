@@ -14,7 +14,6 @@ import '../../widgets/contracttile.dart';
 import '../../widgets/futureimage.dart';
 import '../contract_view.dart';
 
-// TODO ADD SCHOOLING
 class PlayerView extends StatefulWidget {
   const PlayerView({super.key, required this.player});
 
@@ -80,8 +79,7 @@ class _PlayerViewState extends State<PlayerView> {
               onPressed: () => showDialog(
                   context: context,
                   barrierDismissible: false, // user must tap button!
-                  builder: (BuildContext context) =>
-                      ExamModifyView(player: _player)),
+                  builder: (BuildContext context) => ExamModifyView(player: _player)),
             )
           : null,
       body: Column(
@@ -91,8 +89,7 @@ class _PlayerViewState extends State<PlayerView> {
             margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
             color: Colors.blue,
             shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(16))),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               height: MediaQuery.of(context).size.height * 0.2,
@@ -137,218 +134,197 @@ class _PlayerViewState extends State<PlayerView> {
           const Divider(indent: 16, endIndent: 16),
           // Page body
           Expanded(
-            child: PageView(
-              controller: _pageController,
-              children: [
-                // Player information view
-                // TODO ADD SCHOOLING TILE
-                Card(
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16))),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListTile(
-                            title: const Text("Nome"),
-                            subtitle: Text(_player.name)),
-                        ListTile(
-                          title: const Text("Nacionalidade"),
-                          subtitle: Text(_player.country.name),
-                        ),
-                        ListTile(
-                          title: const Text("Data de Nascimento"),
-                          subtitle: Text(
-                              "${DateUtilities().toYMD(_player.birthday)} (${_player.age} anos)"),
-                        ),
-                        ListTile(
-                          title: const Text("Altura"),
-                          subtitle: Text("${_player.height} cm"),
-                        ),
-                        ListTile(
-                          title: const Text("Peso"),
-                          subtitle: Text("${_player.weight} kg"),
-                        ),
-                      ],
-                    ),
+              child: PageView(
+            controller: _pageController,
+            children: [
+              // Player information view
+              // TODO ADD SCHOOLING TILE
+              Card(
+                margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ListTile(title: const Text("Nome"), subtitle: Text(_player.name)),
+                      ListTile(
+                        title: const Text("Nacionalidade"),
+                        subtitle: Text(_player.country.name),
+                      ),
+                      ListTile(
+                        title: const Text("Data de Nascimento"),
+                        subtitle: Text(
+                            "${DateUtilities().toYMD(_player.birthday)} (${_player.age} anos)"),
+                      ),
+                      ListTile(
+                        title: const Text("Altura"),
+                        subtitle: Text("${_player.height} cm"),
+                      ),
+                      ListTile(
+                        title: const Text("Peso"),
+                        subtitle: Text("${_player.weight} kg"),
+                      ),
+                    ],
                   ),
                 ),
-                // Player contracts page
-                Card(
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16))),
-                  child: Consumer<ContractProvider>(
-                    builder: (context, contractProvider, child) {
-                      if (contractProvider.state == ProviderState.ready) {
-                        List<Contract> list = List.from(
-                            contractProvider.items.values.where(
-                                (element) => element.player.id == _player.id));
-                        list.sort(
-                            (a, b) => b.period.end.compareTo(a.period.end));
-                        if (list.isEmpty) {
-                          return Center(
-                            child: Text(
-                              "Este jogador não contêm contratos.",
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                          );
-                        }
-                        return Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            itemCount: list.length,
-                            itemBuilder: (context, index) {
-                              Contract contract = list.elementAt(index);
-                              return ContractTile(
-                                contract: contract,
-                                showClub: true,
-                                showAlert: true,
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      isDismissible: true,
-                                      backgroundColor: Colors.transparent,
-                                      context: context,
-                                      builder: (context) =>
-                                          ContractView(contract: contract));
-                                },
-                              );
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const Divider(),
+              ),
+              // Player contracts page
+              Card(
+                margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                child: Consumer<ContractProvider>(
+                  builder: (context, contractProvider, child) {
+                    if (contractProvider.state == ProviderState.ready) {
+                      List<Contract> list = List.from(contractProvider.items.values
+                          .where((element) => element.player.id == _player.id));
+                      list.sort((a, b) => b.period.end.compareTo(a.period.end));
+                      if (list.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Este jogador não contêm contratos.",
+                            style: Theme.of(context).textTheme.caption,
                           ),
                         );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
                       }
-                    },
-                  ),
+                      return Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            Contract contract = list.elementAt(index);
+                            return ContractTile(
+                              contract: contract,
+                              showClub: true,
+                              showAlert: true,
+                              onTap: () {
+                                showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    isDismissible: true,
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    builder: (context) => ContractView(contract: contract));
+                              },
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) => const Divider(),
+                        ),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
-                // Player exams page
-                Card(
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16))),
-                  child: Consumer<ExamProvider>(
-                    builder: (context, examProvider, child) {
-                      if (examProvider.state == ProviderState.ready) {
-                        List<Exam> list = List.from(examProvider.items.values
-                            .where(
-                                (element) => element.player.id == _player.id));
-                        list.sort((a, b) => b.date.compareTo(a.date));
-                        if (list.isEmpty) {
-                          return Center(
-                            child: Text(
-                              "Jogador não realizou nenhum exame.",
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                          );
-                        }
-                        return Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: ListView.separated(
-                            itemCount: list.length,
-                            itemBuilder: (context, index) {
-                              Exam exam = list.elementAt(index);
-                              return Column(
-                                children: [
-                                  ListTile(
-                                      title: Text("Exame ${exam.id}"),
-                                      subtitle: Text(
-                                          "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
-                                      trailing: PopupMenuButton(
-                                        // Callback that sets the selected popup menu item.
-                                        onSelected: (int value) {
-                                          if (value == 0) {
+              ),
+              // Player exams page
+              Card(
+                margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                child: Consumer<ExamProvider>(
+                  builder: (context, examProvider, child) {
+                    if (examProvider.state == ProviderState.ready) {
+                      List<Exam> list = List.from(examProvider.items.values
+                          .where((element) => element.player.id == _player.id));
+                      list.sort((a, b) => b.date.compareTo(a.date));
+                      if (list.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Jogador não realizou nenhum exame.",
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        );
+                      }
+                      return Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListView.separated(
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            Exam exam = list.elementAt(index);
+                            return Column(
+                              children: [
+                                ListTile(
+                                    title: Text("Exame ${exam.id}"),
+                                    subtitle: Text(
+                                        "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
+                                    trailing: PopupMenuButton(
+                                      // Callback that sets the selected popup menu item.
+                                      onSelected: (int value) {
+                                        switch (value) {
+                                          case 0:
                                             showDialog(
                                               context: context,
-                                              barrierDismissible:
-                                                  false, // user must tap button!
-                                              builder: (BuildContext context) =>
-                                                  ExamModifyView(
+                                              barrierDismissible: false,
+                                              // user must tap button!
+                                              builder: (BuildContext context) => ExamModifyView(
                                                 initialValue: exam,
                                                 player: _player,
                                               ),
                                             ).then((value) => _loadPageData());
-                                          }
-                                          if (value == 1) {
+                                            break;
+                                          case 1:
                                             showDialog<String>(
                                               context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
+                                              builder: (BuildContext context) => AlertDialog(
                                                 title: const Text('Atenção!'),
                                                 content: Text(
                                                     "Tem a certeza que pretende eliminar exame ${exam.id}? Esta operação não é reversível!"),
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
-                                                        examProvider
-                                                            .delete(exam);
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        examProvider.delete(exam);
+                                                        Navigator.of(context).pop();
                                                       },
-                                                      child: const Text(
-                                                          'Eliminar')),
+                                                      child: const Text('Eliminar')),
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        Navigator.of(context).pop();
                                                       },
-                                                      child: const Text(
-                                                          'Cancelar')),
+                                                      child: const Text('Cancelar')),
                                                 ],
                                               ),
                                             );
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                            <PopupMenuEntry<int>>[
-                                          const PopupMenuItem<int>(
-                                            value: 0,
-                                            child: Text('Editar'),
-                                          ),
-                                          const PopupMenuItem<int>(
-                                            value: 1,
-                                            child: Text('Remover'),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              );
-                            },
-                            separatorBuilder: (context, int index) =>
-                                const Divider(),
-                          ),
-                        );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
+                                            break;
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                        const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text('Editar'),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 1,
+                                          child: Text('Remover'),
+                                        ),
+                                      ],
+                                    )),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (context, int index) => const Divider(),
+                        ),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
-              ],
-              onPageChanged: (page) {
-                setState(() {
-                  _selectedIndex = page;
-                });
-              },
-            ),
-          ),
+              ),
+            ],
+            onPageChanged: (page) {
+              setState(() {
+                _selectedIndex = page;
+              });
+            },
+          )),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Informação'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.file_copy_rounded), label: 'Contratos'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.science_rounded), label: 'Exames')
+          BottomNavigationBarItem(icon: Icon(Icons.file_copy_rounded), label: 'Contratos'),
+          BottomNavigationBarItem(icon: Icon(Icons.science_rounded), label: 'Exames')
         ],
         onTap: _onTabTap,
         currentIndex: _selectedIndex,

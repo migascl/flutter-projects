@@ -47,7 +47,7 @@ class MenuDrawer extends StatelessWidget {
               )),
           ListTile(
             leading: const Icon(Icons.calendar_month_rounded),
-            title: const Text("Jornada"),
+            title: const Text("Jogos"),
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
