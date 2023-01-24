@@ -1,28 +1,29 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:tg2/models/country_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 
-// Country provider
+// Country provider class
 class CountryProvider extends ChangeNotifier {
-  // Variables
-  ProviderState _state = ProviderState.empty;
-  static Map<int, Country> _items = {};
+  // ################################## VARIABLES ##################################
+  ProviderState _state = ProviderState.empty; // Provider state
+  static Map<int, Country> _items = {}; // Cached data
 
-  // Automatically fetch data when initialized
   CountryProvider() {
     print("Country/P: Initialized");
   }
 
-  // Getters
+  // ################################## GETTERS ##################################
   ProviderState get state => _state;
 
   Map<int, Country> get items => _items;
 
-  // Methods
+  // ################################## METHODS ##################################
+  // Get all countries from database.
+  // Calls GET method from API service and converts them to objects to insert onto the provider cache.
+  // Prevents multiple calls.
   Future get() async {
     try {
       if (_state != ProviderState.busy) {

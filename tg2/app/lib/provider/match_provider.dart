@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/match_model.dart';
@@ -11,30 +10,32 @@ import 'package:tg2/utils/constants.dart';
 
 // Match provider class
 class MatchProvider extends ChangeNotifier {
-  // Variables
-  late StadiumProvider _stadiumProvider;
-  late ClubProvider _clubProvider;
-  ProviderState _state = ProviderState.empty;
-  static Map<int, Match> _items = {};
+  // ################################## VARIABLES ##################################
+  late StadiumProvider _stadiumProvider; // Reference to parent provider Stadium
+  late ClubProvider _clubProvider; // Reference to parent provider Club
+  ProviderState _state = ProviderState.empty; // Provider state
+  static Map<int, Match> _items = {}; // Cached data
 
-  // Automatically fetch data when initialized
   MatchProvider(this._stadiumProvider, this._clubProvider) {
     print("Match/P: Initialized");
   }
 
-  // Getters
+  // ################################## GETTERS ##################################
   ProviderState get state => _state;
 
   Map<int, Match> get items => _items;
 
+  // Get matches where a given club participated in (Uses club id to search in both home and away)
   Map<int, Match> getByClub(Club club) {
-    return Map.fromEntries(_items.entries.expand((element) => [
-          if (element.value.clubHome.id == club.id ||
-              element.value.clubAway.id == club.id)
-            MapEntry(element.key, element.value)
-        ]));
+    return Map.fromEntries(_items.entries.expand((element) =>
+    [
+      if (element.value.clubHome.id == club.id ||
+          element.value.clubAway.id == club.id)
+        MapEntry(element.key, element.value)
+    ]));
   }
 
+  // Get current season points from a given club (sum of all scores)
   int getClubPoints(Club club) {
     int points = 0;
     for (var item in getByClub(club).values) {
@@ -50,6 +51,7 @@ class MatchProvider extends ChangeNotifier {
     return points;
   }
 
+  // Get list of matchweeks of the season
   List<int> getMatchweeks() {
     int currentMatchweek = _items.entries.last.value.matchweek;
     List<int> matchweeks = List<int>.empty(growable: true);
@@ -59,7 +61,7 @@ class MatchProvider extends ChangeNotifier {
     return matchweeks;
   }
 
-  // Setters
+  // ################################## SETTERS ##################################
   set stadiumProvider(StadiumProvider provider) {
     _stadiumProvider = provider;
     notifyListeners();
@@ -70,7 +72,10 @@ class MatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Methods
+  // ################################## METHODS ##################################
+  // Get all matches from database.
+  // Calls GET method from API service and converts them to objects to insert onto the provider cache.
+  // Prevents multiple calls.
   Future get() async {
     try {
       if (_state != ProviderState.busy &&

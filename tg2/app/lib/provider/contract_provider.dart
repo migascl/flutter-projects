@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/position_model.dart';
@@ -8,31 +7,30 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
-
-import 'club_provider.dart';
+import 'package:tg2/provider/club_provider.dart';
 
 // Contract provider class
 class ContractProvider extends ChangeNotifier {
-  // Variables
-  late PlayerProvider _playerProvider;
-  late ClubProvider _clubProvider;
-  ProviderState _state = ProviderState.empty;
-  Map<int, Contract> _items = {};
+  // ################################## VARIABLES ##################################
+  late PlayerProvider _playerProvider; // Reference to parent provider Player
+  late ClubProvider _clubProvider; // Reference to parent provider Club
+  ProviderState _state = ProviderState.empty; // Provider state
+  static Map<int, Contract> _items = {}; // Cached data
 
-  // Automatically fetch data when initialized
   ContractProvider(this._playerProvider, this._clubProvider) {
     print("Contract/P: Initialized");
   }
 
-  // Getters
+  // ################################## GETTERS ##################################
   ProviderState get state => _state;
 
   Map<int, Contract> get items => _items;
 
+  // Get all active contracts from cache
   Map<int, Contract> get activeContracts => Map.fromEntries(_items.entries
       .where((element) => element.value.club.playing && element.value.active));
 
-  // Setters
+  // ################################## SETTERS ##################################
   set playerProvider(PlayerProvider provider) {
     _playerProvider = provider;
     notifyListeners();
@@ -43,7 +41,10 @@ class ContractProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Methods
+  // ################################## METHODS ##################################
+  // Get all contracts from database.
+  // Calls GET method from API service and converts them to objects to insert onto the provider cache.
+  // Prevents multiple calls.
   Future get() async {
     try {
       if (_state != ProviderState.busy &&

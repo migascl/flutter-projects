@@ -1,39 +1,38 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/club_model.dart';
-import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
-
-import '../utils/constants.dart';
+import 'package:tg2/utils/constants.dart';
+import 'package:tg2/provider/stadium_provider.dart';
 
 // Club provider class
 class ClubProvider extends ChangeNotifier {
-  // Variables
-  late StadiumProvider _stadiumProvider;
-  ProviderState _state = ProviderState.empty;
-  static Map<int, Club> _items = {};
+  // ################################## VARIABLES ##################################
+  late StadiumProvider _stadiumProvider; // Reference to parent provider Stadium
+  ProviderState _state = ProviderState.empty; // Provider state
+  static Map<int, Club> _items = {}; // Cached data
 
-  // Automatically fetch data when initialized
   ClubProvider(this._stadiumProvider) {
     print("Club/P: Initialized");
   }
 
-  // Getters
+  // ################################## GETTERS ##################################
   ProviderState get state => _state;
 
   Map<int, Club> get items => _items;
 
-  // Setters
+  // ################################## SETTERS ##################################
   set stadiumProvider(StadiumProvider provider) {
     _stadiumProvider = provider;
     notifyListeners();
   }
 
-  // Methods
-  // Method for getting all clubs from database and filling them to the list
+  // ################################## METHODS ##################################
+  // Get all clubs from database.
+  // Calls GET method from API service and converts them to objects to insert onto the provider cache.
+  // Prevents multiple calls.
   Future get() async {
     try {
       if (_state != ProviderState.busy &&

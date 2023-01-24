@@ -1,37 +1,37 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tg2/models/stadium_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
-
-import 'country_provider.dart';
+import 'package:tg2/provider/country_provider.dart';
 
 // Stadium provider class
 class StadiumProvider extends ChangeNotifier {
-  // Variables
-  late CountryProvider _countryProvider;
-  ProviderState _state = ProviderState.empty;
-  static Map<int, Stadium> _items = {};
+  // ################################## VARIABLES ##################################
+  late CountryProvider _countryProvider; // Reference to parent provider Country
+  ProviderState _state = ProviderState.empty; // Provider state
+  static Map<int, Stadium> _items = {}; // Cached data
 
-  // Automatically fetch data when initialized
   StadiumProvider(this._countryProvider) {
     print("Stadium/P: Initialized");
   }
 
-  // Getters
+  // ################################## GETTERS ##################################
   ProviderState get state => _state;
 
   Map<int, Stadium> get items => _items;
 
-  // Setters
+  // ################################## SETTERS ##################################
   set countryProvider(CountryProvider provider) {
     _countryProvider = provider;
     notifyListeners();
   }
 
-  // Methods
+  // ################################## METHODS ##################################
+  // Get all stadiums from database.
+  // Calls GET method from API service and converts them to objects to insert onto the provider cache.
+  // Prevents multiple calls.
   Future get() async {
     try {
       if (_state != ProviderState.busy &&
