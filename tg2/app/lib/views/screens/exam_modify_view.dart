@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/models/exam_model.dart';
+import 'package:tg2/models/player_model.dart';
+import 'package:tg2/provider/exam_provider.dart';
+import 'package:tg2/utils/dateutils.dart';
+import 'package:tg2/utils/exceptions.dart';
 
-import '../../models/player_model.dart';
-import '../../provider/exam_provider.dart';
-import '../../utils/dateutils.dart';
-import '../../utils/exceptions.dart';
-
+// Widget used to manage a player's exam data
+// It automatically populates all fields if an exam object is provided
+// Depending on the existence of a non-null id, it knows when to either post or update the database.
 class ExamModifyView extends StatefulWidget {
   const ExamModifyView({super.key, this.initialValue, required this.player});
 
-  final Exam? initialValue;
-  final Player player;
+  final Exam? initialValue; // Default widget data
+  final Player player; // Player information
 
   @override
   State<ExamModifyView> createState() => _ExamModifyViewState();
@@ -23,12 +25,13 @@ class _ExamModifyViewState extends State<ExamModifyView> {
 
   Exam exam = Exam.empty();
 
-  Future<void> _insertData() async {
+  // Method to submit data onto the provider
+  // If the exam object contains a non null id, it executes the PATCH method, or POST otherwise.
+  Future<void> _submitData() async {
     if (dateFieldController.text.isEmpty) {
       setState(() => errorText = "Campo necessário!");
       return;
     }
-    // If exam id is null, it means we're adding a new exam, updating otherwise.
     try {
       if (exam.id == null) {
         await Provider.of<ExamProvider>(context, listen: false)
@@ -46,6 +49,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
 
   @override
   void initState() {
+    // Populate default data
     if (widget.initialValue == null) {
       exam.result = false;
     } else {
@@ -111,7 +115,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
           },
         ),
         ElevatedButton(
-            child: const Text('Guardar'), onPressed: () => _insertData()),
+            child: const Text('Guardar'), onPressed: () => _submitData()),
       ],
     );
   }
