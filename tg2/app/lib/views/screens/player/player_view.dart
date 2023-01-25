@@ -82,63 +82,59 @@ class _PlayerViewState extends State<PlayerView> {
                   builder: (BuildContext context) => ExamModifyView(player: _player)),
             )
           : null,
-      body: Column(
-        children: [
-          // Page header
-          Card(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-            color: Colors.blue,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  FutureImage(
-                    image: _player.picture!,
-                    errorImageUri: 'assets/images/placeholder-player.png',
-                    aspectRatio: 1 / 1,
-                    height: double.infinity,
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _player.nickname ?? _player.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.merge(const TextStyle(color: Colors.white)),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _player.country.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle1
-                            ?.merge(const TextStyle(color: Colors.white70)),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+      body: Column(children: [
+        // Page header
+        Card(
+          margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+          color: Colors.blue,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                FutureImage(
+                  image: _player.picture!,
+                  errorImageUri: 'assets/images/placeholder-player.png',
+                  aspectRatio: 1 / 1,
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _player.nickname ?? _player.name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.merge(const TextStyle(color: Colors.white)),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _player.country.name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1
+                          ?.merge(const TextStyle(color: Colors.white70)),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          const Divider(indent: 16, endIndent: 16),
-          // Page body
-          Expanded(
-              child: PageView(
+        ),
+        // Page body
+        Expanded(
+          child: PageView(
             controller: _pageController,
             children: [
               // Player information view
-              // TODO ADD SCHOOLING TILE
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
@@ -164,6 +160,11 @@ class _PlayerViewState extends State<PlayerView> {
                         title: const Text("Peso"),
                         subtitle: Text("${_player.weight} kg"),
                       ),
+                      if (_player.schoolingLvl != null)
+                        ListTile(
+                          title: const Text("Escolaridade"),
+                          subtitle: Text(_player.schoolingLvl!.name),
+                        )
                     ],
                   ),
                 ),
@@ -179,6 +180,7 @@ class _PlayerViewState extends State<PlayerView> {
                       List<Contract> list = List.from(contractProvider.items.values
                           .where((element) => element.player.id == _player.id));
                       list.sort((a, b) => b.period.end.compareTo(a.period.end));
+
                       if (list.isEmpty) {
                         return Center(
                           child: Text(
@@ -317,9 +319,9 @@ class _PlayerViewState extends State<PlayerView> {
                 _selectedIndex = page;
               });
             },
-          )),
-        ],
-      ),
+          ),
+        ),
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Informação'),

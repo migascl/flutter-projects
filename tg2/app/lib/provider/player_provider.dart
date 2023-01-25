@@ -6,6 +6,7 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/models/schooling_model.dart';
 
 // Player provider class
 class PlayerProvider extends ChangeNotifier {
@@ -35,8 +36,7 @@ class PlayerProvider extends ChangeNotifier {
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          _countryProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Player/P: Getting all...");
@@ -50,6 +50,7 @@ class PlayerProvider extends ChangeNotifier {
               json['height'],
               json['weight'],
               json['nickname'],
+              Schooling.values[json['schooling_id']],
               NetworkImage(dotenv.env['API_URL']! + json['picture']),
               json['id'],
             )
@@ -60,9 +61,7 @@ class PlayerProvider extends ChangeNotifier {
       print("Player/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

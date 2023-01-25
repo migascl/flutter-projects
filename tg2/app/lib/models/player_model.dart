@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tg2/models/country_model.dart';
+import 'package:tg2/models/schooling_model.dart';
 
 // Model for the Player entity
 class Player {
@@ -10,13 +11,13 @@ class Player {
   late DateTime birthday; // Player's date of birth
   late int height; // Player's height
   late int weight; // Player's weight
+  Schooling? schoolingLvl; // Player's schooling level
   NetworkImage? picture; // Player's profile picture
-  // TODO ADD SCHOOLING LEVEL
   final int? _id; // Database id number (managed by provider)
 
   // ################################## CONSTRUCTORS ##################################
   Player(this.name, this.country, this.birthday, this.height, this.weight,
-      [this.nickname, this.picture, this._id]);
+      [this.nickname, this.schoolingLvl, this.picture, this._id]);
 
   // ################################## GETTERS ##################################
   int? get id => _id;
