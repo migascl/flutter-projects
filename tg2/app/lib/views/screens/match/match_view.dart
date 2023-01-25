@@ -161,22 +161,25 @@ class _MatchViewState extends State<MatchView> {
             ),
             // ############# Body #############
             Expanded(
-              child: Container(
-                color: Theme.of(context).canvasColor,
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                child: Row(children: [
-                  _MatchSquadList(
-                    scrollController: controller,
-                    club: widget.match.clubHome,
-                    squad: homeSquad,
-                  ),
-                  _MatchSquadList(
-                    scrollController: controller,
-                    club: widget.match.clubAway,
-                    squad: awaySquad,
-                    mirrored: true,
-                  ),
-                ]),
+              child: IntrinsicHeight(
+                child: Container(
+                  color: Theme.of(context).canvasColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  child: Row(children: [
+                    _MatchSquadList(
+                      scrollController: controller,
+                      club: widget.match.clubHome,
+                      squad: homeSquad,
+                    ),
+                    const VerticalDivider(thickness: 1, indent: 32),
+                    _MatchSquadList(
+                      scrollController: controller,
+                      club: widget.match.clubAway,
+                      squad: awaySquad,
+                      mirrored: true,
+                    ),
+                  ]),
+                ),
               ),
             ),
           ]),
@@ -233,7 +236,7 @@ class _MatchSquadList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> list = [
+    List<Widget> header = [
       FutureImage(
         image: club.picture!,
         errorImageUri: 'assets/images/placeholder-club.png',
@@ -246,7 +249,7 @@ class _MatchSquadList extends StatelessWidget {
       ),
     ];
 
-    if (mirrored) list = list.reversed.toList();
+    if (mirrored) header = header.reversed.toList();
 
     return Expanded(
       child: Column(
@@ -254,8 +257,8 @@ class _MatchSquadList extends StatelessWidget {
         children: [
           Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child:
-                  Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, children: list)),
+              child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center, spacing: 8, children: header)),
           Card(
             child: ListView.separated(
               primary: false,
