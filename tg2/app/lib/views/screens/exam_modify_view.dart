@@ -22,6 +22,7 @@ class ExamModifyView extends StatefulWidget {
 class _ExamModifyViewState extends State<ExamModifyView> {
   TextEditingController dateFieldController = TextEditingController();
   String? errorText;
+  bool isLoading = false;
 
   Exam exam = Exam.empty();
 
@@ -33,6 +34,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
       return;
     }
     try {
+      setState(() => isLoading = true);
       if (exam.id == null) {
         await Provider.of<ExamProvider>(context, listen: false)
             .post(exam)
@@ -44,6 +46,8 @@ class _ExamModifyViewState extends State<ExamModifyView> {
       }
     } on DuplicateException {
       setState(() => errorText = "Jogador já fez exame nesta data.");
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -74,6 +78,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
               title: const Text("Passou?"),
               contentPadding: EdgeInsets.zero,
               value: exam.result,
+              enabled: !isLoading,
               onChanged: (bool? value) => setState(() => exam.result = value!),
               controlAffinity: ListTileControlAffinity.leading,
             ),
@@ -82,6 +87,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
             child: TextFormField(
               controller: dateFieldController,
               readOnly: true,
+              enabled: !isLoading,
               decoration: InputDecoration(
                 labelText: "Data",
                 errorText: errorText,
@@ -110,12 +116,12 @@ class _ExamModifyViewState extends State<ExamModifyView> {
       actions: [
         TextButton(
           child: const Text('Cancelar'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: isLoading ? null : () => Navigator.of(context).pop(),
         ),
         ElevatedButton(
-            child: const Text('Guardar'), onPressed: () => _submitData()),
+          onPressed: isLoading ? null : () => _submitData(),
+          child: isLoading ? CircularProgressIndicator() : Text('Guardar'),
+        ),
       ],
     );
   }
