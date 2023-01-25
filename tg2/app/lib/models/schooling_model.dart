@@ -1,4 +1,4 @@
-// Enumerator for Position entity
+// Enumerator for Schooling entity
 enum Schooling {
   preSchool(name: "Ensino Básico - 1º Ciclo"),
   elementarySchool(name: "Ensino Básico - 2º Ciclo"),
@@ -8,5 +8,5 @@ enum Schooling {
 
   const Schooling({required this.name});
 
-  final String name; // Position label name
+  final String name; // Schooling label name
 }
