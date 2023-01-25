@@ -30,11 +30,10 @@ class Main extends StatelessWidget {
       // Entities composed of different entities are defined as Proxy Providers so their data is refreshed
       // in every parent change notification
       providers: [
-        ChangeNotifierProvider<CountryProvider>(
-            create: (context) => CountryProvider()),
+        ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
-            create: (context) => StadiumProvider(
-                Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) =>
+                StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, stadiumProvider) {
               print("Stadium/P: Update");
               if (stadiumProvider == null) throw Exception;
@@ -44,8 +43,7 @@ class Main extends StatelessWidget {
               return stadiumProvider;
             }),
         ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
-            create: (context) => ClubProvider(
-                Provider.of<StadiumProvider>(context, listen: false)),
+            create: (context) => ClubProvider(Provider.of<StadiumProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider) {
               print("Club/P: Update");
               if (clubProvider == null) throw Exception;
@@ -54,10 +52,8 @@ class Main extends StatelessWidget {
                 ..get();
               return clubProvider;
             }),
-        ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider,
-                MatchProvider>(
-            create: (context) => MatchProvider(
-                Provider.of<StadiumProvider>(context, listen: false),
+        ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider, MatchProvider>(
+            create: (context) => MatchProvider(Provider.of<StadiumProvider>(context, listen: false),
                 Provider.of<ClubProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider, matchProvider) {
               print("Match/P: Update");
@@ -69,8 +65,8 @@ class Main extends StatelessWidget {
               return matchProvider;
             }),
         ChangeNotifierProxyProvider<CountryProvider, PlayerProvider>(
-            create: (context) => PlayerProvider(
-                Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) =>
+                PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, playerProvider) {
               print("Player/P: Update");
               if (playerProvider == null) throw Exception;
@@ -79,8 +75,7 @@ class Main extends StatelessWidget {
                 ..get();
               return playerProvider;
             }),
-        ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider,
-                ContractProvider>(
+        ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider, ContractProvider>(
             create: (context) => ContractProvider(
                 Provider.of<PlayerProvider>(context, listen: false),
                 Provider.of<ClubProvider>(context, listen: false)),
@@ -94,8 +89,7 @@ class Main extends StatelessWidget {
               return contractProvider;
             }),
         ChangeNotifierProxyProvider<PlayerProvider, ExamProvider>(
-            create: (context) => ExamProvider(
-                Provider.of<PlayerProvider>(context, listen: false)),
+            create: (context) => ExamProvider(Provider.of<PlayerProvider>(context, listen: false)),
             update: (context, playerProvider, examProvider) {
               print("Club/P: Update");
               if (examProvider == null) throw Exception;
@@ -145,8 +139,7 @@ class _StartUpView extends State<StartUpView> {
           barrierDismissible: false,
           builder: (BuildContext context) => AlertDialog(
                 title: const Text('Ocorreu um erro!'),
-                content: Text(
-                    'Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
+                content: Text('Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -166,8 +159,7 @@ class _StartUpView extends State<StartUpView> {
     print("StartUp/V: Initialized State!");
     super.initState();
     // Instantiate connection attempt on initial state
-    WidgetsBinding.instance
-        .addPostFrameCallback((context) => _attemptConnection());
+    WidgetsBinding.instance.addPostFrameCallback((context) => _attemptConnection());
   }
 
   @override

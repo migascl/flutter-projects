@@ -20,7 +20,7 @@ class ClubListView extends StatefulWidget {
 class _ClubListViewState extends State<ClubListView> {
   final GlobalKey<RefreshIndicatorState> _clubListRefreshKey = GlobalKey<RefreshIndicatorState>();
 
-  // Method to reload providers used by the page
+  // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
@@ -122,7 +122,7 @@ class _ClubListViewState extends State<ClubListView> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) => ClubView(club: club),
-                                maintainState: true,
+                                maintainState: false,
                               ),
                             );
                           },

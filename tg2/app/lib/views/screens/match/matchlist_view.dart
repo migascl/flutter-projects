@@ -97,6 +97,7 @@ class _MatchListViewState extends State<MatchListView> {
           elevation: 1,
         ),
         drawer: const MenuDrawer(),
+        body: const Center(child: CircularProgressIndicator()),
       );
     });
   }

@@ -200,7 +200,6 @@ class _PlayerListViewState extends State<PlayerListView> {
         onRefresh: _loadPageData,
         child: Consumer2<PlayerProvider, ExamProvider>(
           builder: (context, playerProvider, examProvider, child) {
-            // Wait until provider is ready
             if (examProvider.state == ProviderState.ready) {
               Map<int, Player> list = {}; // List of players to be displayed
 
@@ -249,6 +248,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PlayerView(player: player),
+                        maintainState: false,
                       ),
                     ),
                   );

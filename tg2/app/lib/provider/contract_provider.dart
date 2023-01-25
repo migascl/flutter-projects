@@ -27,8 +27,8 @@ class ContractProvider extends ChangeNotifier {
   Map<int, Contract> get items => _items;
 
   // Get all active contracts from cache
-  Map<int, Contract> get activeContracts => Map.fromEntries(_items.entries
-      .where((element) => element.value.club.playing && element.value.active));
+  Map<int, Contract> get activeContracts => Map.fromEntries(
+      _items.entries.where((element) => element.value.club.playing && element.value.active));
 
   // ################################## SETTERS ##################################
   set playerProvider(PlayerProvider provider) {
@@ -72,9 +72,7 @@ class ContractProvider extends ChangeNotifier {
       print("Contract/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

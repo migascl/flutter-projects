@@ -120,7 +120,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
         ),
         ElevatedButton(
           onPressed: isLoading ? null : () => _submitData(),
-          child: isLoading ? CircularProgressIndicator() : Text('Guardar'),
+          child: isLoading ? const CircularProgressIndicator() : const Text('Guardar'),
         ),
       ],
     );
