@@ -161,3 +161,28 @@ app.get('/contract', (req, res) => connection.any('SELECT * FROM contract')
     .then((data) => res.json(data))
     .catch((error) => console.log('ERROR:', error))
 );
+app.post('/contract', (req,res) => {
+    const { player_id, club_id, number, position_id, period, document } = req.body
+    connection.none(
+        'INSERT INTO contract(player_id, club_id, number, position_id, period, document) ' +
+        'VALUES($/player_id/, $/club_id/, $/number/, $/position_id/, $/period/, $/document/)',
+        {
+        player_id: player_id,
+        club_id: club_id,
+        number: number,
+        position_id: position_id,
+        period: period,
+        document: document,
+    })
+        .then(r => res.json(r))
+        .catch((error) => console.log('ERROR:', error));
+
+});
+app.delete('/contract', (req,res) => {
+    const { id } = req.body
+    connection.none('DELETE FROM contract WHERE id = $/id/', {
+        id: id,
+    })
+        .then(r => res.json(r))
+        .catch((error) => console.log('ERROR:', error));
+});

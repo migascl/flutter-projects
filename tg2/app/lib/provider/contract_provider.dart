@@ -9,6 +9,8 @@ import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/provider/club_provider.dart';
 
+import '../utils/exceptions.dart';
+
 // Contract provider class
 class ContractProvider extends ChangeNotifier {
   // ################################## VARIABLES ##################################
@@ -74,6 +76,58 @@ class ContractProvider extends ChangeNotifier {
     } finally {
       (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
+    }
+  }
+
+  // Delete specific contract from database.
+  // Calls DELETE method from API service by sending a JSON parsed string of the given contract
+  // Prevents multiple calls & always ends by refreshing its cache regardless of result
+  Future delete(Contract contract) async {
+    try {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Contract/P: Deleting contract ${contract.id}...");
+        await ApiService().delete(ApiEndpoints.contract, contract.toJson());
+        print("Contract/P: Deleted contract ${contract.id} successfully!");
+      }
+    } catch (e) {
+      print("Contract/P: Error deleting contract ${contract.id}! $e");
+      rethrow;
+    } finally {
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      await get();
+    }
+  }
+
+  // Insert contract onto the database.
+  // Checks if provider cache contains object with same relevant values before proceeding
+  // Calls POST method from API service by sending a JSON parsed string of the given contract
+  // Prevents multiple calls & always ends by refreshing its cache regardless of result
+  Future post(Contract contract) async {
+    try {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+        _state = ProviderState.busy;
+        notifyListeners();
+        print("Contract/P: Inserting new contract...");
+        // Checks cache if new contract's player already has an active contract or club already has
+        // an active contract with the same shirt number
+        if (_items.values.any((element) =>
+            element.active &&
+            (element.player.id == contract.player.id || element.number == contract.number))) {
+          throw DuplicateException("There's already a contract between club "
+              "#${contract.club.id} and player #${contract.player.id}");
+        } else {
+          await ApiService().post(ApiEndpoints.contract, contract.toJson());
+          print("Contract/P: Contract inserted successfully!");
+        }
+      }
+    } catch (e) {
+      print("Contract/P: Error inserting! $e");
+      rethrow;
+    } finally {
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      await get();
     }
   }
 }

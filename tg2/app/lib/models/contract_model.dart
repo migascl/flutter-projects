@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/models/position_model.dart';
+import 'package:tg2/utils/dateutils.dart';
 
 // Model for the Contract entity
+// - A player can't have more than 1 active contract
 class Contract {
   // ################################## VARIABLES ##################################
   late Player player; // Employee player
@@ -15,9 +17,10 @@ class Contract {
   final int? _id; // Database id number (managed by provider)
 
   // ################################## CONSTRUCTORS ##################################
-  Contract(this.player, this.club, this.number, this.position, this.period,
-      this.document,
+  Contract(this.player, this.club, this.number, this.position, this.period, this.document,
       [this._id]);
+
+  Contract.empty([this._id]);
 
   // ################################## GETTERS ##################################
   int? get id => _id;
@@ -29,17 +32,24 @@ class Contract {
   // Determine if contract is active by checking if current date is between contract period
   bool get active {
     DateTime date = DateTime.now();
-    return date.isAfter(period.start) && date.isBefore(period.end)
-        ? true
-        : false;
+    return date.isAfter(period.start) && date.isBefore(period.end) ? true : false;
   }
 
   // Runtime variable.
   // Calculate if contract will need renovating in the next 6 months
   bool get needsRenovation {
-    DateTime date = DateTime.now();
-    return DateTime(date.year, date.month + 6, date.day).isAfter(period.end)
-        ? true
-        : false;
+    return DateUtils.addMonthsToMonthDate(DateTime.now(), 6).isAfter(period.end) ? true : false;
   }
+
+  // ################################## METHODS ##################################
+  // Convert object into API readable JSON
+  Map<String, dynamic> toJson() => {
+        'id': _id,
+        'player_id': player.id,
+        'club_id': club.id,
+        'number': number,
+        'position_id': position.index,
+        'period': DateUtilities().encoder(period),
+        'document': document
+      };
 }
