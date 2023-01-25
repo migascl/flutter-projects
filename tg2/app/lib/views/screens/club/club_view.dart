@@ -284,14 +284,10 @@ class _ClubViewState extends State<ClubView> {
                   child: Column(
                     children: [
                       ListTile(
+                        isThreeLine: true,
                         title: const Text("Morada"),
-                        subtitle: Wrap(
-                          children: [
-                            Text(widget.club.stadium!.name),
-                            Text(
-                                "${widget.club.stadium!.address}, ${widget.club.stadium?.country.name}")
-                          ],
-                        ),
+                        subtitle: Text(
+                            "${widget.club.stadium!.name},\n${widget.club.stadium!.address}\n${widget.club.stadium?.country.name}"),
                       ),
                       if (widget.club.phone != null)
                         ListTile(
