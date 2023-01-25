@@ -13,6 +13,8 @@ import 'package:tg2/views/widgets/futureimage.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 
+import '../contract_add_view.dart';
+
 // This widget displays all club information
 // It requires a club object to initiate to use as fallback data if it can't retrieve an updated
 // version of the club data from the server
@@ -26,6 +28,12 @@ class ClubView extends StatefulWidget {
 }
 
 class _ClubViewState extends State<ClubView> {
+  // Page view controls
+  int _selectedIndex = 0;
+  final PageController _pageController = PageController();
+
+  FloatingActionButton? fab;
+
   // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
@@ -41,10 +49,6 @@ class _ClubViewState extends State<ClubView> {
       );
     }
   }
-
-  // Page view controls
-  int _selectedIndex = 0;
-  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -69,6 +73,7 @@ class _ClubViewState extends State<ClubView> {
           ),
         ],
       ),
+      floatingActionButton: fab,
       body: Column(children: [
         // Page header
         Card(
@@ -327,7 +332,24 @@ class _ClubViewState extends State<ClubView> {
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Dados Gerais')
         ],
         onTap: (int value) {
-          setState(() => _selectedIndex = value);
+          setState(() {
+            _selectedIndex = value;
+            switch (_selectedIndex) {
+              case 1:
+                fab = FloatingActionButton(
+                  backgroundColor: widget.club.color,
+                  onPressed: () => showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) => ContractAddView(club: widget.club)),
+                  child: const Icon(Icons.add),
+                );
+                break;
+              default:
+                fab = null;
+                break;
+            }
+          });
           _pageController.animateToPage(
             value,
             duration: const Duration(milliseconds: 150),

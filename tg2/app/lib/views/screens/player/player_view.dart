@@ -13,6 +13,8 @@ import 'package:tg2/views/widgets/contracttile.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 
+import '../contract_add_view.dart';
+
 // This widget displays all player information
 // It requires a player object to initiate to use as fallback data if it can't retrieve an updated
 // version of the player data from the server
@@ -31,6 +33,8 @@ class _PlayerViewState extends State<PlayerView> {
   // Page view controls
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+
+  FloatingActionButton? fab;
 
   // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
@@ -65,15 +69,7 @@ class _PlayerViewState extends State<PlayerView> {
               onPressed: () => _loadPageData()),
         ],
       ),
-      floatingActionButton: _selectedIndex == 2
-          ? FloatingActionButton(
-              child: const Icon(Icons.add),
-              onPressed: () => showDialog(
-                  context: context,
-                  barrierDismissible: false, // user must tap button!
-                  builder: (BuildContext context) => ExamModifyView(player: _player)),
-            )
-          : null,
+      floatingActionButton: fab,
       body: Column(children: [
         // ############# Header #############
         Card(
@@ -242,59 +238,60 @@ class _PlayerViewState extends State<PlayerView> {
                             return Column(
                               children: [
                                 ListTile(
-                                    title: Text("Exame ${exam.id}"),
-                                    subtitle: Text(
-                                        "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
-                                    trailing: PopupMenuButton(
-                                      onSelected: (int value) {
-                                        switch (value) {
-                                          case 0:
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (BuildContext context) => ExamModifyView(
-                                                initialValue: exam,
-                                                player: _player,
-                                              ),
-                                            );
-                                            break;
-                                          case 1:
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) => AlertDialog(
-                                                title: const Text('Atenção!'),
-                                                content: Text(
-                                                    "Tem a certeza que pretende eliminar exame ${exam.id}? Esta operação não é reversível!"),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        examProvider.delete(exam);
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Eliminar')),
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Cancelar')),
-                                                ],
-                                              ),
-                                            );
-                                            break;
-                                        }
-                                      },
-                                      // Exam tile popup menu options
-                                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                                        const PopupMenuItem<int>(
-                                          value: 0,
-                                          child: Text('Editar'),
-                                        ),
-                                        const PopupMenuItem<int>(
-                                          value: 1,
-                                          child: Text('Remover'),
-                                        ),
-                                      ],
-                                    )),
+                                  title: Text("Exame ${exam.id}"),
+                                  subtitle: Text(
+                                      "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
+                                  trailing: PopupMenuButton(
+                                    onSelected: (int value) {
+                                      switch (value) {
+                                        case 0:
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) => ExamModifyView(
+                                              initialValue: exam,
+                                              player: _player,
+                                            ),
+                                          );
+                                          break;
+                                        case 1:
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: const Text('Atenção!'),
+                                              content: Text(
+                                                  "Tem a certeza que pretende eliminar exame ${exam.id}? Esta operação não é reversível!"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      examProvider.delete(exam);
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Eliminar')),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Cancelar')),
+                                              ],
+                                            ),
+                                          );
+                                          break;
+                                      }
+                                    },
+                                    // Exam tile popup menu options
+                                    itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                                      const PopupMenuItem<int>(
+                                        value: 0,
+                                        child: Text('Editar'),
+                                      ),
+                                      const PopupMenuItem<int>(
+                                        value: 1,
+                                        child: Text('Remover'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             );
                           },
@@ -324,7 +321,32 @@ class _PlayerViewState extends State<PlayerView> {
           BottomNavigationBarItem(icon: Icon(Icons.science_rounded), label: 'Exames')
         ],
         onTap: (int value) {
-          setState(() => _selectedIndex = value);
+          setState(() {
+            _selectedIndex = value;
+            switch (_selectedIndex) {
+              case 1:
+                fab = FloatingActionButton(
+                  child: const Icon(Icons.add),
+                  onPressed: () => showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) => ContractAddView(player: _player)),
+                );
+                break;
+              case 2:
+                fab = FloatingActionButton(
+                  child: const Icon(Icons.add),
+                  onPressed: () => showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) => ExamModifyView(player: _player)),
+                );
+                break;
+              default:
+                fab = null;
+                break;
+            }
+          });
           _pageController.animateToPage(
             value,
             duration: const Duration(milliseconds: 150),
