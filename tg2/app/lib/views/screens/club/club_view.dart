@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/match_model.dart';
@@ -14,18 +13,20 @@ import 'package:tg2/views/widgets/futureimage.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
 import 'package:tg2/views/screens/contract_view.dart';
 
-// This page lists all clubs
+// This widget displays all club information
+// It requires a club object to initiate to use as fallback data if it can't retrieve an updated
+// version of the club data from the server
 class ClubView extends StatefulWidget {
   const ClubView({super.key, required this.club});
 
-  final Club club; // This club is used as a preloader for the actual club info from the provider
+  final Club club;
 
   @override
   State<ClubView> createState() => _ClubViewState();
 }
 
 class _ClubViewState extends State<ClubView> {
-  // Method to reload providers used by the page
+  // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false)
@@ -45,20 +46,9 @@ class _ClubViewState extends State<ClubView> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
-  void _onTabTap(int value) {
-    setState(() {
-      _selectedIndex = value;
-    });
-    _pageController.animateToPage(value,
-        duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
-  }
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadPageData();
-    });
   }
 
   @override
@@ -130,12 +120,14 @@ class _ClubViewState extends State<ClubView> {
           child: PageView(
             controller: _pageController,
             children: [
-              // Club season statistics
+              // ############# Stats Page #############
               Consumer<MatchProvider>(
-                builder: (context, provider, child) {
-                  if (provider.state == ProviderState.ready) {
-                    List<Match> list = provider.getByClub(widget.club).values.toList();
+                builder: (context, matchProvider, child) {
+                  if (matchProvider.state == ProviderState.ready) {
+                    // Get all matches from the club and sort them by most recent
+                    List<Match> list = matchProvider.getByClub(widget.club).values.toList();
                     list.sort((a, b) => b.date.compareTo(a.date));
+
                     if (list.isEmpty) {
                       return Center(
                         child: Text(
@@ -143,102 +135,109 @@ class _ClubViewState extends State<ClubView> {
                           style: Theme.of(context).textTheme.caption,
                         ),
                       );
-                    } else {
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Card(
-                              margin: const EdgeInsets.all(16),
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(16))),
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(32, 16, 16, 16),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Jogos Totais",
-                                            style: Theme.of(context).textTheme.subtitle1,
-                                          ),
-                                          Divider(height: 8),
-                                          Text(
-                                            "${list.length}",
-                                            style: Theme.of(context).textTheme.headline5,
-                                          ),
-                                        ],
-                                      ),
+                    }
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Statistics (total games & points)
+                          Card(
+                            margin: const EdgeInsets.all(16),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16))),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(32, 16, 16, 16),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Jogos Totais",
+                                          style: Theme.of(context).textTheme.subtitle1,
+                                        ),
+                                        Divider(height: 8),
+                                        Text(
+                                          "${list.length}",
+                                          style: Theme.of(context).textTheme.headline5,
+                                        ),
+                                      ],
                                     ),
-                                    const VerticalDivider(thickness: 1, indent: 16, endIndent: 16),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(16, 16, 32, 16),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Pontos Total",
-                                            style: Theme.of(context).textTheme.subtitle1,
-                                          ),
-                                          Divider(height: 8),
-                                          Text(
-                                            "${provider.getClubPoints(widget.club)}",
-                                            style: Theme.of(context).textTheme.headline5,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  const VerticalDivider(thickness: 1, indent: 16, endIndent: 16),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(16, 16, 32, 16),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Pontos Total",
+                                          style: Theme.of(context).textTheme.subtitle1,
+                                        ),
+                                        const Divider(height: 8),
+                                        Text(
+                                          "${matchProvider.getClubPoints(widget.club)}",
+                                          style: Theme.of(context).textTheme.headline5,
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text("Histórico de Jogos",
-                                style: Theme.of(context).textTheme.headlineSmall),
-                            const SizedBox(height: 8),
-                            MediaQuery.removePadding(
-                                removeTop: true,
-                                context: context,
-                                child: Card(
-                                  margin: const EdgeInsets.all(8),
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(16))),
-                                  child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      child: ListView.separated(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        itemCount: list.length,
-                                        itemBuilder: (context, index) {
-                                          Match match = list[index];
-                                          return MatchTile(match: match);
-                                        },
-                                        separatorBuilder: (context, index) => const Divider(),
-                                      )),
-                                ))
-                          ],
-                        ),
-                      );
-                    }
-                  } else {
+                          ),
+                          // Recent games
+                          const SizedBox(height: 8),
+                          Text("Histórico de Jogos",
+                              style: Theme.of(context).textTheme.headlineSmall),
+                          const SizedBox(height: 8),
+                          Card(
+                            margin: const EdgeInsets.all(8),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16))),
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: ListView.separated(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    Match match = list[index];
+                                    return MatchTile(match: match);
+                                  },
+                                  separatorBuilder: (context, index) => const Divider(),
+                                )),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (matchProvider.state == ProviderState.busy) {
                     return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return Center(
+                      child: Text(
+                        "Não existem nenhuns jogos.",
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    );
                   }
                 },
               ),
-              // Club team list
+              // ############# Team Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
                 child: Consumer<ContractProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.state == ProviderState.ready) {
-                      List<Contract> list = provider.items.values
+                  builder: (context, contractProvider, child) {
+                    if (contractProvider.state == ProviderState.ready) {
+                      // Get all active contracts of the club
+                      List<Contract> list = contractProvider.items.values
                           .where((element) => element.club.id == widget.club.id && element.active)
                           .toList();
+
                       if (list.isEmpty) {
                         return Center(
                             child: Text(
@@ -270,12 +269,20 @@ class _ClubViewState extends State<ClubView> {
                           separatorBuilder: (BuildContext context, int index) => const Divider(),
                         ),
                       );
-                    } else {
+                    } else if (contractProvider.state == ProviderState.busy) {
                       return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Center(
+                        child: Text(
+                          "Não existem nenhuns contratos.",
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      );
                     }
                   },
                 ),
               ),
+              // ############# Info Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
@@ -312,13 +319,21 @@ class _ClubViewState extends State<ClubView> {
           ),
         ),
       ]),
+      // ############# Bottom Nav #############
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Estatísticas'),
           BottomNavigationBarItem(icon: Icon(Icons.groups_rounded), label: 'Plantel'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Dados Gerais')
         ],
-        onTap: _onTabTap,
+        onTap: (int value) {
+          setState(() => _selectedIndex = value);
+          _pageController.animateToPage(
+            value,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeIn,
+          );
+        },
         selectedItemColor: widget.club.color,
         currentIndex: _selectedIndex,
       ),
