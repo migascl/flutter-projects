@@ -5,15 +5,17 @@ import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/views/screens/exam_modify_view.dart';
+import 'package:tg2/models/contract_model.dart';
+import 'package:tg2/models/exam_model.dart';
+import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/dateutils.dart';
+import 'package:tg2/views/widgets/contracttile.dart';
+import 'package:tg2/views/widgets/futureimage.dart';
+import 'package:tg2/views/screens/contract_view.dart';
 
-import '../../../models/contract_model.dart';
-import '../../../models/exam_model.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/dateutils.dart';
-import '../../widgets/contracttile.dart';
-import '../../widgets/futureimage.dart';
-import '../contract_view.dart';
-
+// This widget displays all player information
+// It requires a player object to initiate to use as fallback data if it can't retrieve an updated
+// version of the player data from the server
 class PlayerView extends StatefulWidget {
   const PlayerView({super.key, required this.player});
 
@@ -24,8 +26,13 @@ class PlayerView extends StatefulWidget {
 }
 
 class _PlayerViewState extends State<PlayerView> {
-  late final Player _player = widget.player;
+  late final Player _player = widget.player; // State player data
 
+  // Page view controls
+  int _selectedIndex = 0;
+  final PageController _pageController = PageController();
+
+  // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
       await Provider.of<PlayerProvider>(context, listen: false).get();
@@ -39,25 +46,10 @@ class _PlayerViewState extends State<PlayerView> {
     }
   }
 
-  // Page view controls
-  int _selectedIndex = 0;
-  final PageController _pageController = PageController();
-
-  void _onTabTap(int value) {
-    setState(() {
-      _selectedIndex = value;
-    });
-    _pageController.animateToPage(value,
-        duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
-  }
-
   @override
   void initState() {
     print("Player/V: Initialized State!");
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadPageData();
-    });
   }
 
   @override
@@ -83,7 +75,7 @@ class _PlayerViewState extends State<PlayerView> {
             )
           : null,
       body: Column(children: [
-        // Page header
+        // ############# Header #############
         Card(
           margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
           color: Colors.blue,
@@ -129,12 +121,12 @@ class _PlayerViewState extends State<PlayerView> {
             ),
           ),
         ),
-        // Page body
+        // ############# Page body #############
         Expanded(
           child: PageView(
             controller: _pageController,
             children: [
-              // Player information view
+              // ############# Info Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
@@ -169,7 +161,7 @@ class _PlayerViewState extends State<PlayerView> {
                   ),
                 ),
               ),
-              // Player contracts page
+              // ############# Contracts Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
@@ -177,6 +169,7 @@ class _PlayerViewState extends State<PlayerView> {
                 child: Consumer<ContractProvider>(
                   builder: (context, contractProvider, child) {
                     if (contractProvider.state == ProviderState.ready) {
+                      // Get all contracts from player and sort them from most recent
                       List<Contract> list = List.from(contractProvider.items.values
                           .where((element) => element.player.id == _player.id));
                       list.sort((a, b) => b.period.end.compareTo(a.period.end));
@@ -219,7 +212,7 @@ class _PlayerViewState extends State<PlayerView> {
                   },
                 ),
               ),
-              // Player exams page
+              // ############# Exams Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 shape: const RoundedRectangleBorder(
@@ -227,9 +220,11 @@ class _PlayerViewState extends State<PlayerView> {
                 child: Consumer<ExamProvider>(
                   builder: (context, examProvider, child) {
                     if (examProvider.state == ProviderState.ready) {
+                      // Get all contracts from player and sort them from most recent
                       List<Exam> list = List.from(examProvider.items.values
                           .where((element) => element.player.id == _player.id));
                       list.sort((a, b) => b.date.compareTo(a.date));
+
                       if (list.isEmpty) {
                         return Center(
                           child: Text(
@@ -251,22 +246,20 @@ class _PlayerViewState extends State<PlayerView> {
                                     subtitle: Text(
                                         "Data: ${DateUtilities().toYMD(exam.date)}\nResultado: ${(exam.result) ? "Passou" : "Falhou"}"),
                                     trailing: PopupMenuButton(
-                                      // Callback that sets the selected popup menu item.
                                       onSelected: (int value) {
                                         switch (value) {
                                           case 0:
                                             showDialog(
                                               context: context,
                                               barrierDismissible: false,
-                                              // user must tap button!
                                               builder: (BuildContext context) => ExamModifyView(
                                                 initialValue: exam,
                                                 player: _player,
                                               ),
-                                            ).then((value) => _loadPageData());
+                                            );
                                             break;
                                           case 1:
-                                            showDialog<String>(
+                                            showDialog(
                                               context: context,
                                               builder: (BuildContext context) => AlertDialog(
                                                 title: const Text('Atenção!'),
@@ -290,6 +283,7 @@ class _PlayerViewState extends State<PlayerView> {
                                             break;
                                         }
                                       },
+                                      // Exam tile popup menu options
                                       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                                         const PopupMenuItem<int>(
                                           value: 0,
@@ -322,13 +316,21 @@ class _PlayerViewState extends State<PlayerView> {
           ),
         ),
       ]),
+      // ############# Bottom Nav #############
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Informação'),
           BottomNavigationBarItem(icon: Icon(Icons.file_copy_rounded), label: 'Contratos'),
           BottomNavigationBarItem(icon: Icon(Icons.science_rounded), label: 'Exames')
         ],
-        onTap: _onTabTap,
+        onTap: (int value) {
+          setState(() => _selectedIndex = value);
+          _pageController.animateToPage(
+            value,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeIn,
+          );
+        },
         currentIndex: _selectedIndex,
       ),
     );
