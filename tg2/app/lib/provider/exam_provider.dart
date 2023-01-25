@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tg2/models/exam_model.dart';
 import 'package:tg2/models/player_model.dart';
@@ -13,7 +14,7 @@ class ExamProvider extends ChangeNotifier {
   // ################################## VARIABLES ##################################
   late PlayerProvider _playerProvider; // Reference to parent provider Player
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Exam> _items = {}; // Cached data
+  Map<int, Exam> _items = {}; // Cached data
 
   ExamProvider(this._playerProvider) {
     print("Exam/P: Initialized");
@@ -26,15 +27,13 @@ class ExamProvider extends ChangeNotifier {
 
   // Get exams from given player (Uses player id to search)
   Map<int, Exam> getByPlayer(Player player) {
-    return Map.fromEntries(_items.entries
-        .where((element) => element.value.player.id == player.id));
+    return Map.fromEntries(_items.entries.where((element) => element.value.player.id == player.id));
   }
 
   // Get exams from a date range
   Map<int, Exam> getByDate(DateTimeRange date) {
     return Map.fromEntries(_items.entries.where((element) =>
-        element.value.date.isAfter(date.start) &&
-        element.value.date.isBefore(date.end)));
+        element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
   }
 
   // ################################## SETTERS ##################################
@@ -49,8 +48,7 @@ class ExamProvider extends ChangeNotifier {
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          _playerProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Getting all...");
@@ -70,9 +68,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }
@@ -82,8 +78,7 @@ class ExamProvider extends ChangeNotifier {
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future delete(Exam exam) async {
     try {
-      if (_state != ProviderState.busy &&
-          _playerProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Deleting exam ${exam.id}...");
@@ -94,9 +89,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
@@ -107,17 +100,14 @@ class ExamProvider extends ChangeNotifier {
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future post(Exam exam) async {
     try {
-      if (_state != ProviderState.busy &&
-          _playerProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Inserting new exam...");
         // Checks cache for an exam done by the player in the same date
         if (_items.values.any((element) =>
-            element.date.isAtSameMomentAs(exam.date) &&
-            element.player.id == exam.player.id)) {
-          throw DuplicateException(
-              "Player ${exam.player.id} already had an exam in ${exam.date}");
+            element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id)) {
+          throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
         } else {
           await ApiService().post(ApiEndpoints.exam, exam.toJson());
           print("Exam/P: Exam inserted successfully!");
@@ -127,29 +117,26 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error inserting! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
 
   // Update exam in the database.
-  // Checks if provider cache contains object with same relevant values before proceeding
+  // Checks if provider cache contains object with same relevant values but from a different id before proceeding
   // Calls PATCH method from API service by sending a JSON parsed string of the given exam
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future patch(Exam exam) async {
     try {
-      if (_state != ProviderState.busy &&
-          _playerProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Patching exam ${exam.id}...");
         if (_items.values.any((element) =>
             element.date.isAtSameMomentAs(exam.date) &&
-            element.player.id == exam.player.id)) {
-          throw DuplicateException(
-              "Player ${exam.player.id} already had an exam in ${exam.date}");
+            element.player.id == exam.player.id &&
+            element.id != exam.id)) {
+          throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
         } else {
           await ApiService().patch(ApiEndpoints.exam, exam.toJson());
           print("Exam/P: Patched exam ${exam.id} successfully!");
@@ -159,9 +146,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error patching exam ${exam.id}! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
