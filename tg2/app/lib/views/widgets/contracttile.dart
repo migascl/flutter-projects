@@ -22,46 +22,74 @@ class ContractTile extends StatefulWidget {
   final bool showClub; // Flag to select between showing club or player
   final bool dense; // Flag to render in dense mode
   final bool showAlert; // Flag to show contract alerts (i.e. expiration)
-  final VoidCallback? onTap;
+  final VoidCallback? onTap; // Function to call when tapped
 
   @override
   State<ContractTile> createState() => _ContractTileState();
 }
 
 class _ContractTileState extends State<ContractTile> {
-  Widget? _trailing;
+  var _tapPosition;
 
-  late var overlay;
+  void _storePosition(TapDownDetails details) {
+    _tapPosition = details.globalPosition;
+  }
+
+  void _showDropDown() {
+    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromRect(
+          _tapPosition & const Size(40, 40), // Touch area
+          Offset.zero & overlay.semanticBounds.size // Screen space
+          ),
+      items: <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+          value: 0,
+          child: Text('Remover'),
+        ),
+      ],
+    ).then((value) {
+      switch (value) {
+        case 0:
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Atenção!'),
+              content: Text(
+                  'Tem a certeza que pretende eliminar contrato #${widget.contract.id}? Esta operação não é reversível!'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Provider.of<ContractProvider>(context, listen: false).delete(widget.contract);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Eliminar')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancelar')),
+              ],
+            ),
+          );
+          break;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.showAlert) {
-      if (!widget.contract.active) {
-        _trailing = Tooltip(
-          message:
-              'Expirado à ${DateTime.now().difference(widget.contract.period.end).inDays} dias!',
-          textAlign: TextAlign.center,
-          child: const Icon(
-            Icons.cancel_rounded,
-            size: 32,
-            color: Colors.red,
-          ),
-        );
-      } else if (widget.contract.needsRenovation) {
-        _trailing = Tooltip(
-          message:
-              'Contrato expira em ${widget.contract.remainingTime.inDays} dias!\n(${DateUtilities().toYMD(widget.contract.period.end)})',
-          textAlign: TextAlign.center,
-          child: const Icon(
-            Icons.warning_rounded,
-            size: 32,
-            color: Colors.amber,
-          ),
-        );
-      }
-    }
-    return ListTile(
+    return GestureDetector(
+      onTap: () => widget.onTap?.call(),
+      onLongPress: (widget.dense) ? null : _showDropDown,
+      onTapDown: _storePosition,
+      child: ListTile(
         dense: widget.dense,
+        enabled: (widget.contract.active),
+        // Expired contracts are shown as disabled
+        // Either show player or club picture
         leading: FutureImage(
           image:
               (widget.showClub) ? widget.contract.club.picture! : widget.contract.player.picture!,
@@ -72,79 +100,30 @@ class _ContractTileState extends State<ContractTile> {
           aspectRatio: 1 / 1,
           borderRadius: (widget.showClub) ? null : BorderRadius.circular(100),
         ),
+        // If set to show player, show player shirt number on the title
         title: (widget.showClub)
             ? Text(widget.contract.club.name)
             : Text(
-                "${widget.contract.number}. ${widget.contract.player.nickname ?? widget.contract.player.name}"),
-        subtitle: (widget.showClub)
-            ? Text(
-                "Ínicio: ${DateUtilities().toYMD(widget.contract.period.start)} | Fim: ${DateUtilities().toYMD(widget.contract.period.end)}")
-            : Text(widget.contract.position.name),
+                '${widget.contract.number}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
+        // Don't show any subtitle if set to dense, and only show player shirt number if title set to show the club
+        subtitle: (widget.dense)
+            ? Text(widget.contract.position.name)
+            : Text(
+                '${(widget.showClub) ? 'Número: ${widget.contract.number}\n' : ''}Posição: ${widget.contract.position.name}'),
         // Show warning icon that shows a tooltip with remaining contract duration and expiry date if contract is active
-        trailing: _trailing,
-        onTap: () => widget.onTap?.call(),
-        onLongPress: (widget.dense)
-            ? null
-            : () {
-                overlay = Overlay.of(context)?.context.findRenderObject();
-                showMenu(
-                  context: context,
-                  position: RelativeRect.fromRect(
-                      TapDownDetails().globalPosition & const Size(40, 40),
-                      // smaller rect, the touch area
-                      Offset.zero & overlay.size // Bigger rect, the entire screen
-                      ),
-                  items: <PopupMenuEntry<int>>[
-                    const PopupMenuItem<int>(
-                      value: 0,
-                      child: Text('Remover'),
-                    ),
-                  ],
-                ).then((value) {
-                  switch (value) {
-                    case 0:
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Atenção!'),
-                          content: Text(
-                              "Tem a certeza que pretende eliminar exame ${widget.contract.id}? Esta operação não é reversível!"),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Provider.of<ContractProvider>(context, listen: false)
-                                      .delete(widget.contract);
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Eliminar')),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Cancelar')),
-                          ],
-                        ),
-                      );
-                      break;
-                  }
-                });
-              }
-        /*
-      onLongPress: () => (widget.dense)
-          ? print("yuh")
-          : PopupMenuButton(
-              onSelected: (int value) {
-
-              // Exam tile popup menu options
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                const PopupMenuItem<int>(
-                  value: 0,
-                  child: Text('Remover'),
+        trailing: (widget.showAlert && widget.contract.needsRenovation && widget.contract.active)
+            ? Tooltip(
+                message:
+                    'Contrato expira em ${widget.contract.remainingTime.inDays} dias!\n(${DateUtilities().toYMD(widget.contract.period.end)})',
+                textAlign: TextAlign.center,
+                child: const Icon(
+                  Icons.warning_rounded,
+                  size: 32,
+                  color: Colors.amber,
                 ),
-              ],
-            ),
-
-       */
-        );
+              )
+            : null,
+      ),
+    );
   }
 }
