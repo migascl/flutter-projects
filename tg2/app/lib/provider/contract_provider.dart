@@ -9,10 +9,6 @@ import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/provider/club_provider.dart';
 
-import '../models/club_model.dart';
-import '../models/player_model.dart';
-import '../utils/exceptions.dart';
-
 // Contract provider class
 class ContractProvider extends ChangeNotifier {
   // ################################## VARIABLES ##################################

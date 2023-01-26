@@ -69,6 +69,11 @@ class _ContractAddView extends State<ContractAddView> {
         builder: (context, playerProvider, clubProvider, contractProvider, child) {
           if (playerProvider.state == ProviderState.ready &&
               clubProvider.state == ProviderState.ready) {
+            // A form is used to validate data before submition, the form validates the following:
+            // - All fields must be populated
+            // - A player can't have more than 1 active contract
+            // - Shirt numbers must be unique within a club
+            // - A contract can't be more than 5 years
             return Form(
               key: _formKey,
               autovalidateMode: AutovalidateMode.disabled,

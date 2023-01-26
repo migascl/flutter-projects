@@ -53,7 +53,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
 
   @override
   void initState() {
-    // Populate default data
+    // Check if default object exists
     if (widget.initialValue == null) {
       exam.result = false;
     } else {

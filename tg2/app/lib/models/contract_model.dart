@@ -5,7 +5,6 @@ import 'package:tg2/models/position_model.dart';
 import 'package:tg2/utils/dateutils.dart';
 
 // Model for the Contract entity
-// - A player can't have more than 1 active contract
 class Contract {
   // ################################## VARIABLES ##################################
   late Player player; // Employee player
