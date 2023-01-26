@@ -9,6 +9,8 @@ import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/provider/club_provider.dart';
 
+import '../models/club_model.dart';
+import '../models/player_model.dart';
 import '../utils/exceptions.dart';
 
 // Contract provider class
@@ -101,7 +103,6 @@ class ContractProvider extends ChangeNotifier {
   }
 
   // Insert contract onto the database.
-  // Checks if provider cache contains object with same relevant values before proceeding
   // Calls POST method from API service by sending a JSON parsed string of the given contract
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future post(Contract contract) async {
@@ -110,17 +111,8 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Inserting new contract...");
-        // Checks cache if new contract's player already has an active contract or club already has
-        // an active contract with the same shirt number
-        if (_items.values.any((element) =>
-            element.active &&
-            (element.player.id == contract.player.id || element.number == contract.number))) {
-          throw DuplicateException("There's already a contract between club "
-              "#${contract.club.id} and player #${contract.player.id}");
-        } else {
-          await ApiService().post(ApiEndpoints.contract, contract.toJson());
-          print("Contract/P: Contract inserted successfully!");
-        }
+        await ApiService().post(ApiEndpoints.contract, contract.toJson());
+        print("Contract/P: Contract inserted successfully!");
       }
     } catch (e) {
       print("Contract/P: Error inserting! $e");
