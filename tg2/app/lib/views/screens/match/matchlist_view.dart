@@ -3,8 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/widgets/matchtile.dart';
 import 'package:tg2/views/widgets/menudrawer.dart';
+
+class MatchDay {
+  MatchDay({
+    required this.date,
+    this.isExpanded = false,
+  });
+
+  DateTime date;
+  bool isExpanded;
+}
 
 // This page lists all matches and groups then by matchweek
 class MatchListView extends StatefulWidget {
@@ -44,11 +55,10 @@ class _MatchListViewState extends State<MatchListView> {
     return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
       if (matchProvider.state == ProviderState.ready) {
         // Get a list of tabs from the number of matchweeks given by the provider
-        List<Tab> tabs = List.from(
-            matchProvider.getMatchweeks().map((element) => Tab(text: "Jornada $element")));
+        Set<int> matchweeks = Set.from(matchProvider.items.values.map((e) => e.matchweek));
         return DefaultTabController(
           initialIndex: _currentTab,
-          length: tabs.length,
+          length: matchweeks.length,
           child: Scaffold(
             appBar: AppBar(
               elevation: 1,
@@ -61,7 +71,7 @@ class _MatchListViewState extends State<MatchListView> {
                 ),
               ],
               bottom: TabBar(
-                tabs: tabs,
+                tabs: List.from(matchweeks.map((key) => Tab(text: "Jornada $key"))),
                 isScrollable: true,
                 onTap: (index) {
                   setState(() {
@@ -73,18 +83,38 @@ class _MatchListViewState extends State<MatchListView> {
             drawer: const MenuDrawer(),
             // Generate pages based on the list of matches of a select matchweek
             body: TabBarView(
-              children: List.from(matchProvider.getMatchweeks().map((element) {
-                List<Match> matches = matchProvider.items.values
-                    .where((match) => match.matchweek == element)
-                    .toList();
-                return ListView.separated(
-                  primary: false,
-                  itemCount: matches.length,
-                  itemBuilder: (context, index) {
-                    Match match = matches[index];
-                    return MatchTile(match: match);
-                  },
-                  separatorBuilder: (BuildContext context, int index) => const Divider(),
+              children: List.from(matchweeks.map((matchweek) {
+                // Get unique days in every single matchweek
+                Set<DateTime> matchDays = Set.from(matchProvider.items.values
+                    .where((element) => element.matchweek == matchweek)
+                    .map((e) => DateTime(e.date.year, e.date.month, e.date.day)));
+
+                return SingleChildScrollView(
+                  child: ExpansionPanelList(
+                    children: matchDays.map<ExpansionPanel>((DateTime matchDay) {
+                      List<Match> matches = List.from(matchProvider.items.values.where((element) =>
+                          DateTime(element.date.year, element.date.month, element.date.day)
+                              .isAtSameMomentAs(matchDay)));
+
+                      return ExpansionPanel(
+                        headerBuilder: (BuildContext context, bool isExpanded) {
+                          return ListTile(
+                            title: Text(DateUtilities().toYMD(matchDay)),
+                          );
+                        },
+                        body: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: matches.length,
+                          itemBuilder: (context, index) {
+                            Match match = matches.elementAt(index);
+                            return MatchTile(match: match);
+                          },
+                          separatorBuilder: (BuildContext context, int index) => const Divider(),
+                        ),
+                        isExpanded: true,
+                      );
+                    }).toList(),
+                  ),
                 );
               })),
             ),
