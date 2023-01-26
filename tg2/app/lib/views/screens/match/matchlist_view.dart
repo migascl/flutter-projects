@@ -29,9 +29,12 @@ class _MatchListViewState extends State<MatchListView> {
   int _currentTab = 0; // Current tab index number
   final String appBarTitle = "Jogos";
 
+  Map<int, Map<MatchDay, List<Match>>> _data = {};
+
   // Method to reload providers used by the page
   Future _loadPageData() async {
     try {
+      _data.clear();
       Provider.of<MatchProvider>(context, listen: false).get();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,11 +57,25 @@ class _MatchListViewState extends State<MatchListView> {
     print("MatchListView/V: Building...");
     return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
       if (matchProvider.state == ProviderState.ready) {
-        // Get a list of tabs from the number of matchweeks given by the provider
-        Set<int> matchweeks = Set.from(matchProvider.items.values.map((e) => e.matchweek));
+        if (_data.isEmpty) {
+          List<Match> items = matchProvider.items.values.toList();
+          items.sort((a, b) => a.date.compareTo(b.date));
+          _data = Map.fromEntries(items.map((i) => MapEntry(
+                i.matchweek,
+                Map.fromEntries(items.where((j) => j.matchweek == i.matchweek).map((j) {
+                  DateTime matchday = DateTime(j.date.year, j.date.month, j.date.day);
+                  return MapEntry(
+                    MatchDay(date: matchday, isExpanded: true),
+                    List.from(items.where((l) => DateTime(l.date.year, l.date.month, l.date.day)
+                        .isAtSameMomentAs(matchday))),
+                  );
+                })),
+              )));
+        }
+
         return DefaultTabController(
           initialIndex: _currentTab,
-          length: matchweeks.length,
+          length: _data.length,
           child: Scaffold(
             appBar: AppBar(
               elevation: 1,
@@ -71,7 +88,7 @@ class _MatchListViewState extends State<MatchListView> {
                 ),
               ],
               bottom: TabBar(
-                tabs: List.from(matchweeks.map((key) => Tab(text: "Jornada $key"))),
+                tabs: List.from(_data.keys.map((key) => Tab(text: "Jornada $key"))),
                 isScrollable: true,
                 onTap: (index) {
                   setState(() {
@@ -81,42 +98,41 @@ class _MatchListViewState extends State<MatchListView> {
               ),
             ),
             drawer: const MenuDrawer(),
-            // Generate pages based on the list of matches of a select matchweek
             body: TabBarView(
-              children: List.from(matchweeks.map((matchweek) {
-                // Get unique days in every single matchweek
-                Set<DateTime> matchDays = Set.from(matchProvider.items.values
-                    .where((element) => element.matchweek == matchweek)
-                    .map((e) => DateTime(e.date.year, e.date.month, e.date.day)));
-
-                return SingleChildScrollView(
-                  child: ExpansionPanelList(
-                    children: matchDays.map<ExpansionPanel>((DateTime matchDay) {
-                      List<Match> matches = List.from(matchProvider.items.values.where((element) =>
-                          DateTime(element.date.year, element.date.month, element.date.day)
-                              .isAtSameMomentAs(matchDay)));
-
-                      return ExpansionPanel(
-                        headerBuilder: (BuildContext context, bool isExpanded) {
-                          return ListTile(
-                            title: Text(DateUtilities().toYMD(matchDay)),
-                          );
+              children: _data.keys
+                  .map(
+                    (int matchweek) => SingleChildScrollView(
+                      child: ExpansionPanelList(
+                        expansionCallback: (int index, bool isExpanded) {
+                          setState(() {
+                            _data[matchweek]?.keys.elementAt(index).isExpanded = !isExpanded;
+                          });
                         },
-                        body: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: matches.length,
-                          itemBuilder: (context, index) {
-                            Match match = matches.elementAt(index);
-                            return MatchTile(match: match);
-                          },
-                          separatorBuilder: (BuildContext context, int index) => const Divider(),
-                        ),
-                        isExpanded: true,
-                      );
-                    }).toList(),
-                  ),
-                );
-              })),
+                        children: _data[matchweek]!
+                            .keys
+                            .map((matchday) => ExpansionPanel(
+                                  headerBuilder: (BuildContext context, bool isExpanded) {
+                                    return ListTile(
+                                      title: Text(DateUtilities().toYMD(matchday.date)),
+                                    );
+                                  },
+                                  body: ListView.separated(
+                                    shrinkWrap: true,
+                                    itemCount: _data[matchweek]![matchday]!.length,
+                                    itemBuilder: (context, index) {
+                                      return MatchTile(
+                                          match: _data[matchweek]![matchday]!.elementAt(index));
+                                    },
+                                    separatorBuilder: (BuildContext context, int index) =>
+                                        const Divider(),
+                                  ),
+                                  isExpanded: matchday.isExpanded,
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
         );
