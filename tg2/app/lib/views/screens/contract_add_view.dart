@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tg2/models/exam_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
-import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/dateutils.dart';
-import 'package:tg2/utils/exceptions.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/contract_model.dart';
-
-import '../../models/position_model.dart';
-import '../widgets/futureimage.dart';
+import 'package:tg2/models/position_model.dart';
+import 'package:tg2/views/widgets/futureimage.dart';
 
 // Widget used to manage a player's exam data
 // It automatically populates all fields if an exam object is provided
@@ -48,7 +44,7 @@ class _ContractAddView extends State<ContractAddView> {
     try {
       setState(() => isLoading = true);
       await Provider.of<ContractProvider>(context, listen: false)
-          .post(Contract(_player!, _club!, _number!, _position!, _period!, {"nif": 21808312913}))
+          .post(Contract(_player!, _club!, _number!, _position!, _period!, _document!))
           .then((value) => Navigator.of(context).pop());
     } finally {
       setState(() => isLoading = false);
@@ -57,7 +53,7 @@ class _ContractAddView extends State<ContractAddView> {
 
   @override
   void initState() {
-    print("ContractAdd/V: Initialized State!");
+    print('ContractAdd/V: Initialized State!');
     _club = widget.club;
     _player = widget.player;
     super.initState();
@@ -65,7 +61,7 @@ class _ContractAddView extends State<ContractAddView> {
 
   @override
   Widget build(BuildContext context) {
-    print("ContractAdd/V: Building...");
+    print('ContractAdd/V: Building...');
     return AlertDialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       title: const Text('Novo Contrato'),
@@ -80,7 +76,7 @@ class _ContractAddView extends State<ContractAddView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DropdownButtonFormField<int>(
-                    hint: const Text("Clube"),
+                    hint: const Text('Clube'),
                     value: _club?.id,
                     onChanged: widget.club == null
                         ? (int? value) => setState(() {
@@ -111,7 +107,7 @@ class _ContractAddView extends State<ContractAddView> {
                     }).toList(),
                   ),
                   DropdownButtonFormField<int>(
-                    hint: const Text("Jogador"),
+                    hint: const Text('Jogador'),
                     value: _player?.id,
                     onChanged: widget.player == null
                         ? (int? value) => setState(() {
@@ -143,7 +139,7 @@ class _ContractAddView extends State<ContractAddView> {
                     children: [
                       Flexible(
                         child: DropdownButtonFormField<Position>(
-                          hint: Text("Posição"),
+                          hint: Text('Posição'),
                           value: _position,
                           onChanged: (Position? value) {
                             // This is called when the user selects an item.
@@ -181,7 +177,7 @@ class _ContractAddView extends State<ContractAddView> {
                             }
                           },
                           decoration: const InputDecoration(
-                            labelText: "Número da Camisóla",
+                            labelText: 'Número da Camisóla',
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (String? value) {
@@ -199,7 +195,7 @@ class _ContractAddView extends State<ContractAddView> {
                       readOnly: true,
                       enabled: !isLoading,
                       decoration: const InputDecoration(
-                        labelText: "Período do Contrato",
+                        labelText: 'Período do Contrato',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
@@ -217,7 +213,7 @@ class _ContractAddView extends State<ContractAddView> {
                         } else if (contractProvider.items.values.any((element) =>
                             element.player.id == _player!.id &&
                             _period!.start.isBefore(element.period.end))) {
-                          return "Jogador atualmente contratado neste periodo";
+                          return 'Jogador atualmente contratado neste periodo';
                         } else {
                           return null;
                         }
@@ -234,8 +230,32 @@ class _ContractAddView extends State<ContractAddView> {
                           setState(() {
                             _period = result;
                             dateFieldController.text =
-                                "${DateUtilities().toYMD(_period!.start)} a ${DateUtilities().toYMD(_period!.end)}";
+                                '${DateUtilities().toYMD(_period!.start)} a ${DateUtilities().toYMD(_period!.end)}';
                           });
+                        }
+                      },
+                    ),
+                  ),
+                  Flexible(
+                    child: TextFormField(
+                      enabled: !isLoading,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                      // The validator first checks if the field is null or empty
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Campo necessário';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Número de Identificação',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (String? value) {
+                        if (value != null) {
+                          _document = {'nif': int.tryParse(value)};
                         }
                       },
                     ),
