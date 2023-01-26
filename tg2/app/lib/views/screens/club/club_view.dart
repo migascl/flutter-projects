@@ -58,6 +58,7 @@ class _ClubViewState extends State<ClubView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: widget.club.color,
@@ -338,10 +339,12 @@ class _ClubViewState extends State<ClubView> {
               case 1:
                 fab = FloatingActionButton(
                   backgroundColor: widget.club.color,
-                  onPressed: () => showDialog(
+                  onPressed: () => showGeneralDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (BuildContext context) => ContractAddView(club: widget.club)),
+                      pageBuilder: (BuildContext buildContext, Animation animation,
+                              Animation secondaryAnimation) =>
+                          ContractAddView(club: widget.club)),
                   child: const Icon(Icons.add),
                 );
                 break;

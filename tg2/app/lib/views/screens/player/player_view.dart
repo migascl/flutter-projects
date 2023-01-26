@@ -60,7 +60,10 @@ class _PlayerViewState extends State<PlayerView> {
   Widget build(BuildContext context) {
     print("Player/V: Building...");
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0,
         actions: [
           IconButton(
@@ -74,7 +77,7 @@ class _PlayerViewState extends State<PlayerView> {
         // ############# Header #############
         Card(
           margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-          color: Colors.blue,
+          color: Colors.white,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
           child: Container(
@@ -98,18 +101,12 @@ class _PlayerViewState extends State<PlayerView> {
                   children: [
                     Text(
                       _player.nickname ?? _player.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.merge(const TextStyle(color: Colors.white)),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _player.country.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1
-                          ?.merge(const TextStyle(color: Colors.white70)),
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ],
                 )
@@ -327,19 +324,23 @@ class _PlayerViewState extends State<PlayerView> {
               case 1:
                 fab = FloatingActionButton(
                   child: const Icon(Icons.add),
-                  onPressed: () => showDialog(
+                  onPressed: () => showGeneralDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (BuildContext context) => ContractAddView(player: _player)),
+                      pageBuilder: (BuildContext buildContext, Animation animation,
+                              Animation secondaryAnimation) =>
+                          ContractAddView(player: _player)),
                 );
                 break;
               case 2:
                 fab = FloatingActionButton(
                   child: const Icon(Icons.add),
-                  onPressed: () => showDialog(
+                  onPressed: () => showGeneralDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (BuildContext context) => ExamModifyView(player: _player)),
+                      pageBuilder: (BuildContext buildContext, Animation animation,
+                              Animation secondaryAnimation) =>
+                          ExamModifyView(player: _player)),
                 );
                 break;
               default:
