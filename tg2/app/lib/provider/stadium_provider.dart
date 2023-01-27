@@ -34,16 +34,15 @@ class StadiumProvider extends ChangeNotifier {
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          _countryProvider.state == ProviderState.ready) {
+      if (_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Stadium/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.stadium);
         _items = {
           for (var json in response)
-            json['id']: Stadium(json['name'], json['address'],
-                _countryProvider.items[json['country_id']]!, json['id'])
+            json['id']:
+                Stadium(json['name'], json['address'], json['city'], _countryProvider.items[json['country_id']]!, json['id'])
         };
         print("Stadium/P: Fetched successfully!");
       }
@@ -51,9 +50,7 @@ class StadiumProvider extends ChangeNotifier {
       print("Stadium/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

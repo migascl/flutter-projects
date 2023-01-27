@@ -62,8 +62,7 @@ class _ClubViewState extends State<ClubView> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: widget.club.color,
-        iconTheme: IconThemeData(
-            color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white),
+        iconTheme: IconThemeData(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -80,8 +79,7 @@ class _ClubViewState extends State<ClubView> {
         Card(
           margin: const EdgeInsets.all(0),
           color: widget.club.color,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
           child: Container(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
             height: MediaQuery.of(context).size.height * 0.2,
@@ -102,18 +100,14 @@ class _ClubViewState extends State<ClubView> {
                   children: [
                     Text(
                       widget.club.name,
-                      style: Theme.of(context).textTheme.titleLarge?.merge(TextStyle(
-                          color: widget.club.color!.computeLuminance() > 0.5
-                              ? Colors.black
-                              : Colors.white)),
+                      style: Theme.of(context).textTheme.titleLarge?.merge(
+                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white)),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       widget.club.stadium!.country.name,
-                      style: Theme.of(context).textTheme.subtitle1?.merge(TextStyle(
-                          color: widget.club.color!.computeLuminance() > 0.5
-                              ? Colors.black54
-                              : Colors.white70)),
+                      style: Theme.of(context).textTheme.subtitle1?.merge(
+                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black54 : Colors.white70)),
                     ),
                   ],
                 )
@@ -148,8 +142,7 @@ class _ClubViewState extends State<ClubView> {
                           // Statistics (total games & points)
                           Card(
                             margin: const EdgeInsets.all(16),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(16))),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
                             child: IntrinsicHeight(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -196,13 +189,11 @@ class _ClubViewState extends State<ClubView> {
                           ),
                           // Recent games
                           const SizedBox(height: 8),
-                          Text("Histórico de Jogos",
-                              style: Theme.of(context).textTheme.headlineSmall),
+                          Text("Histórico de Jogos", style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 8),
                           Card(
                             margin: const EdgeInsets.all(8),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(16))),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
                             child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListView.separated(
@@ -234,8 +225,7 @@ class _ClubViewState extends State<ClubView> {
               // ############# Team Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
                 child: Consumer<ContractProvider>(
                   builder: (context, contractProvider, child) {
                     if (contractProvider.state == ProviderState.ready) {
@@ -291,8 +281,7 @@ class _ClubViewState extends State<ClubView> {
               // ############# Info Page #############
               Card(
                 margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -300,7 +289,7 @@ class _ClubViewState extends State<ClubView> {
                         isThreeLine: true,
                         title: const Text("Morada"),
                         subtitle: Text(
-                            "${widget.club.stadium!.name},\n${widget.club.stadium!.address}\n${widget.club.stadium?.country.name}"),
+                            "${widget.club.stadium!.name},\n${widget.club.stadium!.address}\n${widget.club.stadium?.city}, ${widget.club.stadium?.country.name}"),
                       ),
                       if (widget.club.phone != null)
                         ListTile(
@@ -342,8 +331,7 @@ class _ClubViewState extends State<ClubView> {
                   onPressed: () => showGeneralDialog(
                       context: context,
                       barrierDismissible: false,
-                      pageBuilder: (BuildContext buildContext, Animation animation,
-                              Animation secondaryAnimation) =>
+                      pageBuilder: (BuildContext buildContext, Animation animation, Animation secondaryAnimation) =>
                           ContractAddView(club: widget.club)),
                   child: const Icon(Icons.add),
                 );
