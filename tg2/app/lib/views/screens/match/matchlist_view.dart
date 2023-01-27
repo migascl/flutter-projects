@@ -16,10 +16,9 @@ class MatchListView extends StatefulWidget {
 }
 
 class _MatchListViewState extends State<MatchListView> {
-  int _currentTab = 0; // Current tab index number
-  final String appBarTitle = "Jogos";
-
   Map<int, Map<String, List<Match>>> _data = {}; // Data structure of the page
+
+  int _currentTab = 0; // Current tab index number
 
   // Method to reload providers used by the page
   Future _loadPageData() async {
@@ -40,6 +39,8 @@ class _MatchListViewState extends State<MatchListView> {
   void initState() {
     print("MatchListView/V: Initialized State!");
     super.initState();
+    // Run once after build is complete
+    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
   }
 
   @override
@@ -47,28 +48,28 @@ class _MatchListViewState extends State<MatchListView> {
     print("MatchListView/V: Building...");
     return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
       /*
-          Page data structure query
-          Only performs the query if provider data is not empty, to save on processing
-          It first starts by mapping all the matches matchweeks into keys and the values as child map
-          That fragments each matchweek into matchdays as keys and their values will be a list of matches
-          that took place in that matchday.
-          Here's the visual representation of the data tree:
-          {
-            matchweek1: [
-              {matchday1: [match1, match2, match3]},
-              {matchday2: [match4, match5, match6, ...]},
-              ...
-            ],
-            matchweek2": [
-              {matchday5: [match12, match13, match14]},
-              ...
-            ],
-            ...
-          }
-          */
+      Page data structure query
+      Only performs the query if provider data is not empty, to save on processing
+      It first starts by mapping all the matches matchweeks into keys and the values as child map
+      That fragments each matchweek into matchdays as keys and their values will be a list of matches
+      that took place in that matchday.
+      Here's the visual representation of the data tree:
+      {
+        matchweek1: [
+          {matchday1: [match1, match2, match3]},
+          {matchday2: [match4, match5, match6, ...]},
+          ...
+        ],
+        matchweek2": [
+          {matchday5: [match12, match13, match14]},
+          ...
+        ],
+        ...
+      }
+      */
       if (matchProvider.state != ProviderState.busy && _data.isEmpty) {
         List<Match> items = matchProvider.items.values.toList();
-        items.sort((a, b) => a.date.compareTo(b.date));
+        items.sort((a, b) => b.matchweek.compareTo(a.matchweek));
         _data = Map.fromEntries(items.map((i) => MapEntry(
               i.matchweek, // Matchweek Number
               Map.fromEntries(items.where((j) => j.matchweek == i.matchweek).map((k) {
@@ -87,10 +88,11 @@ class _MatchListViewState extends State<MatchListView> {
         length: _data.length,
         child: Scaffold(
           appBar: AppBar(
-            elevation: 1,
-            title: Text(appBarTitle),
+            elevation: 2,
+            title: const Text("Jogos"),
+            centerTitle: true,
             bottom: TabBar(
-              tabs: List.from(_data.keys.map((key) => Tab(text: "Jornada $key"))),
+              tabs: _data.keys.map((key) => Tab(text: "Jornada $key")).toList(),
               isScrollable: true,
               onTap: (index) {
                 setState(() {
@@ -104,7 +106,7 @@ class _MatchListViewState extends State<MatchListView> {
             // As long as the page data is not empty, it will show whatever data it has stored in cache
             if (_data.isNotEmpty) {
               return TabBarView(
-                children: List.from(_data.keys.map((int matchweek) {
+                children: _data.keys.map((int matchweek) {
                   return RefreshIndicator(
                       key: GlobalKey<RefreshIndicatorState>(),
                       onRefresh: _loadPageData,
@@ -130,15 +132,15 @@ class _MatchListViewState extends State<MatchListView> {
                                   String matchday = _data[matchweek]!.keys.elementAt(index);
                                   return Column(children: [
                                     Material(
-                                      color: Colors.blue,
+                                      color: Theme.of(context).colorScheme.tertiary,
                                       elevation: 4,
-                                      shadowColor: Colors.blue.withOpacity(0.5),
+                                      shadowColor: Theme.of(context).colorScheme.shadow,
                                       child: ListTile(
                                         dense: true,
                                         title: Text(
                                           DateFormat.yMMMMd('pt_PT').format(DateTime.parse(matchday)),
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(color: Colors.white),
+                                          style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),
                                         ),
                                       ),
                                     ),
@@ -159,7 +161,7 @@ class _MatchListViewState extends State<MatchListView> {
                               ),
                             ),
                           )));
-                })),
+                }).toList(),
               );
             }
             // If the page data is empty, but the provider is busy, show loading indicator
@@ -167,137 +169,16 @@ class _MatchListViewState extends State<MatchListView> {
               return const Center(child: CircularProgressIndicator());
             } else {
               // If nothing is found
-              return const Center(child: Text("Não foram encontradas nenhuns jogos"));
+              return Center(
+                child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                  Text("Não foram encontradas nenhuns jogos"),
+                  ElevatedButton(onPressed: _loadPageData, child: Text("Tentar novamente")),
+                ]),
+              );
             }
           }),
         ),
       );
     });
   }
-/*
-  @override
-  Widget build(BuildContext context) {
-    print("MatchListView/V: Building...");
-    return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
-      if (matchProvider.state == ProviderState.busy) {
-        return const Center(child: CircularProgressIndicator());
-      } else {
-        if (_data.isEmpty) {
-          /*
-          Page data structure query
-          It first starts by mapping all the matches matchweeks into keys and the values as child map
-          That fragments each matchweek into matchdays as keys and their values will be a list of matches
-          that took place in that matchday.
-          Here's the visual representation of the data tree:
-          {
-            matchweek1: [
-              {matchday1: [match1, match2, match3]},
-              {matchday2: [match4, match5, match6, ...]},
-              ...
-            ],
-            matchweek2": [
-              {matchday5: [match12, match13, match14]},
-              ...
-            ],
-            ...
-          }
-          */
-          List<Match> items = matchProvider.items.values.toList();
-          items.sort((a, b) => a.date.compareTo(b.date));
-          _data = Map.fromEntries(items.map((i) =>
-              MapEntry(
-                i.matchweek, // Matchweek Number
-                Map.fromEntries(items.where((j) => j.matchweek == i.matchweek).map((k) {
-                  DateTime matchday = DateTime(k.date.year, k.date.month, k.date.day);
-                  List<Match> matches = items.where((l) => DateUtils.isSameDay(l.date, matchday)).toList();
-                  return MapEntry(
-                    matchday.toIso8601String(),
-                    matches,
-                  );
-                })),
-              )));
-        }
-
-        return DefaultTabController(
-          initialIndex: _currentTab,
-          length: _data.length,
-          child: Scaffold(
-            appBar: AppBar(
-              elevation: 1,
-              title: Text(appBarTitle),
-              bottom: TabBar(
-                tabs: List.from(_data.keys.map((key) => Tab(text: "Jornada $key"))),
-                isScrollable: true,
-                onTap: (index) {
-                  setState(() {
-                    _currentTab = index;
-                  });
-                },
-              ),
-            ),
-            drawer: const MenuDrawer(),
-            body: (_data.isNotEmpty)
-                ? TabBarView(
-              children: List.from(_data.keys.map((int matchweek) {
-                return RefreshIndicator(
-                    key: GlobalKey<RefreshIndicatorState>(),
-                    onRefresh: _loadPageData,
-                    child: SingleChildScrollView(primary: true, child: Card(
-                      elevation: 1,
-                      margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          width: 0.5,
-                          color: Colors.black.withOpacity(0.25),
-                        ),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                        child: ListView.separated(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: _data[matchweek]!.length,
-                          itemBuilder: (context, index) {
-                            String matchday = _data[matchweek]!.keys.elementAt(index);
-                            return Column(children: [
-                              Material(
-                                color: Colors.blue,
-                                elevation: 4,
-                                shadowColor: Colors.blue.withOpacity(0.5),
-                                child: ListTile(
-                                  dense: true,
-                                  title: Text(
-                                    DateFormat.yMMMMd('pt_PT').format(DateTime.parse(matchday)),
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              ListView.separated(
-                                primary: false,
-                                physics: const ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: _data[matchweek]![matchday]!.length,
-                                itemBuilder: (context, index) {
-                                  Match match = _data[matchweek]![matchday]!.elementAt(index);
-                                  return MatchTile(match: match);
-                                },
-                                separatorBuilder: (context, index) => const Divider(height: 0, thickness: 1),
-                              ),
-                            ]);
-                          },
-                          separatorBuilder: (context, index) => const Divider(height: 0, thickness: 1),
-                        ),
-                      ),
-                    )));
-              })),
-            )
-                : const Center(child: Text("Não foram encontradas nenhuns jogos")),
-          ),
-        );
-      }
-    });
-  }
-  */
 }
