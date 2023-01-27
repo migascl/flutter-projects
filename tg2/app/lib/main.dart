@@ -10,6 +10,7 @@ import 'package:tg2/provider/exam_provider.dart';
 import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
+import 'package:tg2/utils/theme.dart';
 import 'package:tg2/views/screens/match/matchlist_view.dart';
 
 Future main() async {
@@ -77,9 +78,7 @@ class Main extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'TG2',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: theme,
         home: const StartUpView(),
       ),
     );
