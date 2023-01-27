@@ -26,11 +26,7 @@ class ContractProvider extends ChangeNotifier {
       _playerProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Contract> get items => _items;
-
-  // Get all active contracts from cache
-  Map<int, Contract> get activeContracts =>
-      Map.fromEntries(_items.entries.where((element) => element.value.club.playing && element.value.active));
-
+  
   // ################################## METHODS ##################################
   // Called when ProviderProxy update is called
   update(PlayerProvider playerProvider, ClubProvider clubProvider) {
