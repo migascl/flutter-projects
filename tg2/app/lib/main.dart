@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
@@ -14,8 +14,7 @@ import 'package:tg2/views/screens/match/matchlist_view.dart';
 
 Future main() async {
   await dotenv.load();
-
-  runApp(const Main());
+  initializeDateFormatting('pt_PT', null).then((_) => runApp(const Main()));
 }
 
 class Main extends StatelessWidget {
@@ -32,8 +31,7 @@ class Main extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<CountryProvider>(create: (context) => CountryProvider()),
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
-            create: (context) =>
-                StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) => StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, stadiumProvider) {
               print("Stadium/P: Update");
               if (stadiumProvider == null) throw Exception;
@@ -53,8 +51,8 @@ class Main extends StatelessWidget {
               return clubProvider;
             }),
         ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider, MatchProvider>(
-            create: (context) => MatchProvider(Provider.of<StadiumProvider>(context, listen: false),
-                Provider.of<ClubProvider>(context, listen: false)),
+            create: (context) => MatchProvider(
+                Provider.of<StadiumProvider>(context, listen: false), Provider.of<ClubProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider, matchProvider) {
               print("Match/P: Update");
               if (matchProvider == null) throw Exception;
@@ -65,8 +63,7 @@ class Main extends StatelessWidget {
               return matchProvider;
             }),
         ChangeNotifierProxyProvider<CountryProvider, PlayerProvider>(
-            create: (context) =>
-                PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
+            create: (context) => PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, playerProvider) {
               print("Player/P: Update");
               if (playerProvider == null) throw Exception;
@@ -77,8 +74,7 @@ class Main extends StatelessWidget {
             }),
         ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider, ContractProvider>(
             create: (context) => ContractProvider(
-                Provider.of<PlayerProvider>(context, listen: false),
-                Provider.of<ClubProvider>(context, listen: false)),
+                Provider.of<PlayerProvider>(context, listen: false), Provider.of<ClubProvider>(context, listen: false)),
             update: (context, playerProvider, clubProvider, contractProvider) {
               print("Contract/P: Update");
               if (contractProvider == null) throw Exception;
@@ -124,15 +120,13 @@ class _StartUpView extends State<StartUpView> {
   // If connection fails, an alert dialog will be displayed and give the possibility of trying again
   Future _attemptConnection() async {
     try {
-      await Provider.of<CountryProvider>(context, listen: false)
-          .get()
-          .then((value) => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MatchListView(),
-                  maintainState: false,
-                ),
-              ));
+      await Provider.of<CountryProvider>(context, listen: false).get().then((value) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MatchListView(),
+              maintainState: false,
+            ),
+          ));
     } catch (e) {
       showDialog<String>(
           context: context,
