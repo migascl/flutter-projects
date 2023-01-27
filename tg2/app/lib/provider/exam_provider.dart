@@ -21,7 +21,7 @@ class ExamProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state => _playerProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Exam> get items => _items;
 
@@ -32,23 +32,25 @@ class ExamProvider extends ChangeNotifier {
 
   // Get exams from a date range
   Map<int, Exam> getByDate(DateTimeRange date) {
-    return Map.fromEntries(_items.entries.where((element) =>
-        element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
-  }
-
-  // ################################## SETTERS ##################################
-  set playerProvider(PlayerProvider provider) {
-    _playerProvider = provider;
-    notifyListeners();
+    return Map.fromEntries(
+        _items.entries.where((element) => element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
   }
 
   // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(PlayerProvider playerProvider) {
+    print("Exam/P: Update");
+    _playerProvider = playerProvider;
+    notifyListeners();
+    get();
+  }
+
   // Get all exams from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
+      if (state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Getting all...");
@@ -105,8 +107,8 @@ class ExamProvider extends ChangeNotifier {
         notifyListeners();
         print("Exam/P: Inserting new exam...");
         // Checks cache for an exam done by the player in the same date
-        if (_items.values.any((element) =>
-            element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id)) {
+        if (_items.values
+            .any((element) => element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id)) {
           throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
         } else {
           await ApiService().post(ApiEndpoints.exam, exam.toJson());
@@ -133,9 +135,7 @@ class ExamProvider extends ChangeNotifier {
         notifyListeners();
         print("Exam/P: Patching exam ${exam.id}...");
         if (_items.values.any((element) =>
-            element.date.isAtSameMomentAs(exam.date) &&
-            element.player.id == exam.player.id &&
-            element.id != exam.id)) {
+            element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id && element.id != exam.id)) {
           throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
         } else {
           await ApiService().patch(ApiEndpoints.exam, exam.toJson());

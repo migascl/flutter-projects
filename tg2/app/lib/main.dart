@@ -33,65 +33,45 @@ class Main extends StatelessWidget {
         ChangeNotifierProxyProvider<CountryProvider, StadiumProvider>(
             create: (context) => StadiumProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, stadiumProvider) {
-              print("Stadium/P: Update");
               if (stadiumProvider == null) throw Exception;
-              stadiumProvider
-                ..countryProvider = countryProvider
-                ..get();
+              stadiumProvider.update(countryProvider);
               return stadiumProvider;
             }),
         ChangeNotifierProxyProvider<StadiumProvider, ClubProvider>(
             create: (context) => ClubProvider(Provider.of<StadiumProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider) {
-              print("Club/P: Update");
               if (clubProvider == null) throw Exception;
-              clubProvider
-                ..stadiumProvider = stadiumProvider
-                ..get();
+              clubProvider.update(stadiumProvider);
               return clubProvider;
             }),
         ChangeNotifierProxyProvider2<StadiumProvider, ClubProvider, MatchProvider>(
             create: (context) => MatchProvider(
                 Provider.of<StadiumProvider>(context, listen: false), Provider.of<ClubProvider>(context, listen: false)),
             update: (context, stadiumProvider, clubProvider, matchProvider) {
-              print("Match/P: Update");
               if (matchProvider == null) throw Exception;
-              matchProvider
-                ..stadiumProvider = stadiumProvider
-                ..clubProvider = clubProvider
-                ..get();
+              matchProvider.update(stadiumProvider, clubProvider);
               return matchProvider;
             }),
         ChangeNotifierProxyProvider<CountryProvider, PlayerProvider>(
             create: (context) => PlayerProvider(Provider.of<CountryProvider>(context, listen: false)),
             update: (context, countryProvider, playerProvider) {
-              print("Player/P: Update");
               if (playerProvider == null) throw Exception;
-              playerProvider
-                ..countryProvider = countryProvider
-                ..get();
+              playerProvider.update(countryProvider);
               return playerProvider;
             }),
         ChangeNotifierProxyProvider2<PlayerProvider, ClubProvider, ContractProvider>(
             create: (context) => ContractProvider(
                 Provider.of<PlayerProvider>(context, listen: false), Provider.of<ClubProvider>(context, listen: false)),
             update: (context, playerProvider, clubProvider, contractProvider) {
-              print("Contract/P: Update");
               if (contractProvider == null) throw Exception;
-              contractProvider
-                ..playerProvider = playerProvider
-                ..clubProvider = clubProvider
-                ..get();
+              contractProvider.update(playerProvider, clubProvider);
               return contractProvider;
             }),
         ChangeNotifierProxyProvider<PlayerProvider, ExamProvider>(
             create: (context) => ExamProvider(Provider.of<PlayerProvider>(context, listen: false)),
             update: (context, playerProvider, examProvider) {
-              print("Club/P: Update");
               if (examProvider == null) throw Exception;
-              examProvider
-                ..playerProvider = playerProvider
-                ..get();
+              examProvider.update(playerProvider);
               return examProvider;
             }),
       ],

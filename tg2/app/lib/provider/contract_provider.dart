@@ -22,34 +22,33 @@ class ContractProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state =>
+      _playerProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Contract> get items => _items;
 
   // Get all active contracts from cache
-  Map<int, Contract> get activeContracts => Map.fromEntries(
-      _items.entries.where((element) => element.value.club.playing && element.value.active));
-
-  // ################################## SETTERS ##################################
-  set playerProvider(PlayerProvider provider) {
-    _playerProvider = provider;
-    notifyListeners();
-  }
-
-  set clubProvider(ClubProvider provider) {
-    _clubProvider = provider;
-    notifyListeners();
-  }
+  Map<int, Contract> get activeContracts =>
+      Map.fromEntries(_items.entries.where((element) => element.value.club.playing && element.value.active));
 
   // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(PlayerProvider playerProvider, ClubProvider clubProvider) {
+    print("Contract/P: Update");
+    _playerProvider = playerProvider;
+    _clubProvider = clubProvider;
+    notifyListeners();
+    get();
+  }
+
   // Get all contracts from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          (_playerProvider.state == ProviderState.ready &&
-              _clubProvider.state == ProviderState.ready)) {
+      if (state != ProviderState.busy &&
+          _playerProvider.state == ProviderState.ready &&
+          _clubProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Getting all...");

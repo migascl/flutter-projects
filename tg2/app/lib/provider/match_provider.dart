@@ -21,18 +21,18 @@ class MatchProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state => _stadiumProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy
+      ? ProviderState.busy
+      : _state;
 
   Map<int, Match> get items => _items;
 
   // Get matches where a given club participated in (Uses club id to search in both home and away)
   Map<int, Match> getByClub(Club club) {
-    return Map.fromEntries(_items.entries.expand((element) =>
-    [
-      if (element.value.clubHome.id == club.id ||
-          element.value.clubAway.id == club.id)
-        MapEntry(element.key, element.value)
-    ]));
+    return Map.fromEntries(_items.entries.expand((element) => [
+          if (element.value.clubHome.id == club.id || element.value.clubAway.id == club.id)
+            MapEntry(element.key, element.value)
+        ]));
   }
 
   // Get current season points from a given club (sum of all scores)
@@ -51,36 +51,25 @@ class MatchProvider extends ChangeNotifier {
     return points;
   }
 
-  // Get list of matchweeks of the season
-  List<int> getMatchweeks() {
-    int currentMatchweek = _items.entries.last.value.matchweek;
-    List<int> matchweeks = List<int>.empty(growable: true);
-    for (var i = 1; i <= currentMatchweek; i++) {
-      matchweeks.add(i);
-    }
-    return matchweeks;
-  }
-
-  // ################################## SETTERS ##################################
-  set stadiumProvider(StadiumProvider provider) {
-    _stadiumProvider = provider;
-    notifyListeners();
-  }
-
-  set clubProvider(ClubProvider provider) {
-    _clubProvider = provider;
-    notifyListeners();
-  }
-
   // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(StadiumProvider stadiumProvider, ClubProvider clubProvider) {
+    print("Match/P: Update");
+    _stadiumProvider = stadiumProvider;
+    _clubProvider = clubProvider;
+    notifyListeners();
+    get();
+  }
+
   // Get all matches from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          (_stadiumProvider.state == ProviderState.ready &&
-              _clubProvider.state == ProviderState.ready)) {
+      // Only fetch if both parent providers contain data
+      if (state != ProviderState.busy &&
+          _stadiumProvider.state == ProviderState.ready &&
+          _clubProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Match/P: Getting all...");
@@ -105,9 +94,7 @@ class MatchProvider extends ChangeNotifier {
       print("Match/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

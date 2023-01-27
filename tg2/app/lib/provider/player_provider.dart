@@ -20,23 +20,25 @@ class PlayerProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Player> get items => _items;
 
-  // ################################## SETTERS ##################################
-  set countryProvider(CountryProvider provider) {
-    _countryProvider = provider;
+  // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(CountryProvider countryProvider) {
+    print("Player/P: Update");
+    _countryProvider = countryProvider;
     notifyListeners();
+    get();
   }
 
-  // ################################## METHODS ##################################
   // Get all players from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
+      if (state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Player/P: Getting all...");

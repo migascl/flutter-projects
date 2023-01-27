@@ -19,24 +19,25 @@ class ClubProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state => _stadiumProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Club> get items => _items;
 
-  // ################################## SETTERS ##################################
-  set stadiumProvider(StadiumProvider provider) {
-    _stadiumProvider = provider;
+  // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(StadiumProvider stadiumProvider) {
+    print("Club/P: Update");
+    _stadiumProvider = stadiumProvider;
     notifyListeners();
+    get();
   }
 
-  // ################################## METHODS ##################################
   // Get all clubs from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy &&
-          _stadiumProvider.state == ProviderState.ready) {
+      if (state != ProviderState.busy && _stadiumProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Club/P: Getting all...");
@@ -50,8 +51,7 @@ class ClubProvider extends ChangeNotifier {
                 json['phone'],
                 json['fax'],
                 json['email'],
-                Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1],
-                    json['color_rgb'][2]),
+                Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1], json['color_rgb'][2]),
                 NetworkImage(dotenv.env['API_URL']! + json['picture']),
                 json['id'])
         };
@@ -61,9 +61,7 @@ class ClubProvider extends ChangeNotifier {
       print("Club/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

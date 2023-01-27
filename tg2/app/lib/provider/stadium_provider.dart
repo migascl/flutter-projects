@@ -18,23 +18,25 @@ class StadiumProvider extends ChangeNotifier {
   }
 
   // ################################## GETTERS ##################################
-  ProviderState get state => _state;
+  ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Stadium> get items => _items;
 
-  // ################################## SETTERS ##################################
-  set countryProvider(CountryProvider provider) {
-    _countryProvider = provider;
+  // ################################## METHODS ##################################
+  // Called when ProviderProxy update is called
+  update(CountryProvider countryProvider) {
+    print("Stadium/P: Update");
+    _countryProvider = countryProvider;
     notifyListeners();
+    get();
   }
 
-  // ################################## METHODS ##################################
   // Get all stadiums from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
   Future get() async {
     try {
-      if (_state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
+      if (state != ProviderState.busy && _countryProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Stadium/P: Getting all...");
