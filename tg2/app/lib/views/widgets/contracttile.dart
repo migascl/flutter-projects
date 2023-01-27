@@ -87,14 +87,12 @@ class _ContractTileState extends State<ContractTile> {
       child: ListTile(
         dense: widget.dense,
         enabled: (widget.contract.active),
+        contentPadding: widget.dense ? const EdgeInsets.symmetric(horizontal: 8) : null,
         // Expired contracts are shown as disabled
         // Either show player or club picture
         leading: FutureImage(
-          image:
-              (widget.showClub) ? widget.contract.club.picture! : widget.contract.player.picture!,
-          errorImageUri: (widget.showClub)
-              ? 'assets/images/placeholder-club.png'
-              : 'assets/images/placeholder-player.png',
+          image: (widget.showClub) ? widget.contract.club.picture! : widget.contract.player.picture!,
+          errorImageUri: (widget.showClub) ? 'assets/images/placeholder-club.png' : 'assets/images/placeholder-player.png',
           height: (widget.dense) ? 42 : null,
           aspectRatio: 1 / 1,
           borderRadius: (widget.showClub) ? null : BorderRadius.circular(100),
@@ -102,8 +100,7 @@ class _ContractTileState extends State<ContractTile> {
         // If set to show player, show player shirt number on the title
         title: (widget.showClub)
             ? Text(widget.contract.club.name)
-            : Text(
-                '${widget.contract.number}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
+            : Text('${widget.contract.number}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
         // Don't show any subtitle if set to dense, and only show player shirt number if title set to show the club
         subtitle: (widget.dense)
             ? Text(widget.contract.position.name)
