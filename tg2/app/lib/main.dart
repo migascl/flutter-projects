@@ -78,7 +78,7 @@ class Main extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'TG2',
-        theme: theme,
+        theme: AppTheme.theme,
         home: const StartUpView(),
       ),
     );
