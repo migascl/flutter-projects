@@ -41,11 +41,11 @@ class MatchProvider extends ChangeNotifier {
     for (var item in getByClub(club).values) {
       if (item.clubHome.id == club.id) {
         points += item.homeScore;
-        break;
+        continue;
       }
       if (item.clubAway.id == club.id) {
         points += item.awayScore;
-        break;
+        continue;
       }
     }
     return points;
