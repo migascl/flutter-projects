@@ -106,55 +106,48 @@ class _MatchListViewState extends State<MatchListView> {
                       key: GlobalKey<RefreshIndicatorState>(),
                       onRefresh: _loadPageData,
                       child: SingleChildScrollView(
-                          primary: true,
-                          child: Card(
-                            margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 0.5,
-                                color: Colors.black.withOpacity(0.25),
-                              ),
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                              child: ListView.separated(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: _data[matchweek]!.length,
-                                itemBuilder: (context, index) {
-                                  String matchday = _data[matchweek]!.keys.elementAt(index);
-                                  String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(DateTime.parse(matchday));
-                                  return Column(children: [
-                                    Material(
-                                      color: Theme.of(context).colorScheme.secondary,
-                                      child: ListTile(
-                                        dense: true,
-                                        title: Text(
-                                          matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
-                                          // Capitalize week day
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-                                        ),
-                                      ),
+                        primary: true,
+                        child: Container(
+                          margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+                          child: ListView.separated(
+                            primary: false,
+                            shrinkWrap: true,
+                            itemCount: _data[matchweek]!.length,
+                            itemBuilder: (context, index) {
+                              String matchday = _data[matchweek]!.keys.elementAt(index);
+                              String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(DateTime.parse(matchday));
+                              return Column(children: [
+                                Material(
+                                  color: Theme.of(context).colorScheme.surfaceVariant,
+                                  child: ListTile(
+                                    dense: true,
+                                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    title: Text(
+                                      matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
+                                      // Capitalize week day
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.subtitle1,
                                     ),
-                                    ListView.separated(
-                                      primary: false,
-                                      physics: const ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: _data[matchweek]![matchday]!.length,
-                                      itemBuilder: (context, index) {
-                                        Match match = _data[matchweek]![matchday]!.elementAt(index);
-                                        return MatchTile(match: match, showTimeOnly: true);
-                                      },
-                                      separatorBuilder: (context, index) => const Divider(height: 0),
-                                    ),
-                                  ]);
-                                },
-                                separatorBuilder: (context, index) => const Divider(height: 0),
-                              ),
-                            ),
-                          )));
+                                  ),
+                                ),
+                                const Divider(height: 0),
+                                ListView.separated(
+                                  primary: false,
+                                  physics: const ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: _data[matchweek]![matchday]!.length,
+                                  itemBuilder: (context, index) {
+                                    Match match = _data[matchweek]![matchday]!.elementAt(index);
+                                    return MatchTile(match: match, showTimeOnly: true);
+                                  },
+                                  separatorBuilder: (context, index) => const Divider(height: 0),
+                                ),
+                              ]);
+                            },
+                            separatorBuilder: (context, index) => const Divider(height: 0),
+                          ),
+                        ),
+                      ));
                 }).toList(),
               );
             }
