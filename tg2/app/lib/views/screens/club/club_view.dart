@@ -86,30 +86,33 @@ class _ClubViewState extends State<ClubView> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                FutureImage(
-                  image: widget.club.picture!,
-                  errorImageUri: 'assets/images/placeholder-club.png',
-                  aspectRatio: 1 / 1,
-                  height: double.infinity,
+                Flexible(
+                  child: FutureImage(
+                    image: widget.club.picture!,
+                    errorImageUri: 'assets/images/placeholder-club.png',
+                    aspectRatio: 1 / 1,
+                    height: double.infinity,
+                  ),
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.club.name,
-                      style: Theme.of(context).textTheme.titleLarge?.merge(
-                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white)),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.club.stadium!.country.name,
-                      style: Theme.of(context).textTheme.subtitle1?.merge(
-                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black54 : Colors.white70)),
-                    ),
-                  ],
+                Flexible(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.club.name,
+                        style: Theme.of(context).textTheme.titleLarge?.merge(
+                            TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white)),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.club.stadium!.country.name,
+                        style: Theme.of(context).textTheme.subtitle1?.merge(
+                            TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black54 : Colors.white70)),
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -131,7 +134,7 @@ class _ClubViewState extends State<ClubView> {
                     if (list.isEmpty) {
                       return Center(
                         child: Text(
-                          "Este clube ainda não participou em nenhum jogo.",
+                          'Este clube ainda não participou em nenhum jogo.',
                           style: Theme.of(context).textTheme.caption,
                         ),
                       );
@@ -154,12 +157,12 @@ class _ClubViewState extends State<ClubView> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Jogos Totais",
+                                          'Jogos Totais',
                                           style: Theme.of(context).textTheme.subtitle1,
                                         ),
                                         Divider(height: 8),
                                         Text(
-                                          "${list.length}",
+                                          '${list.length}',
                                           style: Theme.of(context).textTheme.headline5,
                                         ),
                                       ],
@@ -172,12 +175,12 @@ class _ClubViewState extends State<ClubView> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Pontos Total",
+                                          'Pontos Total',
                                           style: Theme.of(context).textTheme.subtitle1,
                                         ),
                                         const Divider(height: 8),
                                         Text(
-                                          "${matchProvider.getClubPoints(widget.club)}",
+                                          '${matchProvider.getClubPoints(widget.club)}',
                                           style: Theme.of(context).textTheme.headline5,
                                         ),
                                       ],
@@ -189,23 +192,21 @@ class _ClubViewState extends State<ClubView> {
                           ),
                           // Recent games
                           const SizedBox(height: 8),
-                          Text("Histórico de Jogos", style: Theme.of(context).textTheme.headlineSmall),
+                          Text('Histórico de Jogos', style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 8),
                           Card(
                             margin: const EdgeInsets.all(8),
                             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
-                            child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: ListView.separated(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  itemCount: list.length,
-                                  itemBuilder: (context, index) {
-                                    Match match = list[index];
-                                    return MatchTile(match: match);
-                                  },
-                                  separatorBuilder: (context, index) => const Divider(),
-                                )),
+                            child: ListView.separated(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: list.length,
+                              itemBuilder: (context, index) {
+                                Match match = list[index];
+                                return MatchTile(match: match);
+                              },
+                              separatorBuilder: (context, index) => const Divider(height: 0),
+                            ),
                           ),
                         ],
                       ),
@@ -215,7 +216,7 @@ class _ClubViewState extends State<ClubView> {
                   } else {
                     return Center(
                       child: Text(
-                        "Não existem nenhuns jogos.",
+                        'Não existem nenhuns jogos.',
                         style: Theme.of(context).textTheme.caption,
                       ),
                     );
@@ -237,7 +238,7 @@ class _ClubViewState extends State<ClubView> {
                       if (list.isEmpty) {
                         return Center(
                             child: Text(
-                          "Não existem jogadores neste clube.",
+                          'Não existem jogadores neste clube.',
                           style: Theme.of(context).textTheme.caption,
                         ));
                       }
@@ -270,7 +271,7 @@ class _ClubViewState extends State<ClubView> {
                     } else {
                       return Center(
                         child: Text(
-                          "Não existem nenhuns contratos.",
+                          'Não existem nenhuns contratos.',
                           style: Theme.of(context).textTheme.caption,
                         ),
                       );
@@ -287,23 +288,23 @@ class _ClubViewState extends State<ClubView> {
                     children: [
                       ListTile(
                         isThreeLine: true,
-                        title: const Text("Morada"),
+                        title: const Text('Morada'),
                         subtitle: Text(
-                            "${widget.club.stadium!.name},\n${widget.club.stadium!.address}\n${widget.club.stadium?.city}, ${widget.club.stadium?.country.name}"),
+                            '${widget.club.stadium!.name},\n${widget.club.stadium!.address}\n${widget.club.stadium?.city}, ${widget.club.stadium?.country.name}'),
                       ),
                       if (widget.club.phone != null)
                         ListTile(
-                          title: const Text("Telefone"),
+                          title: const Text('Telefone'),
                           subtitle: Text(widget.club.phone!),
                         ),
                       if (widget.club.fax != null)
                         ListTile(
-                          title: const Text("Fax"),
+                          title: const Text('Fax'),
                           subtitle: Text(widget.club.fax!),
                         ),
                       if (widget.club.email != null)
                         ListTile(
-                          title: const Text("Email"),
+                          title: const Text('Email'),
                           subtitle: Text(widget.club.email!),
                         ),
                     ],

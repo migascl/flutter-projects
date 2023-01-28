@@ -37,7 +37,7 @@ class _MatchListViewState extends State<MatchListView> {
 
   @override
   void initState() {
-    print("MatchListView/V: Initialized State!");
+    print('MatchListView/V: Initialized State!');
     super.initState();
     // Run once after build is complete
     WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
@@ -45,7 +45,7 @@ class _MatchListViewState extends State<MatchListView> {
 
   @override
   Widget build(BuildContext context) {
-    print("MatchListView/V: Building...");
+    print('MatchListView/V: Building...');
     return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
       /*
       Page data structure query
@@ -60,7 +60,7 @@ class _MatchListViewState extends State<MatchListView> {
           {matchday2: [match4, match5, match6, ...]},
           ...
         ],
-        matchweek2": [
+        matchweek2': [
           {matchday5: [match12, match13, match14]},
           ...
         ],
@@ -76,8 +76,8 @@ class _MatchListViewState extends State<MatchListView> {
                 DateTime matchday = DateTime(k.date.year, k.date.month, k.date.day);
                 List<Match> matches = items.where((l) => DateUtils.isSameDay(l.date, matchday)).toList();
                 return MapEntry(
-                  matchday.toIso8601String(),
-                  matches,
+                  matchday.toIso8601String(), // Matchday ISO code
+                  matches, // List of Matches
                 );
               })),
             )));
@@ -88,17 +88,12 @@ class _MatchListViewState extends State<MatchListView> {
         length: _data.length,
         child: Scaffold(
           appBar: AppBar(
-            elevation: 2,
-            title: const Text("Jogos"),
+            title: const Text('Jogos'),
             centerTitle: true,
             bottom: TabBar(
-              tabs: _data.keys.map((key) => Tab(text: "Jornada $key")).toList(),
+              tabs: _data.keys.map((key) => Tab(text: 'Jornada $key')).toList(),
               isScrollable: true,
-              onTap: (index) {
-                setState(() {
-                  _currentTab = index;
-                });
-              },
+              onTap: (index) => setState(() => _currentTab = index),
             ),
           ),
           drawer: const MenuDrawer(),
@@ -113,7 +108,6 @@ class _MatchListViewState extends State<MatchListView> {
                       child: SingleChildScrollView(
                           primary: true,
                           child: Card(
-                            elevation: 1,
                             margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
@@ -130,17 +124,17 @@ class _MatchListViewState extends State<MatchListView> {
                                 itemCount: _data[matchweek]!.length,
                                 itemBuilder: (context, index) {
                                   String matchday = _data[matchweek]!.keys.elementAt(index);
+                                  String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(DateTime.parse(matchday));
                                   return Column(children: [
                                     Material(
-                                      color: Theme.of(context).colorScheme.tertiary,
-                                      elevation: 4,
-                                      shadowColor: Theme.of(context).colorScheme.shadow,
+                                      color: Theme.of(context).colorScheme.secondary,
                                       child: ListTile(
                                         dense: true,
                                         title: Text(
-                                          DateFormat.yMMMMd('pt_PT').format(DateTime.parse(matchday)),
+                                          matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
+                                          // Capitalize week day
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),
+                                          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
                                         ),
                                       ),
                                     ),
@@ -151,13 +145,13 @@ class _MatchListViewState extends State<MatchListView> {
                                       itemCount: _data[matchweek]![matchday]!.length,
                                       itemBuilder: (context, index) {
                                         Match match = _data[matchweek]![matchday]!.elementAt(index);
-                                        return MatchTile(match: match);
+                                        return MatchTile(match: match, showTimeOnly: true);
                                       },
-                                      separatorBuilder: (context, index) => const Divider(height: 0, thickness: 1),
+                                      separatorBuilder: (context, index) => const Divider(height: 0),
                                     ),
                                   ]);
                                 },
-                                separatorBuilder: (context, index) => const Divider(height: 0, thickness: 1),
+                                separatorBuilder: (context, index) => const Divider(height: 0),
                               ),
                             ),
                           )));
@@ -171,8 +165,8 @@ class _MatchListViewState extends State<MatchListView> {
               // If nothing is found
               return Center(
                 child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                  Text("Não foram encontradas nenhuns jogos"),
-                  ElevatedButton(onPressed: _loadPageData, child: Text("Tentar novamente")),
+                  Text('Não foram encontradas nenhuns jogos'),
+                  ElevatedButton(onPressed: _loadPageData, child: Text('Tentar novamente')),
                 ]),
               );
             }
