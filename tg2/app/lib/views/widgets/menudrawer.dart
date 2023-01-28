@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tg2/views/screens/club/clublist_view.dart';
 import 'package:tg2/views/screens/match/matchlist_view.dart';
 import 'package:tg2/views/screens/player/playerlist_view.dart';
@@ -10,45 +11,27 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Wrap(
-                    children: [
-                      Text(
-                        "Liga Portugal bwin",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.merge(const TextStyle(color: Colors.white)),
-                      ),
-                      Text(
-                        "Época 2022-2023",
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle1
-                            ?.merge(const TextStyle(color: Colors.white70)),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "Miguel Leirosa 2022/2023",
-                    style: Theme.of(context)
-                        .textTheme
-                        .overline
-                        ?.merge(const TextStyle(color: Colors.white70)),
-                  ),
-                ],
-              )),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+            child: SvgPicture.asset(
+              height: 48,
+              'assets/images/lp_logo.svg',
+              theme: SvgTheme(currentColor: Theme.of(context).colorScheme.inverseSurface),
+            ),
+          ),
           ListTile(
-            leading: const Icon(Icons.calendar_month_rounded),
+            leading: const Icon(Icons.calendar_month_outlined),
             title: const Text("Jogos"),
-            onTap: () => Navigator.push(
+            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.onPrimary,
+            onTap: () => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const MatchListView(),
@@ -57,9 +40,11 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.group),
+            leading: const Icon(Icons.group_outlined),
             title: const Text("Clubes"),
-            onTap: () => Navigator.push(
+            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.onPrimary,
+            onTap: () => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const ClubListView(),
@@ -68,15 +53,25 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.directions_run_rounded),
+            leading: const Icon(Icons.directions_outlined),
             title: const Text("Jogadores"),
-            onTap: () => Navigator.push(
+            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.onPrimary,
+            onTap: () => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const PlayerListView(),
                 maintainState: false,
               ),
             ),
+          ),
+          const Spacer(),
+          ListTile(
+            tileColor: Theme.of(context).colorScheme.tertiaryContainer,
+            dense: true,
+            title: Text("Miguel Leirosa 2022/2023",
+                style:
+                    Theme.of(context).textTheme.overline?.apply(color: Theme.of(context).colorScheme.onTertiaryContainer)),
           ),
         ],
       ),
