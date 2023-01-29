@@ -18,12 +18,15 @@ class ClubListView extends StatefulWidget {
 }
 
 class _ClubListViewState extends State<ClubListView> {
+  List<Map<String, dynamic>> _data = []; // Data structure of the page
+
   final GlobalKey<RefreshIndicatorState> _clubListRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
+      _data.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -38,104 +41,120 @@ class _ClubListViewState extends State<ClubListView> {
   void initState() {
     print("ClubList/V: Initialized State!");
     super.initState();
+    // Run once after build is complete
+    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
   }
 
   @override
   Widget build(BuildContext context) {
     print("ClubList/V: Building...");
     return Scaffold(
-      appBar: AppBar(title: const Text("Clubes"), elevation: 1),
+      appBar: AppBar(title: const Text("Clubes")),
       drawer: const MenuDrawer(),
       body: RefreshIndicator(
         key: _clubListRefreshKey,
         onRefresh: _loadPageData,
         child: Consumer2<ClubProvider, MatchProvider>(
           builder: (context, clubProvider, matchProvider, child) {
-            if (matchProvider.state != ProviderState.empty &&
-                clubProvider.state != ProviderState.empty) {
+            // Since match provider depends on club provider, its state dictates the page's state
+            // But the page data does not depend on match data being empty or not
+            if (matchProvider.state != ProviderState.busy && _data.isEmpty) {
               // Query data from clubs and matches to sort them by who has the most points and matches
-              var list = List.from(clubProvider.items.values
-                  .where((element) => element.playing == true)
-                  .map((e) => {
-                        'club': e,
-                        'matches': matchProvider.getByClub(e).length,
-                        'points': matchProvider.getClubPoints(e)
-                      }));
-              list
+              _data = clubProvider.items.values
+                  .where((club) => club.playing == true)
+                  .map((club) => {
+                        'club': club,
+                        'matches': matchProvider.getByClub(club).length,
+                        'points': matchProvider.getClubPoints(club),
+                      })
+                  .toList();
+              _data
                 ..sort((b, a) => a['matches'].compareTo(b['matches']))
                 ..sort((b, a) => a['points'].compareTo(b['points']));
+            }
+            if (_data.isNotEmpty) {
               return Column(children: [
-                ListTile(
-                    dense: true,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Expanded(
-                            child: Text("Nome", style: Theme.of(context).textTheme.labelMedium)),
-                        Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            alignment: Alignment.center,
-                            width: 48,
-                            child: Text("Jogos", style: Theme.of(context).textTheme.labelMedium)),
-                        Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            alignment: Alignment.center,
-                            width: 48,
-                            child: Text("Pontos", style: Theme.of(context).textTheme.labelMedium)),
-                      ],
-                    )),
+                Container(child: child),
+                const Divider(height: 0),
                 Expanded(
                   child: ListView.separated(
-                    itemCount: list.length,
+                    itemCount: _data.length,
                     itemBuilder: (context, index) {
-                      Club club = list[index]['club'];
-                      int totalMatches = list[index]['matches'];
-                      int totalPoints = list[index]['points'];
-                      return Column(children: [
-                        ListTile(
-                          leading: FutureImage(
-                            image: club.picture!,
-                            errorImageUri: 'assets/images/placeholder-club.png',
-                            aspectRatio: 1 / 1,
-                          ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                  child: Text(club.name,
-                                      style: Theme.of(context).textTheme.titleSmall)),
-                              Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalMatches.toString(),
-                                      style: Theme.of(context).textTheme.labelLarge)),
-                              Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text(totalPoints.toString(),
-                                      style: Theme.of(context).textTheme.labelLarge)),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => ClubView(club: club),
-                                maintainState: false,
-                              ),
-                            );
-                          },
-                        )
-                      ]);
+                      Club club = _data[index]['club'];
+                      int totalMatches = _data[index]['matches'];
+                      int totalPoints = _data[index]['points'];
+                      return ListTile(
+                        tileColor: Theme.of(context).colorScheme.surface,
+                        leading: FutureImage(
+                          image: club.picture!,
+                          errorImageUri: 'assets/images/placeholder-club.png',
+                          aspectRatio: 1 / 1,
+                          height: 42,
+                        ),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(club.name, style: Theme.of(context).textTheme.titleSmall)),
+                            Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                alignment: Alignment.center,
+                                width: 48,
+                                child: Text('$totalMatches', style: Theme.of(context).textTheme.labelLarge)),
+                            Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                alignment: Alignment.center,
+                                width: 48,
+                                child: Text('$totalPoints', style: Theme.of(context).textTheme.labelLarge)),
+                          ],
+                        ),
+                        subtitle: Text(club.stadium!.city),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => ClubView(club: club),
+                              maintainState: false,
+                            ),
+                          );
+                        },
+                      );
                     },
-                    separatorBuilder: (context, index) => const Divider(),
+                    separatorBuilder: (context, index) => const Divider(height: 0),
                   ),
                 )
               ]);
             }
-            return Container();
+            if (_data.isEmpty && matchProvider.state == ProviderState.busy) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            // If nothing is found
+            return Center(
+              child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                const Text('Não foram encontrados nenhuns clubes'),
+                ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
+              ]),
+            );
           },
+          child: Material(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            child: ListTile(
+              dense: true,
+              title: Row(
+                children: [
+                  Expanded(child: Text("Clube", style: Theme.of(context).textTheme.labelMedium)),
+                  Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      alignment: Alignment.center,
+                      width: 48,
+                      child: Text("Jogos", style: Theme.of(context).textTheme.labelMedium)),
+                  Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      alignment: Alignment.center,
+                      width: 48,
+                      child: Text("Pontos", style: Theme.of(context).textTheme.labelMedium)),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
