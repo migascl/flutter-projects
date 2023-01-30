@@ -325,9 +325,9 @@ class _ClubViewState extends State<ClubView> {
       // ############# Bottom Nav #############
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Estatísticas'),
-          BottomNavigationBarItem(icon: Icon(Icons.groups_rounded), label: 'Plantel'),
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Dados Gerais')
+          BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), label: 'Estatísticas'),
+          BottomNavigationBarItem(icon: Icon(Icons.groups_outlined), label: 'Plantel'),
+          BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'Dados Gerais')
         ],
         onTap: (int value) {
           setState(() {

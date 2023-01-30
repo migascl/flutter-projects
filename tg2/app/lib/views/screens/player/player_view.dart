@@ -337,9 +337,9 @@ class _PlayerViewState extends State<PlayerView> {
       // ############# Bottom Nav #############
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Informação'),
-          BottomNavigationBarItem(icon: Icon(Icons.file_copy_rounded), label: 'Contratos'),
-          BottomNavigationBarItem(icon: Icon(Icons.science_rounded), label: 'Exames')
+          BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'Informação'),
+          BottomNavigationBarItem(icon: Icon(Icons.file_copy_outlined), label: 'Contratos'),
+          BottomNavigationBarItem(icon: Icon(Icons.science_outlined), label: 'Exames')
         ],
         onTap: (int value) {
           setState(() {
