@@ -8,20 +8,21 @@ import 'package:tg2/provider/contract_provider.dart';
 // Club's squad player tile. It displays basic player information from a contract.
 // It can display either the club or player depending on the flag its given
 class ContractTile extends StatefulWidget {
-  const ContractTile({
-    super.key,
-    required this.contract,
-    required this.showClub,
-    this.dense = false,
-    this.showAlert = false,
-    this.onTap,
-  });
+  const ContractTile(
+      {super.key,
+      required this.contract,
+      required this.showClub,
+      this.dense = false,
+      this.showAlert = false,
+      this.onTap,
+      this.onDelete});
 
   final Contract contract; // Widget contract data
   final bool showClub; // Flag to select between showing club or player
   final bool dense; // Flag to render in dense mode
   final bool showAlert; // Flag to show contract alerts (i.e. expiration)
   final VoidCallback? onTap; // Function to call when tapped
+  final VoidCallback? onDelete; // Function to call when deleted
 
   @override
   State<ContractTile> createState() => _ContractTileState();
@@ -62,6 +63,7 @@ class _ContractTileState extends State<ContractTile> {
                 TextButton(
                     onPressed: () {
                       Provider.of<ContractProvider>(context, listen: false).delete(widget.contract);
+                      widget.onDelete?.call();
                       Navigator.of(context).pop();
                     },
                     child: const Text('Eliminar')),
@@ -73,6 +75,7 @@ class _ContractTileState extends State<ContractTile> {
               ],
             ),
           );
+          widget.onDelete?.call();
           break;
       }
     });
@@ -87,13 +90,16 @@ class _ContractTileState extends State<ContractTile> {
       child: ListTile(
         dense: widget.dense,
         enabled: (widget.contract.active),
-        contentPadding: widget.dense ? const EdgeInsets.symmetric(horizontal: 8) : null,
+        contentPadding: widget.dense
+            ? const EdgeInsets.symmetric(horizontal: 8)
+            : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        horizontalTitleGap: widget.dense ? 0 : null,
         // Expired contracts are shown as disabled
         // Either show player or club picture
         leading: FutureImage(
           image: (widget.showClub) ? widget.contract.club.picture! : widget.contract.player.picture!,
           errorImageUri: (widget.showClub) ? 'assets/images/placeholder-club.png' : 'assets/images/placeholder-player.png',
-          height: (widget.dense) ? 42 : null,
+          height: (widget.dense) ? 32 : null,
           aspectRatio: 1 / 1,
           borderRadius: (widget.showClub) ? null : BorderRadius.circular(100),
         ),

@@ -14,6 +14,7 @@ class MatchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+        tileColor: Theme.of(context).colorScheme.surface,
         title: Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Column(

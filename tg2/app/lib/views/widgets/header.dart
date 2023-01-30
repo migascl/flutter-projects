@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:tg2/main.dart';
 
 // Widget used for headers and titles
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key, required this.headerText, this.leading, required this.child});
+  const HeaderWidget({super.key, required this.headerText, this.leading, this.child});
 
   final String headerText;
   final Widget? leading;
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(headerText,
             style: Theme.of(context).textTheme.headline6?.apply(color: Theme.of(context).colorScheme.onSurfaceVariant)),
@@ -21,7 +22,7 @@ class HeaderWidget extends StatelessWidget {
             Flexible(flex: 1, child: Divider(height: 24, thickness: 0.5, color: Theme.of(context).colorScheme.outline)),
           ],
         ),
-        child
+        child ?? Container(),
       ],
     );
   }

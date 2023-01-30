@@ -75,7 +75,7 @@ class _ClubListViewState extends State<ClubListView> {
             if (_data.isNotEmpty) {
               return Column(children: [
                 Container(child: child),
-                const Divider(height: 0),
+                const Divider(height: 0, thickness: 1),
                 Expanded(
                   child: ListView.separated(
                     itemCount: _data.length,
@@ -140,7 +140,7 @@ class _ClubListViewState extends State<ClubListView> {
               dense: true,
               title: Row(
                 children: [
-                  Expanded(child: Text("Clube", style: Theme.of(context).textTheme.labelMedium)),
+                  Expanded(child: Text("Nome do Clube", style: Theme.of(context).textTheme.labelMedium)),
                   Container(
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       alignment: Alignment.center,

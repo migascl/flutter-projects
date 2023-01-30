@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/views/widgets/contracttile.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 
@@ -41,65 +41,61 @@ class _MatchViewState extends State<MatchView> {
 
   @override
   Widget build(BuildContext context) {
-    print("Match/V: Building...");
+    print('Match/V: Building...');
     return DraggableScrollableSheet(
-      initialChildSize: 0.9,
+      initialChildSize: 1,
       maxChildSize: 1,
-      minChildSize: 0.75,
-      expand: false,
+      expand: true,
       builder: (context, controller) => Column(children: [
-        // ############# Handle #############
-        Container(
-          padding: const EdgeInsets.fromLTRB(0, 32, 0, 8),
-          child: Divider(
-            thickness: 4,
-            color: Colors.white,
-            indent: MediaQuery.of(context).size.width * 0.45,
-            endIndent: MediaQuery.of(context).size.width * 0.45,
-          ),
-        ),
         // ############# Header #############
         Container(
-          padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height * 0.05,
-            horizontal: 16,
-          ),
+          margin: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             image: DecorationImage(
-              image: AssetImage("assets/images/match-bg.png"),
+              image: AssetImage('assets/images/match-bg.png'),
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(children: [
-            Column(children: [
-              // ############# Date #############
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 4,
-                children: [
-                  const Icon(Icons.calendar_month_rounded, size: 18, color: Colors.white),
-                  Text(
-                    "${DateUtilities().toYMD(widget.match.date)} ${DateUtilities().toHM(widget.match.date)}",
-                    style: Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(color: Colors.white)),
-                  )
-                ],
-              ),
-              const SizedBox(height: 4),
-              // ############# Stadium #############
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 4,
-                children: [
-                  const Icon(Icons.stadium_rounded, size: 18, color: Colors.white),
-                  Text(
-                    widget.match.stadium.name,
-                    style: Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(color: Colors.white)),
-                  )
-                ],
-              ),
-            ]),
-            Column(children: [
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Column(children: [
+                // ############# Handle #############
+                Divider(
+                  height: 0,
+                  thickness: 4,
+                  color: Colors.white,
+                  indent: MediaQuery.of(context).size.width * 0.4,
+                  endIndent: MediaQuery.of(context).size.width * 0.4,
+                ),
+                const SizedBox(height: 16),
+                // ############# Date #############
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  children: [
+                    const Icon(Icons.calendar_month_rounded, size: 18, color: Colors.white),
+                    Text(
+                      DateFormat.yMMMMd('pt_PT').add_Hm().format(widget.match.date),
+                      style: Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(color: Colors.white)),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // ############# Stadium #############
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  children: [
+                    const Icon(Icons.stadium_rounded, size: 18, color: Colors.white),
+                    Text(
+                      widget.match.stadium.name,
+                      style: Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(color: Colors.white)),
+                    )
+                  ],
+                ),
+              ]),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -113,30 +109,37 @@ class _MatchViewState extends State<MatchView> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "${widget.match.homeScore}",
-                            style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white)),
+                          Expanded(
+                            child: Text(
+                              '${widget.match.homeScore}',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white)),
+                            ),
                           ),
-                          const SizedBox(width: 16),
-                          Text(
-                            ":",
-                            style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white)),
+                          Expanded(
+                            child: Text(
+                              ':',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white70)),
+                            ),
                           ),
-                          const SizedBox(width: 16),
-                          Text(
-                            "${widget.match.awayScore}",
-                            style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white)),
+                          Expanded(
+                            child: Text(
+                              '${widget.match.awayScore}',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.displaySmall?.merge(const TextStyle(color: Colors.white)),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 4,
                         children: [
                           const Icon(Icons.timelapse_rounded, size: 24, color: Colors.white),
                           Text(
-                            "${widget.match.duration} minutos",
+                            '${widget.match.duration} minutos',
                             style: Theme.of(context).textTheme.caption?.merge(const TextStyle(color: Colors.white)),
                           )
                         ],
@@ -147,8 +150,8 @@ class _MatchViewState extends State<MatchView> {
                   Expanded(child: _clubBadgeWidget(widget.match.clubAway)),
                 ],
               ),
-            ]),
-          ]),
+            ],
+          ),
         ),
         // ############# Body #############
         Expanded(
@@ -233,7 +236,7 @@ class _MatchSquadListState extends State<_MatchSquadList> {
             aspectRatio: 1 / 1,
           ),
           Text(
-            (widget.mirrored) ? "Equipa Fora" : "Equipa Casa",
+            (widget.mirrored) ? 'Equipa Fora' : 'Equipa Casa',
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ];

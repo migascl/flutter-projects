@@ -27,6 +27,7 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            style: ListTileStyle.drawer,
             leading: const Icon(Icons.calendar_month_outlined),
             title: const Text("Jogos"),
             textColor: Theme.of(context).colorScheme.onPrimary,
@@ -53,7 +54,7 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.directions_outlined),
+            leading: const Icon(Icons.directions_run_outlined),
             title: const Text("Jogadores"),
             textColor: Theme.of(context).colorScheme.onPrimary,
             iconColor: Theme.of(context).colorScheme.onPrimary,
