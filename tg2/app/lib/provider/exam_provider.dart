@@ -97,7 +97,6 @@ class ExamProvider extends ChangeNotifier {
   }
 
   // Insert exam onto the database.
-  // Checks if provider cache contains object with same relevant values before proceeding
   // Calls POST method from API service by sending a JSON parsed string of the given exam
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future post(Exam exam) async {
@@ -106,14 +105,8 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Inserting new exam...");
-        // Checks cache for an exam done by the player in the same date
-        if (_items.values
-            .any((element) => element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id)) {
-          throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
-        } else {
-          await ApiService().post(ApiEndpoints.exam, exam.toJson());
-          print("Exam/P: Exam inserted successfully!");
-        }
+        await ApiService().post(ApiEndpoints.exam, exam.toJson());
+        print("Exam/P: Exam inserted successfully!");
       }
     } catch (e) {
       print("Exam/P: Error inserting! $e");
