@@ -219,7 +219,8 @@ class _PlayerListViewState extends State<PlayerListView> {
                       color: Colors.white,
                     ),
                     title: Text(player.nickname ?? player.name, style: Theme.of(context).textTheme.titleSmall),
-                    subtitle: Text(player.country.name),
+                    subtitle: Text(player.country.name, style: Theme.of(context).textTheme.caption),
+                    tileColor: Theme.of(context).colorScheme.surface,
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PlayerView(player: player),

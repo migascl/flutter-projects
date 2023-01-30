@@ -107,7 +107,7 @@ class _ClubListViewState extends State<ClubListView> {
                                 child: Text('$totalPoints', style: Theme.of(context).textTheme.labelLarge)),
                           ],
                         ),
-                        subtitle: Text(club.stadium!.city),
+                        subtitle: Text(club.stadium!.city, style: Theme.of(context).textTheme.caption),
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
