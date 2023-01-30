@@ -264,7 +264,10 @@ class _ContractAddView extends State<ContractAddView> {
                                     locale: const Locale('pt', 'PT'),
                                     initialEntryMode: DatePickerEntryMode.input,
                                     initialDateRange: _period,
-                                    firstDate: DateTime(1970, 1, 1),
+                                    // Only dates after the player has turned 18
+                                    firstDate: widget.player != null
+                                        ? DateUtils.addMonthsToMonthDate(widget.player!.birthday, 216)
+                                        : DateTime(1970, 1, 1),
                                     lastDate: DateTime(2100, 1, 1),
                                     currentDate: DateTime.now(),
                                   );
