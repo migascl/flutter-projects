@@ -78,7 +78,7 @@ class _ClubViewState extends State<ClubView> {
       body: Column(children: [
         // Page header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+          padding: const EdgeInsets.all(24),
           height: MediaQuery.of(context).size.height * 0.2,
           color: widget.club.color,
           child: Row(
@@ -229,7 +229,7 @@ class _ClubViewState extends State<ClubView> {
                   if (_contracts.isNotEmpty) {
                     return SingleChildScrollView(
                       child: Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: HeaderWidget(
                           headerText: 'Plantel',
                           child: Card(
@@ -242,6 +242,7 @@ class _ClubViewState extends State<ClubView> {
                                 return ContractTile(
                                   contract: contract,
                                   showClub: false,
+                                  showAlert: true,
                                   onTap: () {
                                     showModalBottomSheet(
                                         isScrollControlled: true,
@@ -255,20 +256,33 @@ class _ClubViewState extends State<ClubView> {
                                   },
                                 );
                               },
-                              separatorBuilder: (context, index) =>
-                                  Divider(indent: 16, endIndent: 16, color: Theme.of(context).colorScheme.outline),
+                              separatorBuilder: (context, index) => Divider(
+                                  height: 0, indent: 16, endIndent: 16, color: Theme.of(context).colorScheme.outline),
                             ),
                           ),
                         ),
                       ),
                     );
                   }
-                  if (_contracts.isEmpty && contractProvider.state == ProviderState.busy) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  // If nothing is found
-                  return Center(
-                      child: Text('Não existem jogadores neste clube.', style: Theme.of(context).textTheme.caption));
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: HeaderWidget(
+                      headerText: 'Plantel',
+                      child: Expanded(
+                        child: (_contracts.isEmpty && contractProvider.state == ProviderState.busy)
+                            ? const Center(child: CircularProgressIndicator())
+                            // If nothing is found
+                            : Card(
+                                child: Center(
+                                  child: Text(
+                                    'Não existem jogadores neste clube.',
+                                    style: Theme.of(context).textTheme.caption,
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  );
                 },
               ),
               // ############# Info Page #############
@@ -326,7 +340,7 @@ class _ClubViewState extends State<ClubView> {
                       context: context,
                       barrierDismissible: false,
                       pageBuilder: (BuildContext buildContext, Animation animation, Animation secondaryAnimation) =>
-                          ContractAddView(club: widget.club)).then((value) => _loadPageData()),
+                          ContractAddView(club: widget.club, onComplete: _loadPageData)),
                   child: const Icon(Icons.add),
                 );
                 break;
