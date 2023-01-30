@@ -210,6 +210,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                 itemBuilder: (context, index) {
                   Player player = _filterResults.values.elementAt(index);
                   return ListTile(
+                    dense: true,
                     leading: FutureImage(
                       image: player.picture!,
                       errorImageUri: 'assets/images/placeholder-player.png',

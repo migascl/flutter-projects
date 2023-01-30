@@ -214,7 +214,14 @@ class _ClubViewState extends State<ClubView> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   // If nothing is found
-                  return const Center(child: Text('Este clube ainda não participou em nenhuma competição'));
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Center(
+                        child: Text(
+                      'Este clube ainda não participou em nenhuma competição',
+                      style: Theme.of(context).textTheme.caption,
+                    )),
+                  );
                 },
               ),
               // ############# Team Page #############

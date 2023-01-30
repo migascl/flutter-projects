@@ -90,7 +90,6 @@ class _ContractAddView extends State<ContractAddView> {
                           headerText: 'Novo Contrato',
                           child: Column(
                             children: [
-                              const SizedBox(height: 16),
                               // ############# Club #############
                               DropdownButtonFormField<int>(
                                 decoration: const InputDecoration(

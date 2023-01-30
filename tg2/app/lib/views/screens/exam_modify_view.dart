@@ -84,78 +84,75 @@ class _ExamModifyViewState extends State<ExamModifyView> {
                       children: [
                         HeaderWidget(
                           headerText: widget.exam == null ? 'Novo Exame' : 'Modificar Exame ${widget.exam!.id}',
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // ############# Club #############
-                                Expanded(
-                                  child: CheckboxListTile(
-                                    title: const Text("Passou?"),
-                                    contentPadding: EdgeInsets.zero,
-                                    activeColor: Theme.of(context).colorScheme.secondary,
-                                    value: result,
-                                    enabled: !isLoading,
-                                    onChanged: (bool? value) => setState(() => result = value!),
-                                    controlAffinity: ListTileControlAffinity.leading,
-                                  ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ############# Club #############
+                              Expanded(
+                                child: CheckboxListTile(
+                                  title: const Text("Passou?"),
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Theme.of(context).colorScheme.secondary,
+                                  value: result,
+                                  enabled: !isLoading,
+                                  onChanged: (bool? value) => setState(() => result = value!),
+                                  controlAffinity: ListTileControlAffinity.leading,
                                 ),
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: dateFieldController,
-                                    readOnly: true,
-                                    enabled: !isLoading,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Data do Exame',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                                    validator: (value) {
-                                      List<Exam> _exams = examProvider.items.values
-                                          .where((element) => element.player.id == widget.player.id)
-                                          .toList();
-                                      // The validator first checks if the field is null or empty
-                                      // Then if a initial exam was provided, it checks if theres other (not including its own)
-                                      // with the same date
-                                      // If it's a new exam, only check for exams of the same date
-                                      if (value == null || value.isEmpty) {
-                                        return 'Campo necessário';
-                                        // Checks an exam done by the player in the same date
-                                      }
-                                      if (widget.exam != null &&
-                                          _exams.any((element) =>
-                                              element.date.isAtSameMomentAs(date!) && element.id != widget.exam!.id)) {
-                                        return 'Existe exame nesta data';
-                                      } else if (widget.exam == null &&
-                                          _exams.any((element) => element.date.isAtSameMomentAs(date!))) {
-                                        return 'Existe exame nesta data';
-                                      } else {
-                                        return null;
-                                      }
-                                    },
-                                    onTap: () async {
-                                      FocusScope.of(context).requestFocus(FocusNode());
-                                      final DateTime? result = await showDatePicker(
-                                        context: context,
-                                        locale: const Locale('pt', 'PT'),
-                                        initialEntryMode: DatePickerEntryMode.calendar,
-                                        initialDate: date ?? DateTime.now(),
-                                        // Only dates after the player is 18.
-                                        firstDate: DateUtils.addMonthsToMonthDate(widget.player.birthday, 216),
-                                        lastDate: DateTime.now(),
-                                      );
-                                      if (result != null) {
-                                        setState(() {
-                                          date = result;
-                                          dateFieldController.text = DateFormat.yMMMd('pt_PT').format(date!);
-                                        });
-                                      }
-                                    },
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: dateFieldController,
+                                  readOnly: true,
+                                  enabled: !isLoading,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Data do Exame',
+                                    border: OutlineInputBorder(),
                                   ),
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    List<Exam> _exams = examProvider.items.values
+                                        .where((element) => element.player.id == widget.player.id)
+                                        .toList();
+                                    // The validator first checks if the field is null or empty
+                                    // Then if a initial exam was provided, it checks if theres other (not including its own)
+                                    // with the same date
+                                    // If it's a new exam, only check for exams of the same date
+                                    if (value == null || value.isEmpty) {
+                                      return 'Campo necessário';
+                                      // Checks an exam done by the player in the same date
+                                    }
+                                    if (widget.exam != null &&
+                                        _exams.any((element) =>
+                                            element.date.isAtSameMomentAs(date!) && element.id != widget.exam!.id)) {
+                                      return 'Existe exame nesta data';
+                                    } else if (widget.exam == null &&
+                                        _exams.any((element) => element.date.isAtSameMomentAs(date!))) {
+                                      return 'Existe exame nesta data';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  onTap: () async {
+                                    FocusScope.of(context).requestFocus(FocusNode());
+                                    final DateTime? result = await showDatePicker(
+                                      context: context,
+                                      locale: const Locale('pt', 'PT'),
+                                      initialEntryMode: DatePickerEntryMode.calendar,
+                                      initialDate: date ?? DateTime.now(),
+                                      // Only dates after the player is 18.
+                                      firstDate: DateUtils.addMonthsToMonthDate(widget.player.birthday, 216),
+                                      lastDate: DateTime.now(),
+                                    );
+                                    if (result != null) {
+                                      setState(() {
+                                        date = result;
+                                        dateFieldController.text = DateFormat.yMMMd('pt_PT').format(date!);
+                                      });
+                                    }
+                                  },
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 32),

@@ -89,7 +89,6 @@ class _MatchListViewState extends State<MatchListView> {
         child: Scaffold(
           appBar: AppBar(
             title: const Text('Jogos'),
-            centerTitle: true,
             bottom: TabBar(
               tabs: _data.keys.map((key) => Tab(text: 'Jornada $key')).toList(),
               isScrollable: true,
@@ -108,7 +107,7 @@ class _MatchListViewState extends State<MatchListView> {
                       child: SingleChildScrollView(
                         primary: true,
                         child: Container(
-                          margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+                          margin: const EdgeInsets.all(16),
                           child: ListView.separated(
                             primary: false,
                             shrinkWrap: true,
@@ -117,17 +116,15 @@ class _MatchListViewState extends State<MatchListView> {
                               String matchday = _data[matchweek]!.keys.elementAt(index);
                               String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(DateTime.parse(matchday));
                               return Column(children: [
-                                Material(
-                                  color: Theme.of(context).colorScheme.surfaceVariant,
-                                  child: ListTile(
-                                    dense: true,
-                                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    title: Text(
-                                      matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
-                                      // Capitalize week day
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.subtitle1,
-                                    ),
+                                ListTile(
+                                  tileColor: Theme.of(context).colorScheme.surfaceVariant,
+                                  dense: true,
+                                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  title: Text(
+                                    matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
+                                    // Capitalize week day
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.subtitle1,
                                   ),
                                 ),
                                 const Divider(height: 0),

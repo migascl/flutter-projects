@@ -85,6 +85,7 @@ class _ClubListViewState extends State<ClubListView> {
                       int totalPoints = _data[index]['points'];
                       return ListTile(
                         tileColor: Theme.of(context).colorScheme.surface,
+                        dense: true,
                         leading: FutureImage(
                           image: club.picture!,
                           errorImageUri: 'assets/images/placeholder-club.png',
