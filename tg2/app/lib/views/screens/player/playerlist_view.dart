@@ -8,7 +8,7 @@ import 'package:tg2/views/screens/player/player_view.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 import 'package:tg2/models/exam_model.dart';
 import 'package:tg2/models/player_model.dart';
-import 'package:tg2/utils/dateutils.dart';
+import 'package:tg2/views/widgets/header.dart';
 import 'package:tg2/views/widgets/menudrawer.dart';
 
 // Enumerator of all possible filter states
@@ -77,6 +77,7 @@ class _PlayerListViewState extends State<PlayerListView> {
   void _showDatePicker() async {
     final DateTimeRange? result = await showDateRangePicker(
       context: context,
+      initialDateRange: _filterPeriod,
       firstDate: DateTime(1970, 1, 1),
       lastDate: DateTime.now(),
       currentDate: DateTime.now(),
@@ -101,68 +102,69 @@ class _PlayerListViewState extends State<PlayerListView> {
           // ############# Filter Popup #############
           IconButton(
             icon: const Icon(Icons.sort_outlined),
-            tooltip: 'Filtrar',
+            tooltip: 'Filtos',
             onPressed: () => {
               showModalBottomSheet<void>(
                 context: context,
                 builder: (context) {
                   return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) => Container(
+                    builder: (BuildContext context, StateSetter setState) => Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Filtros', style: Theme.of(context).textTheme.titleLarge),
-                          Divider(height: 16, color: Theme.of(context).colorScheme.outline),
-                          Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
-                          Wrap(
-                            spacing: 8,
-                            children: [
-                              ActionChip(
-                                label: const Icon(Icons.highlight_remove_rounded),
-                                tooltip: "Remover Filtro",
-                                onPressed: () => setState(() => _setFilter(_ExamFilters.empty)),
-                              ),
-                              ChoiceChip(
-                                label: const Text('Sim'),
-                                selected: _filter == _ExamFilters.hasTests,
-                                onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.hasTests)),
-                              ),
-                              ChoiceChip(
-                                label: const Text('Não'),
-                                selected: _filter == _ExamFilters.noTests,
-                                onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.noTests)),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text('Período', style: Theme.of(context).textTheme.labelLarge),
-                          const SizedBox(height: 8),
-                          Flexible(
-                            child: TextField(
-                              controller: _dateFieldController,
-                              readOnly: true,
-                              enabled: _filter != _ExamFilters.empty,
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                hintText: 'Clique aqui',
-                                suffixIcon: IconButton(
-                                  onPressed: () => _setPeriod(null),
-                                  icon: const Icon(Icons.clear),
+                      child: HeaderWidget(
+                        headerText: 'Filtros',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
+                            Wrap(
+                              spacing: 8,
+                              children: [
+                                ActionChip(
+                                  label: const Icon(Icons.highlight_remove_rounded),
+                                  tooltip: "Remover Filtro",
+                                  onPressed: () => setState(() => _setFilter(_ExamFilters.empty)),
                                 ),
-                              ),
-                              onTap: () => _showDatePicker(),
+                                ChoiceChip(
+                                  label: const Text('Sim'),
+                                  selected: _filter == _ExamFilters.hasTests,
+                                  onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.hasTests)),
+                                ),
+                                ChoiceChip(
+                                  label: const Text('Não'),
+                                  selected: _filter == _ExamFilters.noTests,
+                                  onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.noTests)),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Fechar')),
-                            ],
-                          )
-                        ],
+                            const SizedBox(height: 16),
+                            Text('Período', style: Theme.of(context).textTheme.labelLarge),
+                            const SizedBox(height: 8),
+                            Flexible(
+                              child: TextField(
+                                controller: _dateFieldController,
+                                readOnly: true,
+                                enabled: _filter != _ExamFilters.empty,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  hintText: 'Clique aqui',
+                                  suffixIcon: IconButton(
+                                    onPressed: () => _setPeriod(null),
+                                    icon: const Icon(Icons.clear),
+                                  ),
+                                ),
+                                onTap: () => _showDatePicker(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Fechar')),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -216,7 +218,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                       height: 42,
                       color: Colors.white,
                     ),
-                    title: Text(player.nickname ?? player.name),
+                    title: Text(player.nickname ?? player.name, style: Theme.of(context).textTheme.titleSmall),
                     subtitle: Text(player.country.name),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
