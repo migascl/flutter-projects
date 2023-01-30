@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/provider/club_provider.dart';
 import 'package:tg2/provider/contract_provider.dart';
@@ -11,11 +10,12 @@ import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tg2/views/screens/match/matchlist_view.dart';
 
 Future main() async {
   await dotenv.load();
-  initializeDateFormatting('pt_PT', null).then((_) => runApp(const Main()));
+  runApp(Main());
 }
 
 class Main extends StatelessWidget {
@@ -78,7 +78,16 @@ class Main extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'TG2',
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('pt', 'PT'), // Hebrew, no country code
+        ],
         home: const StartUpView(),
       ),
     );
