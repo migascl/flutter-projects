@@ -11,7 +11,7 @@ class HeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(mainAxisSize: MainAxisSize.min, children: [
       Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
