@@ -11,19 +11,28 @@ class HeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(headerText,
-            style: Theme.of(context).textTheme.headline6?.apply(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-        Row(
-          children: [
-            Flexible(flex: 2, child: Divider(height: 24, thickness: 1, color: Theme.of(context).colorScheme.tertiary)),
-            Flexible(flex: 1, child: Divider(height: 24, thickness: 0.5, color: Theme.of(context).colorScheme.outline)),
-          ],
-        ),
-        child ?? Container(),
-      ],
-    );
+    return Column(children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          IntrinsicWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  headerText,
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.headline6?.apply(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                ),
+                Divider(height: 24, thickness: 1, color: Theme.of(context).colorScheme.tertiary),
+              ],
+            ),
+          ),
+          Expanded(child: Divider(height: 24, thickness: 1, color: Theme.of(context).colorScheme.outline)),
+        ],
+      ),
+      const SizedBox(height: 8),
+      child ?? Container(),
+    ]);
   }
 }
