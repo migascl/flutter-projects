@@ -26,7 +26,7 @@ class ContractProvider extends ChangeNotifier {
       _playerProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Contract> get items => _items;
-  
+
   // ################################## METHODS ##################################
   // Called when ProviderProxy update is called
   update(PlayerProvider playerProvider, ClubProvider clubProvider) {
@@ -57,7 +57,7 @@ class ContractProvider extends ChangeNotifier {
               json['number'],
               Position.values[json['position_id']],
               DateUtilities().decoder(json['period']),
-              json['document'],
+              '/${json['document']}',
               json['id'],
             )
         };
@@ -102,6 +102,7 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Inserting new contract...");
+        await ApiService().upload(contract.document, contract.player.id.toString());
         await ApiService().post(ApiEndpoints.contract, contract.toJson());
         print("Contract/P: Contract inserted successfully!");
       }

@@ -12,12 +12,11 @@ class Contract {
   late int number; // Shirt number
   late Position position; // Player field position
   late DateTimeRange period; // Contract period
-  late Map<String, dynamic> document; // Verification document
+  late String document; // Verification document
   final int? _id; // Database id number (managed by provider)
 
   // ################################## CONSTRUCTORS ##################################
-  Contract(this.player, this.club, this.number, this.position, this.period, this.document,
-      [this._id]);
+  Contract(this.player, this.club, this.number, this.position, this.period, this.document, [this._id]);
 
   Contract.empty([this._id]);
 
@@ -49,6 +48,6 @@ class Contract {
         'number': number,
         'position_id': position.index,
         'period': DateUtilities().encoder(period),
-        'document': document
+        'document': '/img/passports/${player.id}'
       };
 }

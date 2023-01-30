@@ -11,8 +11,16 @@ import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/position_model.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:tg2/views/widgets/header.dart';
+
+import '../../utils/api/api_service.dart';
 
 // Widget used to manage a player's exam data
 // It automatically populates all fields if an exam object is provided
@@ -31,6 +39,7 @@ class ContractAddView extends StatefulWidget {
 class _ContractAddView extends State<ContractAddView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController dateFieldController = TextEditingController();
+  TextEditingController fileFieldController = TextEditingController();
   bool isLoading = false; // Flag used to disable all interactions when the submition process is active
 
   Player? _player;
@@ -38,7 +47,7 @@ class _ContractAddView extends State<ContractAddView> {
   int? _number;
   Position? _position;
   DateTimeRange? _period;
-  Map<String, dynamic>? _document;
+  PlatformFile? _document;
 
   // Method to submit data onto the provider
   // If the exam object contains a non null id, it executes the PATCH method, or POST otherwise.
@@ -46,7 +55,7 @@ class _ContractAddView extends State<ContractAddView> {
     try {
       setState(() => isLoading = true);
       await Provider.of<ContractProvider>(context, listen: false)
-          .post(Contract(_player!, _club!, _number!, _position!, _period!, _document!))
+          .post(Contract(_player!, _club!, _number!, _position!, _period!, _document!.path!))
           .then((value) {
         widget.onComplete?.call();
         Navigator.of(context).pop();
@@ -89,6 +98,7 @@ class _ContractAddView extends State<ContractAddView> {
                         HeaderWidget(
                           headerText: 'Novo Contrato',
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // ############# Club #############
                               DropdownButtonFormField<int>(
@@ -281,20 +291,33 @@ class _ContractAddView extends State<ContractAddView> {
                               ),
                               const SizedBox(height: 16),
                               // ############# Document #############
+                              // It gets the local file path of a picture
                               TextFormField(
+                                controller: fileFieldController,
+                                readOnly: true,
                                 enabled: !isLoading,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
-                                // The validator checks if the field is null or empty
-                                validator: (value) => value == null || value.isEmpty ? 'Campo necessário' : null,
-                                decoration: const InputDecoration(
-                                  labelText: 'Número de Identificação',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'Passaporte',
+                                  helperText: 'Tamanho máx: ~10MB',
+                                  suffixIcon: IconButton(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    tooltip: 'Carregar foto',
+                                    onPressed: () async {
+                                      var result = await FilePicker.platform.pickFiles();
+                                      if (result != null) {
+                                        setState(() {
+                                          _document = result.files.first;
+                                          fileFieldController.text = _document!.name;
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.upload),
+                                  ),
                                 ),
-                                onChanged: (String? value) {
-                                  if (value != null) {
-                                    _document = {'nif': int.tryParse(value)};
+                                validator: (value) {
+                                  if (_document == null) {
+                                    return 'É necessário fornecer um passaporte';
                                   }
                                 },
                               ),
