@@ -104,66 +104,66 @@ class _PlayerListViewState extends State<PlayerListView> {
             icon: const Icon(Icons.sort_outlined),
             tooltip: 'Filtos',
             onPressed: () => {
-              showModalBottomSheet<void>(
+              showDialog<void>(
                 context: context,
                 builder: (context) {
                   return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) => Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: HeaderWidget(
-                        headerText: 'Filtros',
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
-                            Wrap(
-                              spacing: 8,
-                              children: [
-                                ActionChip(
-                                  label: const Icon(Icons.highlight_remove_rounded),
-                                  tooltip: "Remover Filtro",
-                                  onPressed: () => setState(() => _setFilter(_ExamFilters.empty)),
-                                ),
-                                ChoiceChip(
-                                  label: const Text('Sim'),
-                                  selected: _filter == _ExamFilters.hasTests,
-                                  onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.hasTests)),
-                                ),
-                                ChoiceChip(
-                                  label: const Text('Não'),
-                                  selected: _filter == _ExamFilters.noTests,
-                                  onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.noTests)),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Text('Período', style: Theme.of(context).textTheme.labelLarge),
-                            const SizedBox(height: 8),
-                            Flexible(
-                              child: TextField(
-                                controller: _dateFieldController,
-                                readOnly: true,
-                                enabled: _filter != _ExamFilters.empty,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  hintText: 'Clique aqui',
-                                  suffixIcon: IconButton(
-                                    onPressed: () => _setPeriod(null),
-                                    icon: const Icon(Icons.clear),
+                    builder: (BuildContext context, StateSetter setState) => Dialog(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: HeaderWidget(
+                          headerText: 'Filtros',
+                          headerAction: IconButton(
+                            splashRadius: 24,
+                            icon: const Icon(Icons.clear),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
+                              Wrap(
+                                spacing: 8,
+                                children: [
+                                  ActionChip(
+                                    label: const Icon(Icons.highlight_remove_rounded),
+                                    tooltip: "Remover Filtro",
+                                    onPressed: () => setState(() => _setFilter(_ExamFilters.empty)),
                                   ),
-                                ),
-                                onTap: () => _showDatePicker(),
+                                  ChoiceChip(
+                                    label: const Text('Sim'),
+                                    selected: _filter == _ExamFilters.hasTests,
+                                    onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.hasTests)),
+                                  ),
+                                  ChoiceChip(
+                                    label: const Text('Não'),
+                                    selected: _filter == _ExamFilters.noTests,
+                                    onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.noTests)),
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Fechar')),
-                              ],
-                            )
-                          ],
+                              const SizedBox(height: 16),
+                              Text('Período', style: Theme.of(context).textTheme.labelLarge),
+                              const SizedBox(height: 8),
+                              Flexible(
+                                child: TextField(
+                                  controller: _dateFieldController,
+                                  readOnly: true,
+                                  enabled: _filter != _ExamFilters.empty,
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(),
+                                    hintText: 'Clique aqui',
+                                    suffixIcon: IconButton(
+                                      onPressed: () => _setPeriod(null),
+                                      icon: const Icon(Icons.clear),
+                                    ),
+                                  ),
+                                  onTap: () => _showDatePicker(),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
