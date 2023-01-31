@@ -18,16 +18,19 @@ import 'package:tg2/views/screens/contract_add_view.dart';
 // It requires a club object to initiate to use as fallback data if it can't retrieve an updated
 // version of the club data from the server
 class ClubView extends StatefulWidget {
-  const ClubView({super.key, required this.club});
+  const ClubView({super.key, required this.club, this.selectedMatchweek});
 
   final Club club;
+  final int? selectedMatchweek;
 
   @override
   State<ClubView> createState() => _ClubViewState();
 }
 
 class _ClubViewState extends State<ClubView> {
-  List<Match> _matches = [];
+  List<Match> matches = [];
+  int? selectedMatchweek;
+  List<int> matchweeks = [];
   List<Contract> _contracts = [];
 
   // Page view controls
@@ -40,7 +43,7 @@ class _ClubViewState extends State<ClubView> {
   Future _loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
-      _matches.clear();
+      matches.clear();
       _contracts.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,6 +57,7 @@ class _ClubViewState extends State<ClubView> {
 
   @override
   void initState() {
+    selectedMatchweek = widget.selectedMatchweek;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
   }
@@ -122,14 +126,17 @@ class _ClubViewState extends State<ClubView> {
               // ############# Stats Page #############
               Consumer<MatchProvider>(
                 builder: (context, matchProvider, child) {
-                  if (matchProvider.state != ProviderState.busy && _matches.isEmpty) {
+                  if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
+                    matchweeks = matchProvider.getMatchweeks();
                     // Get all matches from the club and sort them by most recent
-                    _matches = matchProvider.items.values.toList();
-                    //_matches = matchProvider.getByClub(widget.club).values.toList();
-                    _matches.sort((a, b) => b.date.compareTo(a.date));
+                    matches = matchProvider.getByClub(widget.club).values.toList();
+                    if (selectedMatchweek != null) {
+                      matches = matches.where((element) => element.matchweek == selectedMatchweek).toList();
+                    }
+                    matches.sort((a, b) => b.date.compareTo(a.date));
                   }
 
-                  if (_matches.isNotEmpty) {
+                  if (matches.isNotEmpty) {
                     return SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -140,6 +147,35 @@ class _ClubViewState extends State<ClubView> {
                                 // Statistics (total games & points)
                                 HeaderWidget(
                                   headerText: 'Estatísticas',
+                                  headerAction: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      DropdownButton<int>(
+                                        items: matchweeks.map<DropdownMenuItem<int>>((int value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text('Jornada $value'),
+                                          );
+                                        }).toList(),
+                                        hint: const Text('Época Inteira'),
+                                        value: selectedMatchweek,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            matches.clear();
+                                            selectedMatchweek = value;
+                                          });
+                                        },
+                                        underline: Container(),
+                                      ),
+                                      IconButton(
+                                        splashRadius: 24,
+                                        onPressed: () => setState(() {
+                                          selectedMatchweek = null;
+                                        }),
+                                        icon: const Icon(Icons.clear_sharp, size: 24),
+                                      ),
+                                    ],
+                                  ),
                                   child: Card(
                                     child: Padding(
                                       padding: const EdgeInsets.all(16),
@@ -157,7 +193,9 @@ class _ClubViewState extends State<ClubView> {
                                                   ),
                                                   const SizedBox(height: 8),
                                                   Text(
-                                                    '${_matches.length}',
+                                                    selectedMatchweek != null
+                                                        ? '${matches.where((match) => match.matchweek == selectedMatchweek).length}'
+                                                        : '${matches.length}',
                                                     style: Theme.of(context).textTheme.headline5,
                                                   ),
                                                 ],
@@ -174,7 +212,7 @@ class _ClubViewState extends State<ClubView> {
                                                   ),
                                                   const SizedBox(height: 8),
                                                   Text(
-                                                    '${matchProvider.getClubPoints(widget.club)}',
+                                                    '${matchProvider.getClubPoints(club: widget.club, matchweek: selectedMatchweek)}',
                                                     style: Theme.of(context).textTheme.headline5,
                                                   ),
                                                 ],
@@ -187,22 +225,33 @@ class _ClubViewState extends State<ClubView> {
                                   ),
                                 ),
                                 const SizedBox(height: 32),
-                                // Recent games
-                                HeaderWidget(
-                                  headerText: 'Histórico de Jogos',
-                                  child: Card(
-                                    child: ListView.separated(
-                                      primary: false,
-                                      shrinkWrap: true,
-                                      itemCount: _matches.length,
-                                      itemBuilder: (context, index) {
-                                        Match match = _matches[index];
-                                        return MatchTile(match: match);
-                                      },
-                                      separatorBuilder: (context, index) => const Divider(height: 0),
+                                Column(
+                                  children: [
+                                    ListTile(
+                                      tileColor: Theme.of(context).colorScheme.surfaceVariant,
+                                      dense: true,
+                                      textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      title: Text(
+                                        'Histórico de Jogos',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.subtitle1,
+                                      ),
                                     ),
-                                  ),
+                                    Card(
+                                      child: ListView.separated(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: matches.length,
+                                        itemBuilder: (context, index) {
+                                          Match match = matches[index];
+                                          return MatchTile(match: match);
+                                        },
+                                        separatorBuilder: (context, index) => const Divider(height: 0),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                // Recent games
                               ],
                             ),
                           ],
@@ -210,7 +259,7 @@ class _ClubViewState extends State<ClubView> {
                       ),
                     );
                   }
-                  if (_matches.isEmpty && matchProvider.state == ProviderState.busy) {
+                  if (matches.isEmpty && matchProvider.state == ProviderState.busy) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   // If nothing is found
