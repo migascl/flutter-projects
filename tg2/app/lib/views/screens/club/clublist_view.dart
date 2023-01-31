@@ -6,6 +6,7 @@ import 'package:tg2/provider/match_provider.dart';
 import 'package:tg2/utils/constants.dart';
 
 import '../../widgets/futureimage.dart';
+import '../../widgets/header.dart';
 import '../../widgets/menudrawer.dart';
 import 'club_view.dart';
 
@@ -19,8 +20,15 @@ class ClubListView extends StatefulWidget {
 
 class _ClubListViewState extends State<ClubListView> {
   List<Map<String, dynamic>> _data = []; // Data structure of the page
+  List<int> matchweeks = [];
 
   final GlobalKey<RefreshIndicatorState> _clubListRefreshKey = GlobalKey<RefreshIndicatorState>();
+  int? selectedMatchweek;
+
+  void _setMatchweek({int? matchweek}) {
+    setState(() => selectedMatchweek = matchweek);
+    _data.clear();
+  }
 
   // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
@@ -49,7 +57,77 @@ class _ClubListViewState extends State<ClubListView> {
   Widget build(BuildContext context) {
     print("ClubList/V: Building...");
     return Scaffold(
-      appBar: AppBar(title: const Text("Clubes")),
+      appBar: AppBar(
+        title: const Text("Clubes"),
+        actions: [
+          // ############# Filter Popup #############
+          IconButton(
+            icon: const Icon(Icons.sort_outlined),
+            tooltip: 'Filtos',
+            onPressed: () => {
+              showDialog<void>(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) => Dialog(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: HeaderWidget(
+                          headerText: 'Filtros',
+                          headerAction: IconButton(
+                            splashRadius: 24,
+                            icon: Icon(Icons.clear),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: DropdownButtonFormField<int>(
+                                      items: matchweeks.map<DropdownMenuItem<int>>((int value) {
+                                        return DropdownMenuItem<int>(
+                                          value: value,
+                                          child: Text('Jornada $value'),
+                                        );
+                                      }).toList(),
+                                      value: selectedMatchweek,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _setMatchweek(matchweek: value);
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Jornada',
+                                      ),
+                                      isExpanded: true,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => setState(() {
+                                      _setMatchweek();
+                                    }),
+                                    icon: Icon(Icons.clear),
+                                  ),
+                                  Expanded(child: SizedBox())
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
+            },
+          )
+        ],
+      ),
       drawer: const MenuDrawer(),
       body: RefreshIndicator(
         key: _clubListRefreshKey,
@@ -59,19 +137,21 @@ class _ClubListViewState extends State<ClubListView> {
             // Since match provider depends on club provider, its state dictates the page's state
             // But the page data does not depend on match data being empty or not
             if (matchProvider.state != ProviderState.busy && _data.isEmpty) {
+              matchweeks = matchProvider.getMatchweeks();
               // Query data from clubs and matches to sort them by who has the most points and matches
               _data = clubProvider.items.values
                   .where((club) => club.playing == true)
                   .map((club) => {
                         'club': club,
                         'matches': matchProvider.getByClub(club).length,
-                        'points': matchProvider.getClubPoints(club),
+                        'points': matchProvider.getClubPoints(club: club, matchweek: selectedMatchweek),
                       })
                   .toList();
               _data
                 ..sort((b, a) => a['matches'].compareTo(b['matches']))
                 ..sort((b, a) => a['points'].compareTo(b['points']));
             }
+
             if (_data.isNotEmpty) {
               return Column(children: [
                 Container(child: child),
