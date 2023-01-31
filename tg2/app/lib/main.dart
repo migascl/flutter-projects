@@ -147,6 +147,8 @@ class _StartUpView extends State<StartUpView> {
   @override
   Widget build(BuildContext context) {
     print("StartUp/V: Building...");
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        body: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)));
   }
 }
