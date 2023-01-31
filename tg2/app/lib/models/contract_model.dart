@@ -13,7 +13,7 @@ class Contract {
   late int number; // Shirt number
   late Position position; // Player field position
   late DateTimeRange period; // Contract period
-  late String document; // Verification document
+  late String document; // Verification passport document
   final int? _id; // Database id number (managed by provider)
 
   // ################################## CONSTRUCTORS ##################################
@@ -24,6 +24,7 @@ class Contract {
   // ################################## GETTERS ##################################
   int? get id => _id;
 
+  // This getter is used to retrieve the image from the server, since the 'document' variable only stores the file path
   NetworkImage get documentImage => NetworkImage(dotenv.env['API_URL']! + document);
 
   // Runtime variable. Calculate remaining time of contract

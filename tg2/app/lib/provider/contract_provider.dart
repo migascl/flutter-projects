@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/position_model.dart';
 import 'package:tg2/provider/player_provider.dart';
