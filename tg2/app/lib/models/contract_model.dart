@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/models/player_model.dart';
 import 'package:tg2/models/position_model.dart';
@@ -22,6 +23,8 @@ class Contract {
 
   // ################################## GETTERS ##################################
   int? get id => _id;
+
+  NetworkImage get documentImage => NetworkImage(dotenv.env['API_URL']! + document);
 
   // Runtime variable. Calculate remaining time of contract
   Duration get remainingTime => period.end.difference(DateTime.now());

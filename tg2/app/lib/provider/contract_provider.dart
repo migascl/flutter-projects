@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/position_model.dart';
 import 'package:tg2/provider/player_provider.dart';
@@ -57,7 +58,7 @@ class ContractProvider extends ChangeNotifier {
               json['number'],
               Position.values[json['position_id']],
               DateUtilities().decoder(json['period']),
-              '/${json['document']}',
+              json['document'],
               json['id'],
             )
         };
@@ -94,6 +95,7 @@ class ContractProvider extends ChangeNotifier {
   }
 
   // Insert contract onto the database.
+  // It first saves the passport picture onto the server using the POST /upload endpoint
   // Calls POST method from API service by sending a JSON parsed string of the given contract
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
   Future post(Contract contract) async {
@@ -102,7 +104,7 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Inserting new contract...");
-        await ApiService().upload(contract.document, contract.player.id.toString());
+        await ApiService().upload(contract.document, contract.id.toString());
         await ApiService().post(ApiEndpoints.contract, contract.toJson());
         print("Contract/P: Contract inserted successfully!");
       }

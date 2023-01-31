@@ -29,7 +29,7 @@ app.use(
     })
 );
 app.listen(port, () => {
-  console.log(`Server listening on the port  ${port}`);
+  console.log(`Server listening on the port ${port}`);
 })
 
 // Creating server to accept image request
@@ -101,7 +101,7 @@ app.post('/passport', (req, res) => {
    */
 
   // Move the uploaded image to passport folder
-  image.mv(__dirname + '/assets/passports/' + image.name);
+  image.mv(__dirname + '/assets/img/passports/' + image.name);
 
   // All good
   res.sendStatus(200);
