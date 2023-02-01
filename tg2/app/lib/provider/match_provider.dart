@@ -35,10 +35,13 @@ class MatchProvider extends ChangeNotifier {
         ]));
   }
 
-  // Get current season points from a given club (sum of all scores)
-  int getClubPoints(Club club) {
+  // Get current season points from a given club in the entire season or in a specific matchweek if specified
+  int getClubPoints({required Club club, int? matchweek}) {
     int points = 0;
-    for (var item in getByClub(club).values) {
+    List<Match> list =
+        (matchweek == null ? getByClub(club).values : getByClub(club).values.where((e) => e.matchweek == matchweek!))
+            .toList();
+    for (var item in list) {
       if (item.clubHome.id == club.id) {
         points += item.homeScore;
         continue;
@@ -49,6 +52,13 @@ class MatchProvider extends ChangeNotifier {
       }
     }
     return points;
+  }
+
+  List<int> getMatchweeks() {
+    Set<int> seen = <int>{};
+    List<Match> uniquelist = _items.values.where((element) => seen.add(element.matchweek)).toList();
+    uniquelist.sort((a, b) => b.matchweek.compareTo(a.matchweek));
+    return List.from(uniquelist.map((e) => e.matchweek));
   }
 
   // ################################## METHODS ##################################
