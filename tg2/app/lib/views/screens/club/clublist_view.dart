@@ -19,13 +19,13 @@ class ClubListView extends StatefulWidget {
 }
 
 class _ClubListViewState extends State<ClubListView> {
-  List<Map<String, dynamic>> data = []; // Data structure of the page
+  List<Map<String, dynamic>> matches = []; // Data structure of the page
   List<int> filterData = []; // Filter data (Dropdown items)
   int? selectedMatchweek;
 
-  void _setMatchweek(int? matchweek) {
+  void setMatchweek(int? matchweek) {
     setState(() => selectedMatchweek = matchweek);
-    data.clear();
+    matches.clear();
   }
 
   // Reload providers used by the page, displays snackbar if exception occurs
@@ -33,7 +33,7 @@ class _ClubListViewState extends State<ClubListView> {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
       filterData.clear();
-      data.clear();
+      matches.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -46,7 +46,7 @@ class _ClubListViewState extends State<ClubListView> {
 
   @override
   void initState() {
-    print("ClubList/V: Initialized State!");
+    print('ClubList/V: Initialized State!');
     super.initState();
     // Run once after build is complete
     WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
@@ -54,14 +54,14 @@ class _ClubListViewState extends State<ClubListView> {
 
   @override
   Widget build(BuildContext context) {
-    print("ClubList/V: Building...");
+    print('ClubList/V: Building...');
     return Consumer2<ClubProvider, MatchProvider>(builder: (context, clubProvider, matchProvider, child) {
       // Since match provider depends on club provider, its state dictates the page's state
       // But the page data does not depend on match data being empty or not
-      if (matchProvider.state != ProviderState.busy && data.isEmpty) {
+      if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
         filterData = matchProvider.getMatchweeks();
         // Query data from clubs and matches to sort them by who has the most points and matches
-        data = clubProvider.items.values
+        matches = clubProvider.items.values
             .where((club) => club.playing == true)
             .map((club) => {
                   'club': club,
@@ -69,33 +69,33 @@ class _ClubListViewState extends State<ClubListView> {
                   'points': matchProvider.getClubPoints(club: club, matchweek: selectedMatchweek),
                 })
             .toList();
-        data
+        matches
           ..sort((b, a) => a['matches'].compareTo(b['matches']))
           ..sort((b, a) => a['points'].compareTo(b['points']));
       }
 
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Clubes"),
-          actions: [
-            // ############# Filter Popup #############
-            filterData.isNotEmpty
-                ? IconButton(
+          title: const Text('Clubes'),
+          // FILTER POPUP
+          actions: filterData.isNotEmpty
+              ? [
+                  IconButton(
                     icon: const Icon(Icons.sort_outlined),
                     tooltip: 'Filtos',
-                    onPressed: () => {
-                      showDialog<void>(
-                        context: context,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            builder: (BuildContext context, StateSetter setState) => Dialog(
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(
+                          builder: (BuildContext context, StateSetter setState) {
+                            return Dialog(
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: HeaderWidget(
-                                  headerText: 'Filtros',
+                                  headerText: 'Selecionar Jornada',
                                   headerAction: IconButton(
                                     splashRadius: 24,
-                                    icon: Icon(Icons.clear),
+                                    icon: const Icon(Icons.clear),
                                     onPressed: () => Navigator.pop(context),
                                   ),
                                   child: Column(
@@ -105,7 +105,6 @@ class _ClubListViewState extends State<ClubListView> {
                                       Row(
                                         children: [
                                           Expanded(
-                                            flex: 2,
                                             child: DropdownButtonFormField<int>(
                                               items: filterData.map<DropdownMenuItem<int>>((int value) {
                                                 return DropdownMenuItem<int>(
@@ -114,39 +113,35 @@ class _ClubListViewState extends State<ClubListView> {
                                                 );
                                               }).toList(),
                                               value: selectedMatchweek,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _setMatchweek(value);
-                                                });
-                                              },
+                                              onChanged: (value) => setState(() => setMatchweek(value)),
                                               decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.zero,
+                                                ),
                                                 labelText: 'Jornada',
                                               ),
                                               isExpanded: true,
                                             ),
                                           ),
-                                          IconButton(
-                                            onPressed: () => setState(() {
-                                              _setMatchweek(null);
-                                            }),
-                                            icon: Icon(Icons.clear),
+                                          const SizedBox(width: 8),
+                                          TextButton(
+                                            onPressed: () => setState(() => setMatchweek(null)),
+                                            child: const Text('Limpar'),
                                           ),
-                                          Expanded(child: SizedBox())
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      )
-                    },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   )
-                : Container()
-          ],
+                ]
+              : null,
         ),
         drawer: const MenuDrawer(),
         body: RefreshIndicator(
@@ -154,7 +149,7 @@ class _ClubListViewState extends State<ClubListView> {
           onRefresh: _loadPageData,
           child: Builder(
             builder: (BuildContext context) {
-              if (data.isNotEmpty) {
+              if (matches.isNotEmpty) {
                 return Column(children: [
                   Material(
                     color: Theme.of(context).colorScheme.surfaceVariant,
@@ -162,17 +157,19 @@ class _ClubListViewState extends State<ClubListView> {
                       dense: true,
                       title: Row(
                         children: [
-                          Expanded(child: Text("Nome do Clube", style: Theme.of(context).textTheme.labelMedium)),
+                          Expanded(child: Text('Nome do Clube', style: Theme.of(context).textTheme.labelMedium)),
                           Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              alignment: Alignment.center,
-                              width: 48,
-                              child: Text("Jogos", style: Theme.of(context).textTheme.labelMedium)),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            alignment: Alignment.center,
+                            width: 48,
+                            child: Text('Jogos', style: Theme.of(context).textTheme.labelMedium),
+                          ),
                           Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              alignment: Alignment.center,
-                              width: 48,
-                              child: Text("Pontos", style: Theme.of(context).textTheme.labelMedium)),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            alignment: Alignment.center,
+                            width: 48,
+                            child: Text('Pontos', style: Theme.of(context).textTheme.labelMedium),
+                          ),
                         ],
                       ),
                     ),
@@ -180,11 +177,11 @@ class _ClubListViewState extends State<ClubListView> {
                   const Divider(height: 0, thickness: 1),
                   Expanded(
                     child: ListView.separated(
-                      itemCount: data.length,
+                      itemCount: matches.length,
                       itemBuilder: (context, index) {
-                        Club club = data[index]['club'];
-                        int totalMatches = data[index]['matches'];
-                        int totalPoints = data[index]['points'];
+                        Club club = matches[index]['club'];
+                        int totalMatches = matches[index]['matches'];
+                        int totalPoints = matches[index]['points'];
                         return ListTile(
                           tileColor: Theme.of(context).colorScheme.surface,
                           dense: true,
@@ -199,15 +196,17 @@ class _ClubListViewState extends State<ClubListView> {
                             children: [
                               Expanded(child: Text(club.name, style: Theme.of(context).textTheme.titleSmall)),
                               Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text('$totalMatches', style: Theme.of(context).textTheme.labelLarge)),
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                alignment: Alignment.center,
+                                width: 48,
+                                child: Text('$totalMatches', style: Theme.of(context).textTheme.labelLarge),
+                              ),
                               Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  alignment: Alignment.center,
-                                  width: 48,
-                                  child: Text('$totalPoints', style: Theme.of(context).textTheme.labelLarge)),
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                alignment: Alignment.center,
+                                width: 48,
+                                child: Text('$totalPoints', style: Theme.of(context).textTheme.labelLarge),
+                              ),
                             ],
                           ),
                           subtitle: Text(club.stadium!.city, style: Theme.of(context).textTheme.caption),
@@ -227,15 +226,19 @@ class _ClubListViewState extends State<ClubListView> {
                   )
                 ]);
               }
-              if (data.isEmpty && matchProvider.state == ProviderState.busy) {
+              if (matches.isEmpty && matchProvider.state == ProviderState.busy) {
                 return const Center(child: CircularProgressIndicator());
               }
               // If nothing is found
               return Center(
-                child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                  const Text('Não foram encontrados nenhuns clubes'),
-                  ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
-                ]),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const Text('Não foram encontrados nenhuns clubes'),
+                    ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
+                  ],
+                ),
               );
             },
           ),
@@ -243,194 +246,4 @@ class _ClubListViewState extends State<ClubListView> {
       );
     });
   }
-/*
-  @override
-  Widget build(BuildContext context) {
-    print("ClubList/V: Building...");
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Clubes"),
-        actions: [
-          // ############# Filter Popup #############
-          IconButton(
-            icon: const Icon(Icons.sort_outlined),
-            tooltip: 'Filtos',
-            onPressed: () => {
-              showDialog<void>(
-                context: context,
-                builder: (context) {
-                  return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) => Dialog(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: HeaderWidget(
-                          headerText: 'Filtros',
-                          headerAction: IconButton(
-                            splashRadius: 24,
-                            icon: Icon(Icons.clear),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: DropdownButtonFormField<int>(
-                                      items: matchweeks.map<DropdownMenuItem<int>>((int value) {
-                                        return DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text('Jornada $value'),
-                                        );
-                                      }).toList(),
-                                      value: selectedMatchweek,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _setMatchweek(matchweek: value);
-                                        });
-                                      },
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        labelText: 'Jornada',
-                                      ),
-                                      isExpanded: true,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () => setState(() {
-                                      _setMatchweek();
-                                    }),
-                                    icon: Icon(Icons.clear),
-                                  ),
-                                  Expanded(child: SizedBox())
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              )
-            },
-          )
-        ],
-      ),
-      drawer: const MenuDrawer(),
-      body: RefreshIndicator(
-        key: _clubListRefreshKey,
-        onRefresh: _loadPageData,
-        child: Consumer2<ClubProvider, MatchProvider>(
-          builder: (context, clubProvider, matchProvider, child) {
-            // Since match provider depends on club provider, its state dictates the page's state
-            // But the page data does not depend on match data being empty or not
-            if (matchProvider.state != ProviderState.busy && _data.isEmpty) {
-              _setMatchweeks(matchProvider.getMatchweeks());
-              // Query data from clubs and matches to sort them by who has the most points and matches
-              _data = clubProvider.items.values
-                  .where((club) => club.playing == true)
-                  .map((club) => {
-                        'club': club,
-                        'matches': matchProvider.getByClub(club).length,
-                        'points': matchProvider.getClubPoints(club: club, matchweek: selectedMatchweek),
-                      })
-                  .toList();
-              _data
-                ..sort((b, a) => a['matches'].compareTo(b['matches']))
-                ..sort((b, a) => a['points'].compareTo(b['points']));
-            }
-
-            if (_data.isNotEmpty) {
-              return Column(children: [
-                Container(child: child),
-                const Divider(height: 0, thickness: 1),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: _data.length,
-                    itemBuilder: (context, index) {
-                      Club club = _data[index]['club'];
-                      int totalMatches = _data[index]['matches'];
-                      int totalPoints = _data[index]['points'];
-                      return ListTile(
-                        tileColor: Theme.of(context).colorScheme.surface,
-                        dense: true,
-                        leading: FutureImage(
-                          image: club.picture!,
-                          errorImageUri: 'assets/images/placeholder-club.png',
-                          aspectRatio: 1 / 1,
-                          height: 42,
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: Text(club.name, style: Theme.of(context).textTheme.titleSmall)),
-                            Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                alignment: Alignment.center,
-                                width: 48,
-                                child: Text('$totalMatches', style: Theme.of(context).textTheme.labelLarge)),
-                            Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                alignment: Alignment.center,
-                                width: 48,
-                                child: Text('$totalPoints', style: Theme.of(context).textTheme.labelLarge)),
-                          ],
-                        ),
-                        subtitle: Text(club.stadium!.city, style: Theme.of(context).textTheme.caption),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => ClubView(club: club),
-                              maintainState: false,
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(height: 0),
-                  ),
-                )
-              ]);
-            }
-            if (_data.isEmpty && matchProvider.state == ProviderState.busy) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            // If nothing is found
-            return Center(
-              child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                const Text('Não foram encontrados nenhuns clubes'),
-                ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
-              ]),
-            );
-          },
-          child: Material(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: ListTile(
-              dense: true,
-              title: Row(
-                children: [
-                  Expanded(child: Text("Nome do Clube", style: Theme.of(context).textTheme.labelMedium)),
-                  Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      alignment: Alignment.center,
-                      width: 48,
-                      child: Text("Jogos", style: Theme.of(context).textTheme.labelMedium)),
-                  Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      alignment: Alignment.center,
-                      width: 48,
-                      child: Text("Pontos", style: Theme.of(context).textTheme.labelMedium)),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-   */
 }
