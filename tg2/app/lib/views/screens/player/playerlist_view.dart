@@ -28,27 +28,23 @@ class PlayerListView extends StatefulWidget {
 }
 
 class _PlayerListViewState extends State<PlayerListView> {
-  Map<int, Player> _data = {}; // Data structure of the page
+  Map<int, Player> players = {}; // Data structure of the page
 
   // Glocal key for refresh indicator
-  final GlobalKey<RefreshIndicatorState> _playerListRefreshKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> playerListRefreshKey = GlobalKey<RefreshIndicatorState>();
 
   // Text field controllers
-  TextEditingController _dateFieldController = TextEditingController();
+  TextEditingController periodFieldController = TextEditingController();
   String? errorText; // Date field error text (will activate if non-null)
 
-  _ExamFilters _filter = _ExamFilters.empty; // Current Filter
-  // Exam period filter
-  DateTimeRange _filterPeriod = DateTimeRange(
-    start: DateTime(1970, 1, 1),
-    end: DateTime.now(),
-  );
+  _ExamFilters filter = _ExamFilters.empty; // Current Filter
+  DateTimeRange? filterPeriod; // Exam period filter
 
   // Reload providers used by the page, displays snackbar if exception occurs
   Future _loadPageData() async {
     try {
       await Provider.of<PlayerProvider>(context, listen: false).get();
-      _data.clear();
+      players.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -59,146 +55,150 @@ class _PlayerListViewState extends State<PlayerListView> {
     }
   }
 
-  void _setFilter(_ExamFilters newFilter) => setState(() => _filter = newFilter);
+  void setFilter(_ExamFilters newFilter) => setState(() => filter = newFilter);
 
-  void _setPeriod(DateTimeRange? range) => setState(() {
+  void setPeriod(DateTimeRange? range) => setState(() {
         if (range != null) {
-          _filterPeriod = range;
+          filterPeriod = range;
           //dateFieldController.text = DateUtilities().toYMD(range.start);
-          _dateFieldController.text =
+          periodFieldController.text =
               '${DateFormat.yMMMd('pt_PT').format(range.start)} - ${DateFormat.yMMMd('pt_PT').format(range.end)}';
         } else {
-          _filterPeriod = DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
-          _dateFieldController.clear();
+          filterPeriod = DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
+          periodFieldController.clear();
         }
       });
 
   // Method to show date picker modal and set filter period
-  void _showDatePicker() async {
+  void showDatePicker() async {
     final DateTimeRange? result = await showDateRangePicker(
       context: context,
-      initialDateRange: _filterPeriod,
+      initialDateRange: filterPeriod,
       firstDate: DateTime(1970, 1, 1),
       lastDate: DateTime.now(),
       currentDate: DateTime.now(),
     );
-    _setPeriod(result);
+    setPeriod(result);
   }
 
   @override
   void initState() {
-    print("PlayerList/V: Initialized State!");
+    print('PlayerList/V: Initialized State!');
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
   }
 
   @override
   Widget build(BuildContext context) {
-    print("PlayerList/V: Building...");
+    print('PlayerList/V: Building...');
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Jogadores"),
+        title: const Text('Jogadores'),
         actions: [
-          // ############# Filter Popup #############
+          // FILTER
           IconButton(
             icon: const Icon(Icons.sort_outlined),
             tooltip: 'Filtos',
-            onPressed: () => {
-              showDialog<void>(
-                context: context,
-                builder: (context) {
-                  return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) => Dialog(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: HeaderWidget(
-                          headerText: 'Filtros',
-                          headerAction: IconButton(
-                            splashRadius: 24,
-                            icon: const Icon(Icons.clear),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
-                              Wrap(
-                                spacing: 8,
-                                children: [
-                                  ActionChip(
-                                    label: const Icon(Icons.highlight_remove_rounded),
-                                    tooltip: "Remover Filtro",
-                                    onPressed: () => setState(() => _setFilter(_ExamFilters.empty)),
-                                  ),
-                                  ChoiceChip(
-                                    label: const Text('Sim'),
-                                    selected: _filter == _ExamFilters.hasTests,
-                                    onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.hasTests)),
-                                  ),
-                                  ChoiceChip(
-                                    label: const Text('Não'),
-                                    selected: _filter == _ExamFilters.noTests,
-                                    onSelected: (bool selected) => setState(() => _setFilter(_ExamFilters.noTests)),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text('Período', style: Theme.of(context).textTheme.labelLarge),
-                              const SizedBox(height: 8),
-                              Flexible(
-                                child: TextField(
-                                  controller: _dateFieldController,
-                                  readOnly: true,
-                                  enabled: _filter != _ExamFilters.empty,
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(),
-                                    hintText: 'Clique aqui',
-                                    suffixIcon: IconButton(
-                                      onPressed: () => _setPeriod(null),
-                                      icon: const Icon(Icons.clear),
-                                    ),
-                                  ),
-                                  onTap: () => _showDatePicker(),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) {
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) => Dialog(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: HeaderWidget(
+                        headerText: 'Filtros',
+                        headerAction: IconButton(
+                          splashRadius: 24,
+                          icon: const Icon(Icons.clear),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Realizou Testes?', style: Theme.of(context).textTheme.labelLarge),
+                            Wrap(
+                              spacing: 8,
+                              children: [
+                                ActionChip(
+                                  label: const Icon(Icons.highlight_remove_rounded),
+                                  tooltip: 'Remover Filtro',
+                                  onPressed: () => setState(() {
+                                    setFilter(_ExamFilters.empty);
+                                    setPeriod(null);
+                                  }),
                                 ),
+                                ChoiceChip(
+                                  label: const Text('Sim'),
+                                  selected: filter == _ExamFilters.hasTests,
+                                  onSelected: (bool selected) => setState(() => setFilter(_ExamFilters.hasTests)),
+                                ),
+                                ChoiceChip(
+                                  label: const Text('Não'),
+                                  selected: filter == _ExamFilters.noTests,
+                                  onSelected: (bool selected) => setState(() => setFilter(_ExamFilters.noTests)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Text('Período', style: Theme.of(context).textTheme.labelLarge),
+                            const SizedBox(height: 8),
+                            Flexible(
+                              child: TextField(
+                                controller: periodFieldController,
+                                readOnly: true,
+                                enabled: filter != _ExamFilters.empty,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                  hintText: 'Clique aqui',
+                                  suffixIcon: IconButton(
+                                    onPressed: () => setState(() => setPeriod(null)),
+                                    icon: const Icon(Icons.clear),
+                                  ),
+                                ),
+                                onTap: () => showDatePicker(),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                },
-              )
-            },
-          )
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
       drawer: const MenuDrawer(),
       // ############# Body #############
       body: RefreshIndicator(
-        key: _playerListRefreshKey,
+        key: playerListRefreshKey,
         onRefresh: _loadPageData,
         child: Consumer2<PlayerProvider, ExamProvider>(builder: (context, playerProvider, examProvider, child) {
-          if (examProvider.state != ProviderState.busy && _data.isEmpty) {
-            _data = playerProvider.items;
+          if (examProvider.state != ProviderState.busy && players.isEmpty) {
+            players = playerProvider.items;
           }
 
-          if (_data.isNotEmpty) {
+          if (players.isNotEmpty) {
             Map<int, Player> filterResults = {};
             // First it checks the filter state. If it's set to empty, add all players to the list.
             // Otherwise, it starts the filtering process by getting every exam entry on the given date range
             // It then iterates through every player, and depending on what filter state it's selected,
             // tries to find any exam (or none) that contains the player id of the current player iteration
-            if (_filter == _ExamFilters.empty) {
-              filterResults = _data;
+            if (filter == _ExamFilters.empty) {
+              filterResults = players;
             } else {
-              List<Exam> exams = examProvider.getByDate(_filterPeriod).values.toList();
-              for (var player in _data.values) {
-                if (_filter == _ExamFilters.hasTests && exams.any((element) => element.player.id == player.id)) {
+              List<Exam> exams =
+                  (filterPeriod != null ? examProvider.getByDate(filterPeriod!).values : examProvider.items.values).toList();
+              for (var player in players.values) {
+                if (filter == _ExamFilters.hasTests && exams.any((element) => element.player.id == player.id)) {
                   filterResults.putIfAbsent(player.id!, () => player);
                 }
-                if (_filter == _ExamFilters.noTests && !exams.any((element) => element.player.id == player.id)) {
+                if (filter == _ExamFilters.noTests && !exams.any((element) => element.player.id == player.id)) {
                   filterResults.putIfAbsent(player.id!, () => player);
                 }
               }
@@ -235,7 +235,7 @@ class _PlayerListViewState extends State<PlayerListView> {
             }
           }
 
-          if (_data.isEmpty && examProvider.state == ProviderState.busy) {
+          if (players.isEmpty && examProvider.state == ProviderState.busy) {
             return const Center(child: CircularProgressIndicator());
           }
           // If nothing is found
