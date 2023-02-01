@@ -8,7 +8,7 @@ import 'package:tg2/provider/country_provider.dart';
 
 // Stadium provider class
 class StadiumProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late CountryProvider _countryProvider; // Reference to parent provider Country
   ProviderState _state = ProviderState.empty; // Provider state
   static Map<int, Stadium> _items = {}; // Cached data
@@ -17,12 +17,12 @@ class StadiumProvider extends ChangeNotifier {
     print("Stadium/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Stadium> get items => _items;
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Called when ProviderProxy update is called
   update(CountryProvider countryProvider) {
     print("Stadium/P: Update");

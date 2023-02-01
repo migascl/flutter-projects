@@ -11,7 +11,7 @@ import 'package:tg2/utils/exceptions.dart';
 
 // Exam provider class
 class ExamProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late PlayerProvider _playerProvider; // Reference to parent provider Player
   ProviderState _state = ProviderState.empty; // Provider state
   Map<int, Exam> _items = {}; // Cached data
@@ -20,7 +20,7 @@ class ExamProvider extends ChangeNotifier {
     print("Exam/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state => _playerProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Exam> get items => _items;
@@ -36,7 +36,7 @@ class ExamProvider extends ChangeNotifier {
         _items.entries.where((element) => element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
   }
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Called when ProviderProxy update is called
   update(PlayerProvider playerProvider) {
     print("Exam/P: Update");

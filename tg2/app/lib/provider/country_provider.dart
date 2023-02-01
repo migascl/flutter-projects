@@ -7,7 +7,7 @@ import 'package:tg2/utils/constants.dart';
 
 // Country provider class
 class CountryProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   ProviderState _state = ProviderState.empty; // Provider state
   static Map<int, Country> _items = {}; // Cached data
 
@@ -15,12 +15,12 @@ class CountryProvider extends ChangeNotifier {
     print("Country/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state => _state;
 
   Map<int, Country> get items => _items;
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Get all countries from database.
   // Calls GET method from API service and converts them to objects to insert onto the provider cache.
   // Prevents multiple calls.
@@ -31,19 +31,14 @@ class CountryProvider extends ChangeNotifier {
         notifyListeners();
         print("Country/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.country);
-        _items = {
-          for (var json in response)
-            json['id']: Country(json['id'], json['name'])
-        };
+        _items = {for (var json in response) json['id']: Country(json['id'], json['name'])};
         print("Country/P: Fetched successfully!");
       }
     } catch (e) {
       print("Country/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty)
-          ? _state = ProviderState.empty
-          : _state = ProviderState.ready;
+      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

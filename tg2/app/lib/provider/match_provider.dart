@@ -10,7 +10,7 @@ import 'package:tg2/utils/constants.dart';
 
 // Match provider class
 class MatchProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late StadiumProvider _stadiumProvider; // Reference to parent provider Stadium
   late ClubProvider _clubProvider; // Reference to parent provider Club
   ProviderState _state = ProviderState.empty; // Provider state
@@ -20,7 +20,7 @@ class MatchProvider extends ChangeNotifier {
     print("Match/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state => _stadiumProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy
       ? ProviderState.busy
       : _state;
@@ -61,7 +61,7 @@ class MatchProvider extends ChangeNotifier {
     return List.from(uniquelist.map((e) => e.matchweek));
   }
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Called when ProviderProxy update is called
   update(StadiumProvider stadiumProvider, ClubProvider clubProvider) {
     print("Match/P: Update");

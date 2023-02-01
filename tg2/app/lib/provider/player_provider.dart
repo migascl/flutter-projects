@@ -10,7 +10,7 @@ import 'package:tg2/models/schooling_model.dart';
 
 // Player provider class
 class PlayerProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late CountryProvider _countryProvider; // Reference to parent provider Country
   ProviderState _state = ProviderState.empty; // Provider state
   static Map<int, Player> _items = {}; // Cached data
@@ -19,12 +19,12 @@ class PlayerProvider extends ChangeNotifier {
     print("Player/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Player> get items => _items;
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Called when ProviderProxy update is called
   update(CountryProvider countryProvider) {
     print("Player/P: Update");

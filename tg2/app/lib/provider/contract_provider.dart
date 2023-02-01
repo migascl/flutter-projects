@@ -11,7 +11,7 @@ import 'package:tg2/provider/club_provider.dart';
 
 // Contract provider class
 class ContractProvider extends ChangeNotifier {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late PlayerProvider _playerProvider; // Reference to parent provider Player
   late ClubProvider _clubProvider; // Reference to parent provider Club
   ProviderState _state = ProviderState.empty; // Provider state
@@ -21,13 +21,13 @@ class ContractProvider extends ChangeNotifier {
     print("Contract/P: Initialized");
   }
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   ProviderState get state =>
       _playerProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
   Map<int, Contract> get items => _items;
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Called when ProviderProxy update is called
   update(PlayerProvider playerProvider, ClubProvider clubProvider) {
     print("Contract/P: Update");
