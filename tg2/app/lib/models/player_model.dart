@@ -4,7 +4,7 @@ import 'package:tg2/models/schooling_model.dart';
 
 // Model for the Player entity
 class Player {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late String name; // Player's name
   String? nickname; // Player's optional nickname
   late Country country; // Player's nationality
@@ -15,13 +15,13 @@ class Player {
   NetworkImage? picture; // Player's profile picture
   final int? _id; // Database id number (managed by provider)
 
-  // ################################## CONSTRUCTORS ##################################
+  // CONSTRUCTORS
   Player(this.name, this.country, this.birthday, this.height, this.weight,
       [this.nickname, this.schoolingLvl, this.picture, this._id]);
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   int? get id => _id;
 
-  // Runtime variable. Calculate player's age from birthday date
+  // Calculate player's age from birthday date
   int get age => DateTime.now().year - birthday.year;
 }

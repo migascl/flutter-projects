@@ -19,8 +19,6 @@ class Contract {
   // ################################## CONSTRUCTORS ##################################
   Contract(this.player, this.club, this.number, this.position, this.period, this.document, [this._id]);
 
-  Contract.empty([this._id]);
-
   // ################################## GETTERS ##################################
   int? get id => _id;
 
