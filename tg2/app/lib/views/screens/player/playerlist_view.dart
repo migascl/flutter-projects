@@ -185,30 +185,30 @@ class _PlayerListViewState extends State<PlayerListView> {
           }
 
           if (_data.isNotEmpty) {
-            Map<int, Player> _filterResults = {};
+            Map<int, Player> filterResults = {};
             // First it checks the filter state. If it's set to empty, add all players to the list.
             // Otherwise, it starts the filtering process by getting every exam entry on the given date range
             // It then iterates through every player, and depending on what filter state it's selected,
             // tries to find any exam (or none) that contains the player id of the current player iteration
             if (_filter == _ExamFilters.empty) {
-              _filterResults.addAll(_data);
+              filterResults = _data;
             } else {
               List<Exam> exams = examProvider.getByDate(_filterPeriod).values.toList();
-              for (var player in playerProvider.items.values) {
+              for (var player in _data.values) {
                 if (_filter == _ExamFilters.hasTests && exams.any((element) => element.player.id == player.id)) {
-                  _filterResults.putIfAbsent(player.id!, () => player);
+                  filterResults.putIfAbsent(player.id!, () => player);
                 }
                 if (_filter == _ExamFilters.noTests && !exams.any((element) => element.player.id == player.id)) {
-                  _filterResults.putIfAbsent(player.id!, () => player);
+                  filterResults.putIfAbsent(player.id!, () => player);
                 }
               }
             }
 
-            if (_filterResults.isNotEmpty) {
+            if (filterResults.isNotEmpty) {
               return ListView.separated(
-                itemCount: _filterResults.length,
+                itemCount: filterResults.length,
                 itemBuilder: (context, index) {
-                  Player player = _filterResults.values.elementAt(index);
+                  Player player = filterResults.values.elementAt(index);
                   return ListTile(
                     dense: true,
                     leading: FutureImage(
