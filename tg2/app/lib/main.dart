@@ -79,7 +79,7 @@ class Main extends StatelessWidget {
       child: MaterialApp(
         title: 'TG2',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
+        theme: AppTheme.getTheme(context),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

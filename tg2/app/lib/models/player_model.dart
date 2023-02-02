@@ -12,16 +12,18 @@ class Player {
   int? height; // Player's height
   int? weight; // Player's weight
   Schooling? schooling; // Player's schooling level
-  NetworkImage? picture; // Player's profile picture
+  Image picture; // Player's profile picture
   final int? _id; // Database id number (managed by provider)
 
   // CONSTRUCTORS
-  Player(this.name, this.country, this.birthday,
-      [this.nickname, this.height, this.weight, this.schooling, this.picture, this._id]);
+  Player(this.name, this.country, this.birthday, this.picture,
+      [this.nickname, this.height, this.weight, this.schooling, this._id]);
 
   // GETTERS
   int? get id => _id;
 
   // Calculate player's age from birthday date
   int get age => DateTime.now().year - birthday.year;
+
+  String get nicknameFallback => nickname ?? name; // Get nickname but get name as fallback
 }

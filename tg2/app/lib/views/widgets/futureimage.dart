@@ -4,17 +4,9 @@ import 'package:flutter/material.dart';
 // It supports placeholder and fallback images, scaling, aspect ratios, borders...
 class FutureImage extends StatefulWidget {
   const FutureImage(
-      {super.key,
-      required this.image,
-      this.errorImageUri,
-      this.height,
-      this.width,
-      this.aspectRatio,
-      this.borderRadius,
-      this.color});
+      {super.key, required this.image, this.height, this.width, this.aspectRatio, this.borderRadius, this.color});
 
-  final ImageProvider image;
-  final String? errorImageUri;
+  final Image image;
   final double? height;
   final double? width;
   final double? aspectRatio;
@@ -29,25 +21,26 @@ class _FutureImageState extends State<FutureImage> {
   @override
   Widget build(BuildContext context) {
     Widget imageWidget = FadeInImage(
-      image: widget.image,
+      image: widget.image.image,
       placeholder: const AssetImage('assets/images/loading.gif'),
       imageErrorBuilder: (context, error, stackTrace) {
-        return Image.asset(widget.errorImageUri ?? 'assets/images/placeholder.png', fit: BoxFit.contain);
+        return Image.asset('assets/images/placeholder.png', fit: BoxFit.contain);
       },
       fit: BoxFit.contain,
       placeholderFit: BoxFit.fill,
     );
 
     return ClipRRect(
-        borderRadius: widget.borderRadius ?? BorderRadius.zero,
-        child: Container(
-            height: widget.height,
-            width: widget.width,
-            decoration: BoxDecoration(
-              color: widget.color,
-            ),
-            child: (widget.aspectRatio != null)
-                ? AspectRatio(aspectRatio: widget.aspectRatio!, child: imageWidget)
-                : imageWidget));
+      borderRadius: widget.borderRadius ?? BorderRadius.zero,
+      child: Container(
+          height: widget.height,
+          width: widget.width,
+          decoration: BoxDecoration(
+            color: widget.color,
+          ),
+          child: (widget.aspectRatio != null)
+              ? AspectRatio(aspectRatio: widget.aspectRatio!, child: imageWidget)
+              : imageWidget),
+    );
   }
 }

@@ -38,38 +38,27 @@ class ContractAddView extends StatefulWidget {
 
 class _ContractAddView extends State<ContractAddView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController shirtnumberFieldController = TextEditingController();
   TextEditingController dateFieldController = TextEditingController();
   TextEditingController fileFieldController = TextEditingController();
   bool isLoading = false; // Flag used to disable all interactions when the submition process is active
 
-  Player? _player;
-  Club? _club;
-  int? _number;
-  Position? _position;
-  DateTimeRange? _period;
-  PlatformFile? _document;
+  Player? player;
+  Club? club;
+  int? shirtnumber;
+  Position? position;
+  DateTimeRange? period;
+  PlatformFile? passportFile;
 
   // Method to submit data onto the provider
   // If the exam object contains a non null id, it executes the PATCH method, or POST otherwise.
-  Future _submitData() async {
-    try {
-      setState(() => isLoading = true);
-      await Provider.of<ContractProvider>(context, listen: false)
-          .post(Contract(_player!, _club!, _number!, _position!, _period!, _document!.path!))
-          .then((value) {
-        widget.onComplete?.call();
-        Navigator.of(context).pop();
-      });
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
+  Future submitData() async {}
 
   @override
   void initState() {
     print('ContractAdd/V: Initialized State!');
-    _club = widget.club;
-    _player = widget.player;
+    club = widget.club;
+    player = widget.player;
     super.initState();
   }
 
@@ -82,16 +71,11 @@ class _ContractAddView extends State<ContractAddView> {
         child: Card(
           child: Consumer3<PlayerProvider, ClubProvider, ContractProvider>(
             builder: (context, playerProvider, clubProvider, contractProvider, child) {
-              if (contractProvider.state == ProviderState.ready) {
-                // A form is used to validate data before submitting, the form validates the following:
-                // - All fields must be populated
-                // - A player can't have more than 1 active contract
-                // - Shirt numbers must be unique within a club
-                // - A contract can't be more than 5 years
-                return Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+              return Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                  child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -100,32 +84,31 @@ class _ContractAddView extends State<ContractAddView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // ############# Club #############
+                              // CLUB
                               DropdownButtonFormField<int>(
                                 decoration: const InputDecoration(
                                   labelText: 'Clube',
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                 ),
                                 isExpanded: true,
-                                value: _club?.id,
+                                value: club?.id,
                                 onChanged: widget.club == null
                                     ? (int? value) => setState(() {
-                                          _club = clubProvider.data.values.singleWhere((element) => element.id == value);
+                                          club = clubProvider.data.values.singleWhere((element) => element.id == value);
                                         })
                                     : null,
                                 // The validator checks if the field is null or empty
                                 validator: (value) => value == null ? 'Campo necessário' : null,
                                 // New contracts can only be made by currently playing clubs
-                                items: clubProvider.data.values
-                                    .where((element) => element.playing)
-                                    .map<DropdownMenuItem<int>>((Club value) {
+                                items: clubProvider.data.values.map<DropdownMenuItem<int>>((Club value) {
                                   return DropdownMenuItem<int>(
                                     value: value.id,
                                     child: Row(
                                       children: [
                                         FutureImage(
-                                          image: value.logo!,
-                                          errorImageUri: 'assets/images/placeholder-club.png',
+                                          image: value.logo,
                                           height: 32,
                                           aspectRatio: 1 / 1,
                                         ),
@@ -137,17 +120,19 @@ class _ContractAddView extends State<ContractAddView> {
                                 }).toList(),
                               ),
                               const SizedBox(height: 16),
-                              // ############# Player #############
+                              // PLAYER
                               DropdownButtonFormField<int>(
                                 decoration: const InputDecoration(
                                   labelText: 'Jogador',
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                 ),
                                 isExpanded: true,
-                                value: _player?.id,
+                                value: player?.id,
                                 onChanged: widget.player == null
                                     ? (int? value) => setState(() {
-                                          _player = playerProvider.data.values.singleWhere((element) => element.id == value);
+                                          player = playerProvider.data.values.singleWhere((element) => element.id == value);
                                         })
                                     : null,
                                 validator: (value) => value == null ? 'Campo necessário' : null,
@@ -157,8 +142,7 @@ class _ContractAddView extends State<ContractAddView> {
                                     child: Row(
                                       children: [
                                         FutureImage(
-                                          image: value.picture!,
-                                          errorImageUri: 'assets/images/placeholder-player.png',
+                                          image: value.picture,
                                           height: 32,
                                           aspectRatio: 1 / 1,
                                           borderRadius: BorderRadius.circular(100),
@@ -175,16 +159,18 @@ class _ContractAddView extends State<ContractAddView> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // ############# Position #############
+                                  // POSITION
                                   Expanded(
                                     child: DropdownButtonFormField<Position>(
                                       decoration: const InputDecoration(
                                         labelText: 'Posição',
-                                        border: OutlineInputBorder(),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.zero,
+                                        ),
                                       ),
                                       isExpanded: true,
-                                      value: _position,
-                                      onChanged: (Position? value) => setState(() => _position = value),
+                                      value: position,
+                                      onChanged: (Position? value) => setState(() => position = value),
                                       autovalidateMode: AutovalidateMode.onUserInteraction,
                                       validator: (value) => value == null ? 'Campo necessário' : null,
                                       items: Position.values.map<DropdownMenuItem<Position>>((Position value) {
@@ -196,7 +182,7 @@ class _ContractAddView extends State<ContractAddView> {
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  // ############# Shirt Number #############
+                                  // SHIRT NUMBER
                                   Expanded(
                                     child: TextFormField(
                                       enabled: !isLoading,
@@ -209,8 +195,8 @@ class _ContractAddView extends State<ContractAddView> {
                                         if (value == null || value.isEmpty) {
                                           return 'Campo necessário';
                                         } else if (contractProvider.data.values
-                                            .where((element) => element.club.id == _club!.id && element.active)
-                                            .any((element) => element.shirtNumber == _number)) {
+                                            .where((element) => element.club.id == club!.id && element.active)
+                                            .any((element) => element.shirtNumber == shirtnumber)) {
                                           return 'Número em uso pelo clube.';
                                         } else {
                                           return null;
@@ -218,11 +204,14 @@ class _ContractAddView extends State<ContractAddView> {
                                       },
                                       decoration: const InputDecoration(
                                         labelText: 'Número da Camisola',
-                                        border: OutlineInputBorder(),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.zero,
+                                        ),
                                       ),
                                       onChanged: (String? value) {
                                         if (value != null) {
-                                          _number = int.tryParse(value);
+                                          shirtnumber = int.tryParse(value);
+                                          shirtnumberFieldController.text = shirtnumber.toString();
                                         }
                                       },
                                     ),
@@ -230,17 +219,19 @@ class _ContractAddView extends State<ContractAddView> {
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              // ############# Period #############
+                              // PERIOD
                               TextFormField(
                                 controller: dateFieldController,
                                 readOnly: true,
                                 enabled: !isLoading,
                                 decoration: InputDecoration(
                                   labelText: 'Período do Contrato',
-                                  border: const OutlineInputBorder(),
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                   suffixIcon: IconButton(
                                     onPressed: () {
-                                      _period = null;
+                                      period = null;
                                       dateFieldController.text = '';
                                     },
                                     icon: const Icon(Icons.clear),
@@ -254,12 +245,12 @@ class _ContractAddView extends State<ContractAddView> {
                                   // already has another contract active
                                   if (value == null || value.isEmpty) {
                                     return 'Campo necessário';
-                                  } else if (_period!.end.difference(_period!.start).compareTo(
-                                          DateUtils.addMonthsToMonthDate(_period!.start, 60).difference(_period!.start)) ==
+                                  } else if (period!.end.difference(period!.start).compareTo(
+                                          DateUtils.addMonthsToMonthDate(period!.start, 60).difference(period!.start)) ==
                                       1) {
                                     return 'Contratos têm duração máxima de 5 anos';
                                   } else if (contractProvider.data.values.any((element) =>
-                                      element.player.id == _player!.id && _period!.start.isBefore(element.period.end))) {
+                                      element.player.id == player!.id && period!.start.isBefore(element.period.end))) {
                                     return 'Jogador atualmente contratado neste periodo';
                                   } else {
                                     return null;
@@ -271,7 +262,7 @@ class _ContractAddView extends State<ContractAddView> {
                                     context: context,
                                     locale: const Locale('pt', 'PT'),
                                     initialEntryMode: DatePickerEntryMode.input,
-                                    initialDateRange: _period,
+                                    initialDateRange: period,
                                     // Only dates after the player has turned 18
                                     firstDate: widget.player != null
                                         ? DateUtils.addMonthsToMonthDate(widget.player!.birthday, 216)
@@ -281,22 +272,24 @@ class _ContractAddView extends State<ContractAddView> {
                                   );
                                   if (result != null) {
                                     setState(() {
-                                      _period = result;
+                                      period = result;
                                       dateFieldController.text =
-                                          '${DateFormat.yMMMd('pt_PT').format(_period!.start)} - ${DateFormat.yMMMd('pt_PT').format(_period!.end)}';
+                                          '${DateFormat.yMMMd('pt_PT').format(period!.start)} - ${DateFormat.yMMMd('pt_PT').format(period!.end)}';
                                     });
                                   }
                                 },
                               ),
                               const SizedBox(height: 16),
-                              // ############# Document #############
+                              // DOCUMENT
                               // It gets the local file path of a picture
                               TextFormField(
                                 controller: fileFieldController,
                                 readOnly: true,
                                 enabled: !isLoading,
                                 decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                   labelText: 'Passaporte',
                                   helperText: 'Tamanho máx: ~10MB',
                                   suffixIcon: IconButton(
@@ -306,8 +299,8 @@ class _ContractAddView extends State<ContractAddView> {
                                       var result = await FilePicker.platform.pickFiles();
                                       if (result != null) {
                                         setState(() {
-                                          _document = result.files.first;
-                                          fileFieldController.text = _document!.name;
+                                          passportFile = result.files.first;
+                                          fileFieldController.text = passportFile!.name;
                                         });
                                       }
                                     },
@@ -315,7 +308,7 @@ class _ContractAddView extends State<ContractAddView> {
                                   ),
                                 ),
                                 validator: (value) {
-                                  if (_document == null) {
+                                  if (passportFile == null) {
                                     return 'É necessário fornecer um passaporte';
                                   }
                                 },
@@ -335,8 +328,23 @@ class _ContractAddView extends State<ContractAddView> {
                             ElevatedButton(
                               onPressed: isLoading
                                   ? null
-                                  : () {
-                                      if (_formKey.currentState!.validate()) _submitData();
+                                  : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() => isLoading = true);
+                                        try {
+                                          await contractProvider
+                                              .post(
+                                                  Contract(player!, club!, shirtnumber!, position!, period!,
+                                                      '${DateTime.now().microsecondsSinceEpoch}.png'),
+                                                  passportFile!)
+                                              .then((value) {
+                                            widget.onComplete?.call();
+                                            Navigator.of(context).pop();
+                                          });
+                                        } finally {
+                                          setState(() => isLoading = false);
+                                        }
+                                      }
                                     },
                               child: isLoading ? const CircularProgressIndicator() : const Text('Criar Contrato'),
                             ),
@@ -345,9 +353,8 @@ class _ContractAddView extends State<ContractAddView> {
                       ],
                     ),
                   ),
-                );
-              }
-              return const Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator());
+                ),
+              );
             },
           ),
         ),

@@ -5,3 +5,9 @@
 # Files and directories created by IntelliJ.
 /.idea/
 /app.iml
+
+# Project directories
+/assets/img/club/
+/assets/img/player/
+/assets/img/passport/
+

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +6,6 @@ import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/provider/contract_provider.dart';
 import 'package:tg2/utils/constants.dart';
-import 'package:tg2/views/widgets/contracttile.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
 
 // This widgets shows a match's information
@@ -21,12 +19,11 @@ class MatchView extends StatefulWidget {
 }
 
 class _MatchViewState extends State<MatchView> {
-  Widget _clubBadgeWidget(Club club) => Column(
+  Widget clubBadgeWidget(Club club) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FutureImage(
-            image: club.logo!,
-            errorImageUri: 'assets/images/placeholder-club.png',
+            image: club.logo,
             height: 64,
             aspectRatio: 1 / 1,
           ),
@@ -102,7 +99,7 @@ class _MatchViewState extends State<MatchView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ############# Club Home #############
-                  Expanded(child: _clubBadgeWidget(widget.match.homeClub)),
+                  Expanded(child: clubBadgeWidget(widget.match.homeClub)),
                   // ############# Score & Time #############
                   Expanded(
                     child: Column(children: [
@@ -142,14 +139,14 @@ class _MatchViewState extends State<MatchView> {
                           const Icon(Icons.timelapse_rounded, size: 24, color: Colors.white),
                           Text(
                             '${widget.match.duration} minutos',
-                            style: Theme.of(context).textTheme.caption?.merge(const TextStyle(color: Colors.white)),
+                            style: Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(color: Colors.white)),
                           )
                         ],
                       ),
                     ]),
                   ),
                   // ############# Club Away #############
-                  Expanded(child: _clubBadgeWidget(widget.match.awayClub)),
+                  Expanded(child: clubBadgeWidget(widget.match.awayClub)),
                 ],
               ),
             ],
@@ -202,10 +199,11 @@ class _MatchSquadListState extends State<_MatchSquadList> {
             Divider(height: 0, color: widget.club.color, thickness: 3),
             Expanded(
               child: Card(
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
-                  margin: EdgeInsets.zero,
-                  child: Builder(builder: (context) {
-                    List<Contract> _squad =
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+                margin: EdgeInsets.zero,
+                child: Builder(
+                  builder: (context) {
+                    List<Contract> squad =
                         contractProvider.data.values.where((e) => e.club == widget.club && e.active).toList();
                     switch (contractProvider.state) {
                       case ProviderState.busy:
@@ -214,26 +212,42 @@ class _MatchSquadListState extends State<_MatchSquadList> {
                         return ListView.builder(
                           primary: false,
                           controller: widget.scrollController,
-                          itemCount: _squad.length,
+                          itemCount: squad.length,
                           itemBuilder: (context, index) {
-                            return ContractTile(
-                              contract: _squad[index],
-                              showClub: false,
+                            Contract contract = squad[index];
+                            return ListTile(
                               dense: true,
+                              minVerticalPadding: 0,
+                              horizontalTitleGap: 0,
+                              leading: FutureImage(
+                                image: contract.player.picture,
+                                height: 32,
+                                aspectRatio: 1 / 1,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              title: Text(
+                                '${contract.shirtNumber}. ${contract.player.nicknameFallback}',
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              subtitle: Text(
+                                contract.position.name,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             );
                           },
                         );
                     }
-                  })),
+                  },
+                ),
+              ),
             ),
           ],
         );
       },
       child: Builder(builder: (context) {
-        List<Widget> _header = [
+        List<Widget> header = [
           FutureImage(
-            image: widget.club.logo!,
-            errorImageUri: 'assets/images/placeholder-club.png',
+            image: widget.club.logo,
             height: 32,
             aspectRatio: 1 / 1,
           ),
@@ -242,14 +256,14 @@ class _MatchSquadListState extends State<_MatchSquadList> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ];
-        if (widget.mirrored) _header = _header.reversed.toList();
+        if (widget.mirrored) header = header.reversed.toList();
         return Padding(
           padding: const EdgeInsets.all(8),
           child: Wrap(
             alignment: (widget.mirrored) ? WrapAlignment.end : WrapAlignment.start,
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 8,
-            children: _header,
+            children: header,
           ),
         );
       }),

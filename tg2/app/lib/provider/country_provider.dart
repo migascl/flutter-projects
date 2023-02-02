@@ -4,6 +4,7 @@ import 'package:tg2/models/country_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 
 // Country provider class
 class CountryProvider extends ChangeNotifier {
@@ -30,7 +31,7 @@ class CountryProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Country/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.country);
+        final response = await ApiService().request(ApiEndpoints.country, ApiMethods.get);
         _data = {for (var json in response) json['id']: Country(json['id'], json['name'])};
         print("Country/P: Fetched successfully!");
       }

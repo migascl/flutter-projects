@@ -30,7 +30,7 @@ class PlayerView extends StatefulWidget {
 
 class _PlayerViewState extends State<PlayerView> {
   late final Player _player = widget.player; // State player data
-  List<Contract> _contracts = [];
+  List<Contract> contracts = [];
   List<Exam> _exams = [];
 
   // Page view controls
@@ -40,11 +40,11 @@ class _PlayerViewState extends State<PlayerView> {
   FloatingActionButton? fab;
 
   // Reload providers used by the page, displays snackbar if exception occurs
-  Future _loadPageData() async {
+  Future loadPageData() async {
     print("Player/V: Reloading...");
     try {
       await Provider.of<PlayerProvider>(context, listen: false).get();
-      _contracts.clear();
+      contracts.clear();
       _exams.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -60,7 +60,7 @@ class _PlayerViewState extends State<PlayerView> {
   void initState() {
     print("Player/V: Initialized State!");
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
+    WidgetsBinding.instance.addPostFrameCallback((context) => loadPageData());
   }
 
   @override
@@ -73,30 +73,30 @@ class _PlayerViewState extends State<PlayerView> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         elevation: 0,
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: 'Refresh', onPressed: () => _loadPageData()),
+          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: 'Refresh', onPressed: () => loadPageData()),
         ],
       ),
       floatingActionButton: fab,
       body: Column(children: [
-        // ############# Header #############
+        // HEADER
         Container(
           padding: const EdgeInsets.all(24),
-          height: MediaQuery.of(context).size.height * 0.2,
           color: Theme.of(context).colorScheme.primary,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
             children: [
-              FutureImage(
-                image: _player.picture!,
-                errorImageUri: 'assets/images/placeholder-player.png',
-                aspectRatio: 1 / 1,
-                borderRadius: BorderRadius.circular(100),
-                height: double.infinity,
-                color: Colors.white,
+              Expanded(
+                flex: 1,
+                child: FutureImage(
+                  image: _player.picture,
+                  aspectRatio: 1 / 1,
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
+                flex: 3,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,12 +118,12 @@ class _PlayerViewState extends State<PlayerView> {
             ],
           ),
         ),
-        // ############# Page body #############
+        // BODY
         Expanded(
           child: PageView(
               controller: _pageController,
               children: [
-                // ############# Info Page #############
+                // INFO PAGE
                 SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -153,15 +153,15 @@ class _PlayerViewState extends State<PlayerView> {
                     ),
                   ),
                 ),
-                // ############# Contracts Page #############
+                // CONTRACTS
                 Consumer<ContractProvider>(
                   builder: (context, contractProvider, child) {
-                    if (contractProvider.state != ProviderState.busy && _contracts.isEmpty) {
+                    if (contractProvider.state != ProviderState.busy && contracts.isEmpty) {
                       // Get all active contracts of the player
-                      _contracts = contractProvider.data.values.where((element) => element.player.id == _player.id).toList();
-                      _contracts.sort((a, b) => b.period.end.compareTo(a.period.end));
+                      contracts = contractProvider.data.values.where((element) => element.player.id == _player.id).toList();
+                      contracts.sort((a, b) => b.period.end.compareTo(a.period.end));
                     }
-                    if (_contracts.isNotEmpty) {
+                    if (contracts.isNotEmpty) {
                       return SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
@@ -171,13 +171,12 @@ class _PlayerViewState extends State<PlayerView> {
                               child: ListView.separated(
                                 shrinkWrap: true,
                                 primary: false,
-                                itemCount: _contracts.length,
+                                itemCount: contracts.length,
                                 itemBuilder: (context, index) {
-                                  Contract contract = _contracts.elementAt(index);
+                                  Contract contract = contracts.elementAt(index);
                                   return ContractTile(
                                     contract: contract,
                                     showClub: true,
-                                    showAlert: true,
                                     onTap: () {
                                       showModalBottomSheet(
                                           isScrollControlled: true,
@@ -186,9 +185,7 @@ class _PlayerViewState extends State<PlayerView> {
                                           context: context,
                                           builder: (context) => ContractView(contract: contract));
                                     },
-                                    onDelete: () {
-                                      _loadPageData();
-                                    },
+                                    onDelete: () => loadPageData(),
                                   );
                                 },
                                 separatorBuilder: (context, index) => Divider(
@@ -204,14 +201,14 @@ class _PlayerViewState extends State<PlayerView> {
                       child: HeaderWidget(
                         headerText: 'Contratos',
                         child: Expanded(
-                          child: (_contracts.isEmpty && contractProvider.state == ProviderState.busy)
+                          child: (contracts.isEmpty && contractProvider.state == ProviderState.busy)
                               ? const Center(child: CircularProgressIndicator())
                               // If nothing is found
                               : Card(
                                   child: Center(
                                     child: Text(
                                       'Este jogador não tem contratos.',
-                                      style: Theme.of(context).textTheme.caption,
+                                      style: Theme.of(context).textTheme.bodySmall,
                                     ),
                                   ),
                                 ),
@@ -220,7 +217,7 @@ class _PlayerViewState extends State<PlayerView> {
                     );
                   },
                 ),
-                // ############# Exams Page #############
+                // EXAMS PAGE
                 Consumer<ExamProvider>(
                   builder: (context, examProvider, child) {
                     if (examProvider.state != ProviderState.busy && _exams.isEmpty) {
@@ -256,7 +253,7 @@ class _PlayerViewState extends State<PlayerView> {
                                               builder: (context) => ExamModifyView(
                                                 exam: exam,
                                                 player: _player,
-                                                onComplete: _loadPageData,
+                                                onComplete: loadPageData,
                                               ),
                                             );
                                             break;
@@ -270,7 +267,7 @@ class _PlayerViewState extends State<PlayerView> {
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
-                                                        examProvider.delete(exam).then((value) => _loadPageData());
+                                                        examProvider.delete(exam).then((value) => loadPageData());
                                                         Navigator.of(context).pop();
                                                       },
                                                       child: const Text('Eliminar')),
@@ -307,7 +304,6 @@ class _PlayerViewState extends State<PlayerView> {
                         ),
                       );
                     }
-
                     return Padding(
                       padding: const EdgeInsets.all(16),
                       child: HeaderWidget(
@@ -333,7 +329,7 @@ class _PlayerViewState extends State<PlayerView> {
               onPageChanged: (page) => setState(() => _selectedIndex = page)),
         ),
       ]),
-      // ############# Bottom Nav #############
+      // BOTTOM NAV
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -363,7 +359,7 @@ class _PlayerViewState extends State<PlayerView> {
                     context: context,
                     barrierDismissible: false,
                     pageBuilder: (buildContext, animation, secondaryAnimation) =>
-                        ContractAddView(player: _player, onComplete: _loadPageData),
+                        ContractAddView(player: _player, onComplete: loadPageData),
                   ),
                 );
                 break;
@@ -375,7 +371,7 @@ class _PlayerViewState extends State<PlayerView> {
                     barrierDismissible: false,
                     pageBuilder: (buildContext, animation, secondaryAnimation) => ExamModifyView(
                       player: _player,
-                      onComplete: _loadPageData,
+                      onComplete: loadPageData,
                     ),
                   ),
                 );

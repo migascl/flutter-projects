@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tg2/main.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
@@ -21,58 +20,63 @@ class MatchTile extends StatelessWidget {
           children: [
             // TIMESTAMP
             Text(
-              showTimeOnly
-                  ? DateFormat.Hm('pt_PT').format(match.date)
-                  : DateFormat.yMMMMd('pt_PT').add_Hm().format(match.date),
-              style: Theme.of(context).textTheme.bodySmall,
+              showTimeOnly ? DateFormat.Hm('pt_PT').format(match.date) : DateFormat.yMd('pt_PT').add_Hm().format(match.date),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // HOME CLUB BADGE
-                FutureImage(
-                  image: match.homeClub.logo!,
-                  errorImageUri: 'assets/images/placeholder-club.png',
-                  height: 48,
-                  aspectRatio: 1 / 1,
-                ),
-                // SCORE
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 16,
-                  children: [
-                    Text('${match.homeScore}', style: Theme.of(context).textTheme.headlineMedium),
-                    Text(':', style: Theme.of(context).textTheme.headlineSmall),
-                    Text('${match.awayScore}', style: Theme.of(context).textTheme.headlineMedium),
-                  ],
-                ),
-                // AWAY CLUB BADGE
-                FutureImage(
-                  image: match.awayClub.logo!,
-                  errorImageUri: 'assets/images/placeholder-club.png',
-                  height: 48,
-                  aspectRatio: 1 / 1,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // CLUBS NAME
-            Row(
-              children: [
+                // HOME CLUB
                 Expanded(
-                  child: Text(
-                    match.homeClub.nickname ?? match.homeClub.name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.caption,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: FutureImage(
+                          image: match.homeClub.logo!,
+                          height: 48,
+                          aspectRatio: 1 / 1,
+                        ),
+                      ),
+                      Text(
+                        match.homeClub.nickname ?? match.homeClub.name,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
                   ),
                 ),
-                const Spacer(),
+                // SCORE
                 Expanded(
-                  child: Text(
-                    match.awayClub.nickname ?? match.awayClub.name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.caption,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 16,
+                    children: [
+                      Text('${match.homeScore}', style: Theme.of(context).textTheme.headlineMedium),
+                      Text(':', style: Theme.of(context).textTheme.headlineSmall),
+                      Text('${match.awayScore}', style: Theme.of(context).textTheme.headlineMedium),
+                    ],
+                  ),
+                ),
+                // AWAY CLUB
+                Expanded(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: FutureImage(
+                          image: match.awayClub.logo!,
+                          height: 48,
+                          aspectRatio: 1 / 1,
+                        ),
+                      ),
+                      Text(
+                        match.awayClub.nickname ?? match.awayClub.name,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
                   ),
                 ),
               ],

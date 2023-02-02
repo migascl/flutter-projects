@@ -7,6 +7,7 @@ import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/provider/country_provider.dart';
 import 'package:tg2/models/schooling_model.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 
 // Player provider class
 class PlayerProvider extends ChangeNotifier {
@@ -42,18 +43,20 @@ class PlayerProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Player/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.player);
+        final response = await ApiService().request(ApiEndpoints.player, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Player(
               json['name'],
               _countryProvider.data[json['country']]!,
               DateTime.parse(json['birthday'].toString()),
+              json['picture'] != null
+                  ? Image.network(dotenv.env['API_URL']! + '/img/player/' + json['picture'])
+                  : Image.asset('assets/images/placeholder-player.png'),
               json['nickname'],
               json['height'],
               json['weight'],
               Schooling.values[json['schooling']],
-              NetworkImage(dotenv.env['API_URL']! + json['picture']),
               json['id'],
             )
         };

@@ -31,20 +31,20 @@ class _ClubViewState extends State<ClubView> {
   List<Match> matches = [];
   int? selectedMatchweek;
   List<int> matchweeks = [];
-  List<Contract> _contracts = [];
+  List<Contract> contracts = [];
 
   // Page view controls
-  int _selectedIndex = 0;
-  final PageController _pageController = PageController();
+  int selectedIndex = 0;
+  final PageController pageController = PageController();
 
   FloatingActionButton? fab;
 
   // Reload providers used by the page, displays snackbar if exception occurs
-  Future _loadPageData() async {
+  Future loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
       matches.clear();
-      _contracts.clear();
+      contracts.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -59,7 +59,7 @@ class _ClubViewState extends State<ClubView> {
   void initState() {
     selectedMatchweek = widget.selectedMatchweek;
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
+    WidgetsBinding.instance.addPostFrameCallback((context) => loadPageData());
   }
 
   @override
@@ -77,30 +77,30 @@ class _ClubViewState extends State<ClubView> {
             icon: const Icon(Icons.refresh_rounded),
             tooltip: 'Refresh',
             onPressed: () {
-              _loadPageData();
+              loadPageData();
             },
           ),
         ],
       ),
       floatingActionButton: fab,
       body: Column(children: [
-        // Page header
+        // HEADER
         Container(
           padding: const EdgeInsets.all(24),
-          height: MediaQuery.of(context).size.height * 0.2,
           color: theme.colorScheme.primary,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
             children: [
-              FutureImage(
-                image: widget.club.logo!,
-                errorImageUri: 'assets/images/placeholder-club.png',
-                aspectRatio: 1 / 1,
-                height: double.infinity,
+              Expanded(
+                flex: 1,
+                child: FutureImage(
+                  image: widget.club.logo,
+                  aspectRatio: 1 / 1,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
+                flex: 3,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,12 +123,12 @@ class _ClubViewState extends State<ClubView> {
             ],
           ),
         ),
-        // Page body
+        // BODY
         Expanded(
           child: PageView(
-            controller: _pageController,
+            controller: pageController,
             children: [
-              // ############# Stats Page #############
+              // STATS PAGE
               Consumer<MatchProvider>(
                 builder: (context, matchProvider, child) {
                   if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
@@ -256,7 +256,6 @@ class _ClubViewState extends State<ClubView> {
                                     ),
                                   ],
                                 ),
-                                // Recent games
                               ],
                             ),
                           ],
@@ -278,16 +277,16 @@ class _ClubViewState extends State<ClubView> {
                   );
                 },
               ),
-              // ############# Team Page #############
+              // TEAM PAGE
               Consumer<ContractProvider>(
                 builder: (context, contractProvider, child) {
-                  if (contractProvider.state != ProviderState.busy && _contracts.isEmpty) {
+                  if (contractProvider.state != ProviderState.busy && contracts.isEmpty) {
                     // Get all active contracts of the club
-                    _contracts = contractProvider.data.values
+                    contracts = contractProvider.data.values
                         .where((element) => element.club.id == widget.club.id && element.active)
                         .toList();
                   }
-                  if (_contracts.isNotEmpty) {
+                  if (contracts.isNotEmpty) {
                     return SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -297,28 +296,32 @@ class _ClubViewState extends State<ClubView> {
                             child: ListView.separated(
                               shrinkWrap: true,
                               primary: false,
-                              itemCount: _contracts.length,
+                              itemCount: contracts.length,
                               itemBuilder: (context, index) {
-                                Contract contract = _contracts.elementAt(index);
+                                Contract contract = contracts.elementAt(index);
                                 return ContractTile(
                                   contract: contract,
                                   showClub: false,
-                                  showAlert: true,
                                   onTap: () {
                                     showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        isDismissible: true,
-                                        backgroundColor: Colors.transparent,
-                                        context: context,
-                                        builder: (context) => ContractView(contract: contract));
+                                      isScrollControlled: true,
+                                      isDismissible: true,
+                                      backgroundColor: Colors.transparent,
+                                      context: context,
+                                      builder: (context) => ContractView(contract: contract),
+                                    );
                                   },
                                   onDelete: () {
-                                    _loadPageData();
+                                    loadPageData();
                                   },
                                 );
                               },
                               separatorBuilder: (context, index) => Divider(
-                                  height: 0, indent: 16, endIndent: 16, color: Theme.of(context).colorScheme.outline),
+                                height: 0,
+                                indent: 16,
+                                endIndent: 16,
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
                             ),
                           ),
                         ),
@@ -330,7 +333,7 @@ class _ClubViewState extends State<ClubView> {
                     child: HeaderWidget(
                       headerText: 'Plantel',
                       child: Expanded(
-                        child: (_contracts.isEmpty && contractProvider.state == ProviderState.busy)
+                        child: (contracts.isEmpty && contractProvider.state == ProviderState.busy)
                             ? const Center(child: CircularProgressIndicator())
                             // If nothing is found
                             : Card(
@@ -346,7 +349,7 @@ class _ClubViewState extends State<ClubView> {
                   );
                 },
               ),
-              // ############# Info Page #############
+              // INFO PAGE
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -383,7 +386,7 @@ class _ClubViewState extends State<ClubView> {
         Divider(thickness: 1, height: 0, color: Theme.of(context).colorScheme.outline)
       ]),
 
-      // ############# Bottom Nav #############
+      // BOTTOM NAV
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: theme.colorScheme.primary,
         items: const [
@@ -405,8 +408,8 @@ class _ClubViewState extends State<ClubView> {
         ],
         onTap: (int value) {
           setState(() {
-            _selectedIndex = value;
-            switch (_selectedIndex) {
+            selectedIndex = value;
+            switch (selectedIndex) {
               case 1:
                 fab = FloatingActionButton(
                   backgroundColor: theme.colorScheme.primary,
@@ -414,7 +417,7 @@ class _ClubViewState extends State<ClubView> {
                     context: context,
                     barrierDismissible: false,
                     pageBuilder: (BuildContext buildContext, Animation animation, Animation secondaryAnimation) =>
-                        ContractAddView(club: widget.club, onComplete: _loadPageData),
+                        ContractAddView(club: widget.club, onComplete: loadPageData),
                   ),
                   child: const Icon(Icons.add),
                 );
@@ -424,13 +427,13 @@ class _ClubViewState extends State<ClubView> {
                 break;
             }
           });
-          _pageController.animateToPage(
+          pageController.animateToPage(
             value,
             duration: const Duration(milliseconds: 150),
             curve: Curves.easeIn,
           );
         },
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
       ),
     );
   }

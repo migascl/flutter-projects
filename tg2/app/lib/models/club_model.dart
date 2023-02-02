@@ -12,13 +12,15 @@ class Club {
   String? fax; // Fax number
   String? email; // Email address
   Color? color; // Club's brand color
-  NetworkImage? logo; // Club's logo
+  Image logo; // Club's logo
   final int? _id; // Database id number (managed by provider)
 
   // CONSTRUCTORS
-  Club(this.name, this.playing,
-      [this.nickname, this.stadium, this.phone, this.fax, this.email, this.color, this.logo, this._id]);
+  Club(this.name, this.playing, this.logo,
+      [this.nickname, this.stadium, this.phone, this.fax, this.email, this.color, this._id]);
 
   // GETTERS
   int? get id => _id;
+
+  String get nicknameFallback => nickname ?? name; // Get nickname but get name as fallback
 }

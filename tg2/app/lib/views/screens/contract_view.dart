@@ -32,11 +32,10 @@ class ContractView extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Contratante', style: Theme.of(context).textTheme.subtitle2),
+                              Text('Contratante', style: Theme.of(context).textTheme.titleSmall),
                               const SizedBox(height: 16),
                               FutureImage(
-                                image: contract.club.logo!,
-                                errorImageUri: 'assets/images/placeholder-club.png',
+                                image: contract.club.logo,
                                 height: 64,
                                 aspectRatio: 1 / 1,
                               ),
@@ -57,11 +56,10 @@ class ContractView extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Contratado', style: Theme.of(context).textTheme.subtitle2),
+                              Text('Contratado', style: Theme.of(context).textTheme.titleSmall),
                               const SizedBox(height: 16),
                               FutureImage(
                                 image: contract.player.picture!,
-                                errorImageUri: 'assets/images/placeholder-player.png',
                                 height: 64,
                                 aspectRatio: 1 / 1,
                                 borderRadius: BorderRadius.circular(100),
@@ -98,9 +96,9 @@ class ContractView extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Text('Posição', style: Theme.of(context).textTheme.subtitle1),
+                            Text('Posição', style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 8),
-                            Text(contract.position.name, style: Theme.of(context).textTheme.headline6),
+                            Text(contract.position.name, style: Theme.of(context).textTheme.titleLarge),
                           ],
                         ),
                       ),
@@ -110,12 +108,12 @@ class ContractView extends StatelessWidget {
                           children: [
                             Text(
                               'Número',
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 8),
                             Text(
                               '${contract.shirtNumber}',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.titleLarge,
                             ),
                           ],
                         ),
@@ -127,7 +125,7 @@ class ContractView extends StatelessWidget {
                     children: [
                       Text(
                         'Duração do Contrato',
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -136,12 +134,12 @@ class ContractView extends StatelessWidget {
                         children: [
                           Text(
                             DateFormat.yMd('pt_PT').format(contract.period.start),
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           Text('a', style: Theme.of(context).textTheme.subtitle1),
                           Text(
                             DateFormat.yMd('pt_PT').format(contract.period.end),
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
                       ),
@@ -150,7 +148,7 @@ class ContractView extends StatelessWidget {
                       // If active and close to expiration, display remaining days
                       Text(
                           'Estado: ${(contract.active) ? 'Ativo ${(contract.needsRenovation) ? '(${contract.remainingTime.inDays} dias restantes)' : ''}' : (contract.remainingTime.inDays < 0) ? 'Expirado' : 'Aguardando ínicio efetivo'}',
-                          style: Theme.of(context).textTheme.caption),
+                          style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                 ],
@@ -166,7 +164,7 @@ class ContractView extends StatelessWidget {
 class _PassportView extends StatelessWidget {
   const _PassportView({super.key, required this.passport});
 
-  final ImageProvider passport;
+  final Image passport;
 
   @override
   Widget build(BuildContext context) {

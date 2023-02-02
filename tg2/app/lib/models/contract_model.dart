@@ -7,7 +7,7 @@ import 'package:tg2/utils/dateutils.dart';
 
 // Model for the Contract entity
 class Contract {
-  // ################################## VARIABLES ##################################
+  // VARIABLES
   late Player player; // Employee player
   late Club club; // Employer club
   late int shirtNumber; // Shirt number
@@ -16,14 +16,14 @@ class Contract {
   late String passport; // Verification passport document
   final int? _id; // Database id number (managed by provider)
 
-  // ################################## CONSTRUCTORS ##################################
+  // CONSTRUCTORS
   Contract(this.player, this.club, this.shirtNumber, this.position, this.period, this.passport, [this._id]);
 
-  // ################################## GETTERS ##################################
+  // GETTERS
   int? get id => _id;
 
   // This getter is used to retrieve the image from the server, since the 'document' variable only stores the file path
-  NetworkImage get passportImage => NetworkImage(dotenv.env['API_URL']! + passport);
+  Image get passportImage => Image.network(dotenv.env['API_URL']! + '/img/passport/' + passport);
 
   // Runtime variable. Calculate remaining time of contract
   Duration get remainingTime => period.end.difference(DateTime.now());
@@ -41,7 +41,7 @@ class Contract {
     return DateUtils.addMonthsToMonthDate(DateTime.now(), 6).isAfter(period.end) ? true : false;
   }
 
-  // ################################## METHODS ##################################
+  // METHODS
   // Convert object into API readable JSON
   Map<String, dynamic> toJson() => {
         'id': _id,
@@ -50,6 +50,6 @@ class Contract {
         'shirtnumber': shirtNumber,
         'position': position.index,
         'period': DateUtilities().encoder(period),
-        'passport': '/img/passport/${id}'
+        'passport': passport
       };
 }

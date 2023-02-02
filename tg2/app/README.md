@@ -1,8 +1,10 @@
 # Application
 
-This is the frontend application. It requires a working API to function.
+## How to Setup
 
-Please, check ```.env.example``` to setup environment variables.
+- Run ```flutter get``` to get the dependencies;
+- Copy ```.env.example``` and rename it to ```.env``` and point the ```API_URL``` to the API's address;
+- Make sure the API is online before running the application.
 
 ## Project Structure
 
@@ -18,5 +20,5 @@ This folder contains all the code of the application, organized by function (mod
 - **Provider**: Providers manage the current state and data of a certain model. They are provide a communication layer between the API and the user.
 - **Views**: All UI/UX components.
     - **Screens**: Single use pages or popups organized by entity.
-    - **Widgets**: Miscellaneous Multiple use components.
+    - **Widgets**: Miscellaneous multiple use components.
 - **Utils**: Folder containing various utilities and services (such as API logic).

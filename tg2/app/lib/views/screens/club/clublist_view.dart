@@ -29,7 +29,7 @@ class _ClubListViewState extends State<ClubListView> {
   }
 
   // Reload providers used by the page, displays snackbar if exception occurs
-  Future _loadPageData() async {
+  Future loadPageData() async {
     try {
       await Provider.of<ClubProvider>(context, listen: false).get();
       filterData.clear();
@@ -49,7 +49,7 @@ class _ClubListViewState extends State<ClubListView> {
     print('ClubList/V: Initialized State!');
     super.initState();
     // Run once after build is complete
-    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
+    WidgetsBinding.instance.addPostFrameCallback((context) => loadPageData());
   }
 
   @override
@@ -146,7 +146,7 @@ class _ClubListViewState extends State<ClubListView> {
         drawer: const MenuDrawer(),
         body: RefreshIndicator(
           key: GlobalKey<RefreshIndicatorState>(),
-          onRefresh: _loadPageData,
+          onRefresh: loadPageData,
           child: Builder(
             builder: (BuildContext context) {
               if (matches.isNotEmpty) {
@@ -192,8 +192,7 @@ class _ClubListViewState extends State<ClubListView> {
                                   contentPadding: EdgeInsets.zero,
                                   dense: true,
                                   leading: FutureImage(
-                                    image: club.logo!,
-                                    errorImageUri: 'assets/images/placeholder-club.png',
+                                    image: club.logo,
                                     aspectRatio: 1 / 1,
                                     height: 42,
                                   ),
@@ -202,9 +201,10 @@ class _ClubListViewState extends State<ClubListView> {
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            ClubView(club: club, selectedMatchweek: selectedMatchweek),
-                                        maintainState: false,
+                                        builder: (BuildContext context) => ClubView(
+                                          club: club,
+                                          selectedMatchweek: selectedMatchweek,
+                                        ),
                                       ),
                                     );
                                   },
@@ -241,7 +241,7 @@ class _ClubListViewState extends State<ClubListView> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text('Não foram encontrados nenhuns clubes'),
-                    ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
+                    ElevatedButton(onPressed: loadPageData, child: const Text('Tentar novamente')),
                   ],
                 ),
               );

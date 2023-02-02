@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tg2/models/club_model.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/provider/stadium_provider.dart';
 
@@ -41,19 +42,21 @@ class ClubProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Club/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.club);
+        final response = await ApiService().request(ApiEndpoints.club, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Club(
                 json['name'],
                 json['playing'],
+                json['logo'] != null
+                    ? Image.network(dotenv.env['API_URL']! + '/img/club/' + json['logo'])
+                    : Image.asset('assets/images/placeholder-club.png'),
                 json['nickname'],
                 _stadiumProvider.data[json['stadium']]!,
                 json['phone'],
                 json['fax'],
                 json['email'],
                 json['color'] != null ? Color.fromARGB(255, json['color'][0], json['color'][1], json['color'][2]) : null,
-                NetworkImage(dotenv.env['API_URL']! + json['logo']),
                 json['id'])
         };
         print("Club/P: Fetched successfully!");
