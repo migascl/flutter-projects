@@ -8,19 +8,10 @@ import 'package:tg2/provider/contract_provider.dart';
 // Club's squad player tile. It displays basic player information from a contract.
 // It can display either the club or player depending on the flag its given
 class ContractTile extends StatefulWidget {
-  const ContractTile(
-      {super.key,
-      required this.contract,
-      required this.showClub,
-      this.dense = false,
-      this.showAlert = false,
-      this.onTap,
-      this.onDelete});
+  const ContractTile({super.key, required this.contract, required this.showClub, this.onTap, this.onDelete});
 
   final Contract contract; // Widget contract data
   final bool showClub; // Flag to select between showing club or player
-  final bool dense; // Flag to render in dense mode
-  final bool showAlert; // Flag to show contract alerts (i.e. expiration)
   final VoidCallback? onTap; // Function to call when tapped
   final VoidCallback? onDelete; // Function to call when deleted
 
@@ -29,19 +20,21 @@ class ContractTile extends StatefulWidget {
 }
 
 class _ContractTileState extends State<ContractTile> {
-  var _tapPosition;
+  var tapPosition;
 
-  void _storePosition(TapDownDetails details) {
-    _tapPosition = details.globalPosition;
+  bool isLoading = false;
+
+  void storePosition(TapDownDetails details) {
+    tapPosition = details.globalPosition;
   }
 
-  void _showDropDown() {
+  void showDropDown() {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     showMenu(
       context: context,
       position: RelativeRect.fromRect(
-          _tapPosition & const Size(40, 40), // Touch area
+          tapPosition & const Size(40, 40), // Touch area
           Offset.zero & overlay.semanticBounds.size // Screen space
           ),
       items: <PopupMenuEntry<int>>[
@@ -50,70 +43,75 @@ class _ContractTileState extends State<ContractTile> {
           child: Text('Remover'),
         ),
       ],
-    ).then((value) {
-      switch (value) {
-        case 0:
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Atenção!'),
-              content: Text(
-                  'Tem a certeza que pretende eliminar contrato #${widget.contract.id}? Esta operação não é reversível!'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Provider.of<ContractProvider>(context, listen: false).delete(widget.contract);
+    ).then(
+      (value) {
+        switch (value) {
+          case 0:
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Atenção!'),
+                content: Text(
+                    'Tem a certeza que pretende eliminar contrato #${widget.contract.id}? Esta operação não é reversível!'),
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      await Provider.of<ContractProvider>(context, listen: false).delete(widget.contract);
                       widget.onDelete?.call();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Eliminar')),
-                ElevatedButton(
+                    child: const Text('Eliminar'),
+                  ),
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Cancelar')),
-              ],
-            ),
-          );
-          widget.onDelete?.call();
-          break;
-      }
-    });
+                    child: const Text('Cancelar'),
+                  ),
+                ],
+              ),
+            );
+            break;
+        }
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: _storePosition,
+      onTapDown: storePosition,
       child: ListTile(
-        onTap: (widget.dense) ? null : () => widget.onTap?.call(),
-        dense: widget.dense,
-        onLongPress: (widget.dense) ? null : _showDropDown,
+        onTap: widget.onTap?.call,
+        onLongPress: showDropDown,
         //enabled: (widget.contract.active),
-        contentPadding: widget.dense
-            ? const EdgeInsets.symmetric(horizontal: 8)
-            : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        horizontalTitleGap: widget.dense ? 0 : null,
-        // Expired contracts are shown as disabled
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         // Either show player or club picture
         leading: FutureImage(
           image: (widget.showClub) ? widget.contract.club.logo! : widget.contract.player.picture!,
-          errorImageUri: (widget.showClub) ? 'assets/images/placeholder-club.png' : 'assets/images/placeholder-player.png',
-          height: (widget.dense) ? 32 : null,
           aspectRatio: 1 / 1,
           borderRadius: (widget.showClub) ? null : BorderRadius.circular(100),
         ),
         // If set to show player, show player shirt number on the title
         title: (widget.showClub)
-            ? Text(widget.contract.club.name)
+            ? Text(widget.contract.club.nicknameFallback)
             : Text('${widget.contract.shirtNumber}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
         // Don't show any subtitle if set to dense, and only show player shirt number if title set to show the club
-        subtitle: (widget.dense)
-            ? Text(widget.contract.position.name)
-            : Text(
-                '${(widget.showClub) ? 'Número: ${widget.contract.shirtNumber}\n' : ''}Posição: ${widget.contract.position.name}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Posição: ${widget.contract.position.name}'),
+            Text(
+                'Contrato: ${DateFormat.yM('pt_PT').format(widget.contract.period.start)} - ${DateFormat.yM('pt_PT').format(widget.contract.period.end)}'),
+          ],
+        ),
         // Show warning icon that shows a tooltip with remaining contract duration and expiry date if contract is active
-        trailing: (widget.showAlert && widget.contract.needsRenovation && widget.contract.active)
+        trailing: (widget.contract.needsRenovation && widget.contract.active)
             ? Tooltip(
                 message:
                     'Contrato expira em ${widget.contract.remainingTime.inDays} dias!\n(${DateFormat.yMd('pt_PT').format(widget.contract.period.end)})',

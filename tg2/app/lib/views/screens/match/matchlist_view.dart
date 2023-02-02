@@ -21,7 +21,7 @@ class _MatchListViewState extends State<MatchListView> {
   int currentTab = 0; // Current tab index number
 
   // Method to reload providers used by the page
-  Future _loadPageData() async {
+  Future loadPageData() async {
     try {
       await Provider.of<MatchProvider>(context, listen: false).get();
       matchweeks.clear();
@@ -40,7 +40,7 @@ class _MatchListViewState extends State<MatchListView> {
     print('MatchListView/V: Initialized State!');
     super.initState();
     // Run once after build is complete
-    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
+    WidgetsBinding.instance.addPostFrameCallback((context) => loadPageData());
   }
 
   @override
@@ -77,54 +77,55 @@ class _MatchListViewState extends State<MatchListView> {
                       .toSet()
                       .toList();
                   return RefreshIndicator(
-                      key: GlobalKey<RefreshIndicatorState>(),
-                      onRefresh: _loadPageData,
-                      child: SingleChildScrollView(
-                        primary: true,
-                        child: Card(
-                          margin: const EdgeInsets.all(16),
-                          // MATCHDAY GROUP
-                          child: ListView.separated(
-                            primary: false,
-                            shrinkWrap: true,
-                            itemCount: matchdays.length,
-                            itemBuilder: (context, index) {
-                              // Get matches from matchday
-                              DateTime matchday = DateTime.parse(matchdays[index]);
-                              String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(matchday);
-                              List<Match> matches = matchProvider.data.values
-                                  .where((match) => DateUtils.isSameDay(match.date, matchday))
-                                  .toList();
-                              return Column(children: [
-                                ListTile(
-                                  tileColor: Theme.of(context).colorScheme.surfaceVariant,
-                                  dense: true,
-                                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  title: Text(
-                                    matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
-                                    // Capitalize week day
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.subtitle1,
-                                  ),
+                    key: GlobalKey<RefreshIndicatorState>(),
+                    onRefresh: loadPageData,
+                    child: SingleChildScrollView(
+                      primary: true,
+                      child: Card(
+                        margin: const EdgeInsets.all(16),
+                        // MATCHDAY GROUP
+                        child: ListView.separated(
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: matchdays.length,
+                          itemBuilder: (context, index) {
+                            // Get matches from matchday
+                            DateTime matchday = DateTime.parse(matchdays[index]);
+                            String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(matchday);
+                            List<Match> matches = matchProvider.data.values
+                                .where((match) => DateUtils.isSameDay(match.date, matchday))
+                                .toList();
+                            return Column(children: [
+                              ListTile(
+                                tileColor: Theme.of(context).colorScheme.surfaceVariant,
+                                dense: true,
+                                textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                title: Text(
+                                  matchdayLabel.replaceRange(0, 1, matchdayLabel.substring(0, 1).toUpperCase()),
+                                  // Capitalize week day
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.titleMedium,
                                 ),
-                                // MATCHES IN MATCHDAY GROUP
-                                ListView.separated(
-                                  primary: false,
-                                  physics: const ClampingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: matches.length,
-                                  itemBuilder: (context, index) {
-                                    Match match = matches[index];
-                                    return MatchTile(match: match, showTimeOnly: true);
-                                  },
-                                  separatorBuilder: (context, index) => const Divider(height: 0),
-                                ),
-                              ]);
-                            },
-                            separatorBuilder: (context, index) => const Divider(height: 0),
-                          ),
+                              ),
+                              // MATCHES IN MATCHDAY GROUP
+                              ListView.separated(
+                                primary: false,
+                                physics: const ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: matches.length,
+                                itemBuilder: (context, index) {
+                                  Match match = matches[index];
+                                  return MatchTile(match: match, showTimeOnly: true);
+                                },
+                                separatorBuilder: (context, index) => const Divider(height: 0),
+                              ),
+                            ]);
+                          },
+                          separatorBuilder: (context, index) => const Divider(height: 0),
                         ),
-                      ));
+                      ),
+                    ),
+                  );
                 }).toList(),
               );
             }
@@ -136,7 +137,7 @@ class _MatchListViewState extends State<MatchListView> {
               return Center(
                 child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
                   const Text('Não foram encontradas nenhuns jogos'),
-                  ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
+                  ElevatedButton(onPressed: loadPageData, child: const Text('Tentar novamente')),
                 ]),
               );
             }

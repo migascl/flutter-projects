@@ -1,15 +1,15 @@
 // Enumerator of all possible Api endpoints
 enum ApiEndpoints {
-  root(endpoint: '/'),
-  country(endpoint: '/country'),
-  stadium(endpoint: '/stadium'),
-  club(endpoint: '/club'),
-  player(endpoint: '/player'),
-  exam(endpoint: '/exam'),
-  contract(endpoint: '/contract'),
-  match(endpoint: '/match');
+  root(name: '/'),
+  country(name: '/country'),
+  stadium(name: '/stadium'),
+  club(name: '/club'),
+  player(name: '/player'),
+  exam(name: '/exam'),
+  contract(name: '/contract'),
+  match(name: '/match');
 
-  final String endpoint;
+  final String name;
 
-  const ApiEndpoints({required this.endpoint});
+  const ApiEndpoints({required this.name});
 }

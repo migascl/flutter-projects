@@ -163,56 +163,49 @@ app.get('/position', (req, res) => connection.any('SELECT * FROM position')
 );
 
 // CONTRACTS
-app.get('/contract', (req, res) => connection.any('SELECT * FROM contract')
+app.get('/contract', (req, res) => {
+  connection.any('SELECT * FROM contract')
     .then((data) => res.json(data))
     .catch((error) => console.log('ERROR:', error))
-);
+});
+
 app.post('/contract', (req,res) => {
   const { player, club, shirtnumber, position, period, passport } = req.body
+  const { file } = req.files;
+  if (!file) return res.sendStatus(400);
   connection.none(
-      'INSERT INTO contract(player, club, number, position, period, passport) ' +
+      'INSERT INTO contract(player, club, shirtnumber, position, period, passport) ' +
       'VALUES($/player/, $/club/, $/shirtnumber/, $/position/, $/period/, $/passport/)',
       {
-        player_id: player,
-        club_id: club,
-        number: shirtnumber,
-        position_id: position,
+        player: player,
+        club: club,
+        shirtnumber: shirtnumber,
+        position: position,
         period: period,
         passport: passport,
       })
-      .then(r => res.json(r))
+      .then(r => {
+        file.mv(__dirname + '/assets/img/passport/' + passport);
+      }).then(r => res.json(r))
       .catch((error) => console.log('ERROR:', error));
-
 });
+
 app.delete('/contract', (req,res) => {
-  const { id } = req.body
+  const { id, passport } = req.body
+  console.log(passport)
   connection.none('DELETE FROM contract WHERE id = $/id/', {
     id: id,
-  })
-      .then(r => res.json(r))
-      .catch((error) => console.log('ERROR:', error));
-});
+  }).then(r => {
+    fs.unlink('./assets/img/passport/' + passport, function(err) {
+      if(err && err.code == 'ENOENT') {
+        console.info("File doesn't exist, won't remove it.");
+      } else if (err) {
+        console.error("Error occurred while trying to remove file");
+      } else {
+        console.info(`removed`);
+      }
 
-// PASSPORT
-app.post('/passport', (req, res) => {
-
-  // Get the file that was set to our field named "image"
-  const { image } = req.files;
-  const { name } = req.body;
-  image.name = name + '.png'
-
-  // If no image submitted, exit
-  if (!image) return res.sendStatus(400);
-
-  /*
-  // If does not have image mime type prevent from uploading
-  if (/^image/.test(image.mimetype)) return res.sendStatus(400);
-
-   */
-
-  // Move the uploaded image to passport folder
-  image.mv(__dirname + '/assets/img/passport/' + image.name);
-
-  // All good
-  res.json(req.files);
+    });
+    res.json(r)
+  }).catch((error) => console.log('ERROR:', error));
 });

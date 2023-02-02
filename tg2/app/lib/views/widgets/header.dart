@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tg2/main.dart';
 
 // Widget used for headers and titles
 class HeaderWidget extends StatelessWidget {
@@ -39,9 +38,6 @@ class HeaderWidget extends StatelessWidget {
               ],
             ),
           ),
-          /*
-          Expanded(child: Divider(height: 24, thickness: 1, color: Theme.of(context).colorScheme.outline)),
-        */
         ],
       ),
       const SizedBox(height: 20),

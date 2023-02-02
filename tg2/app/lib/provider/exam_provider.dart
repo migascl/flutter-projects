@@ -8,6 +8,7 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/utils/exceptions.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 
 // Exam provider class
 class ExamProvider extends ChangeNotifier {
@@ -54,7 +55,7 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.exam);
+        final response = await ApiService().request(ApiEndpoints.exam, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Exam(
@@ -84,7 +85,7 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Deleting exam ${exam.id}...");
-        await ApiService().delete(ApiEndpoints.exam, exam.toJson());
+        await ApiService().request(ApiEndpoints.exam, ApiMethods.delete, body: exam.toJson());
         print("Exam/P: Deleted exam ${exam.id} successfully!");
       }
     } catch (e) {
@@ -105,7 +106,7 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Inserting new exam...");
-        await ApiService().post(ApiEndpoints.exam, exam.toJson());
+        await ApiService().request(ApiEndpoints.exam, ApiMethods.post, body: exam.toJson());
         print("Exam/P: Exam inserted successfully!");
       }
     } catch (e) {
@@ -127,13 +128,7 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Patching exam ${exam.id}...");
-        if (_data.values.any((element) =>
-            element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id && element.id != exam.id)) {
-          throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
-        } else {
-          await ApiService().patch(ApiEndpoints.exam, exam.toJson());
-          print("Exam/P: Patched exam ${exam.id} successfully!");
-        }
+        await ApiService().request(ApiEndpoints.exam, ApiMethods.patch, body: exam.toJson());
       }
     } catch (e) {
       print("Exam/P: Error patching exam ${exam.id}! $e");

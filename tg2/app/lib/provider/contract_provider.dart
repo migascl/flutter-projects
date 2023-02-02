@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/models/position_model.dart';
@@ -6,7 +7,9 @@ import 'package:tg2/provider/player_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 import 'package:tg2/utils/dateutils.dart';
+import 'package:http/http.dart' as http;
 import 'package:tg2/provider/club_provider.dart';
 
 // Contract provider class
@@ -48,7 +51,7 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.contract);
+        final response = await ApiService().request(ApiEndpoints.contract, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Contract(
@@ -81,7 +84,7 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Deleting contract ${contract.id}...");
-        await ApiService().delete(ApiEndpoints.contract, contract.toJson());
+        await ApiService().request(ApiEndpoints.contract, ApiMethods.delete, body: contract.toJson());
         print("Contract/P: Deleted contract ${contract.id} successfully!");
       }
     } catch (e) {
@@ -94,17 +97,20 @@ class ContractProvider extends ChangeNotifier {
   }
 
   // Insert contract onto the database.
-  // It first saves the passport picture onto the server using the POST /upload endpoint
-  // Calls POST method from API service by sending a JSON parsed string of the given contract
+  // Calls POST method from API service by sending a JSON parsed string of the given contract and the file of the passport
   // Prevents multiple calls & always ends by refreshing its cache regardless of result
-  Future post(Contract contract) async {
+  Future post(Contract contract, PlatformFile passport) async {
     try {
       if (_state != ProviderState.busy && _playerProvider.state == ProviderState.ready) {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Inserting new contract...");
-        await ApiService().upload(contract.passport, contract.id.toString());
-        await ApiService().post(ApiEndpoints.contract, contract.toJson());
+        await ApiService().request(
+          ApiEndpoints.contract,
+          ApiMethods.post,
+          body: contract.toJson(),
+          files: [await http.MultipartFile.fromPath('file', passport.path!)],
+        );
         print("Contract/P: Contract inserted successfully!");
       }
     } catch (e) {

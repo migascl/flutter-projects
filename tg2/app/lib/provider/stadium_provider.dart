@@ -5,6 +5,7 @@ import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
 import 'package:tg2/provider/country_provider.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 
 // Stadium provider class
 class StadiumProvider extends ChangeNotifier {
@@ -40,7 +41,7 @@ class StadiumProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Stadium/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.stadium);
+        final response = await ApiService().request(ApiEndpoints.stadium, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Stadium(

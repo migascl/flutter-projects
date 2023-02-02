@@ -41,7 +41,7 @@ class _PlayerListViewState extends State<PlayerListView> {
   DateTimeRange? filterPeriod; // Exam period filter
 
   // Reload providers used by the page, displays snackbar if exception occurs
-  Future _loadPageData() async {
+  Future loadPageData() async {
     try {
       await Provider.of<PlayerProvider>(context, listen: false).get();
       players.clear();
@@ -64,7 +64,7 @@ class _PlayerListViewState extends State<PlayerListView> {
           periodFieldController.text =
               '${DateFormat.yMMMd('pt_PT').format(range.start)} - ${DateFormat.yMMMd('pt_PT').format(range.end)}';
         } else {
-          filterPeriod = DateTimeRange(start: DateTime(1970, 1, 1), end: DateTime.now());
+          filterPeriod = range;
           periodFieldController.clear();
         }
       });
@@ -85,7 +85,7 @@ class _PlayerListViewState extends State<PlayerListView> {
   void initState() {
     print('PlayerList/V: Initialized State!');
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((context) => _loadPageData());
+    WidgetsBinding.instance.addPostFrameCallback((context) => loadPageData());
   }
 
   @override
@@ -177,7 +177,7 @@ class _PlayerListViewState extends State<PlayerListView> {
       // ############# Body #############
       body: RefreshIndicator(
         key: playerListRefreshKey,
-        onRefresh: _loadPageData,
+        onRefresh: loadPageData,
         child: Consumer2<PlayerProvider, ExamProvider>(builder: (context, playerProvider, examProvider, child) {
           if (examProvider.state != ProviderState.busy && players.isEmpty) {
             players = playerProvider.data;
@@ -213,7 +213,6 @@ class _PlayerListViewState extends State<PlayerListView> {
                     dense: true,
                     leading: FutureImage(
                       image: player.picture!,
-                      errorImageUri: 'assets/images/placeholder-player.png',
                       aspectRatio: 1 / 1,
                       borderRadius: BorderRadius.circular(100),
                       height: 42,
@@ -223,10 +222,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                     subtitle: Text(player.country.name, style: Theme.of(context).textTheme.caption),
                     tileColor: Theme.of(context).colorScheme.surface,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PlayerView(player: player),
-                        maintainState: false,
-                      ),
+                      MaterialPageRoute(builder: (context) => PlayerView(player: player)),
                     ),
                   );
                 },
@@ -242,7 +238,7 @@ class _PlayerListViewState extends State<PlayerListView> {
           return Center(
             child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
               const Text('Não foram encontrados nenhuns jogadores'),
-              ElevatedButton(onPressed: _loadPageData, child: const Text('Tentar novamente')),
+              ElevatedButton(onPressed: loadPageData, child: const Text('Tentar novamente')),
             ]),
           );
         }),

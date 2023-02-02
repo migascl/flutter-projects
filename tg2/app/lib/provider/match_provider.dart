@@ -7,6 +7,7 @@ import 'package:tg2/provider/stadium_provider.dart';
 import 'package:tg2/utils/api/api_endpoints.dart';
 import 'package:tg2/utils/api/api_service.dart';
 import 'package:tg2/utils/constants.dart';
+import 'package:tg2/utils/api/api_methods.dart';
 
 // Match provider class
 class MatchProvider extends ChangeNotifier {
@@ -83,7 +84,7 @@ class MatchProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Match/P: Getting all...");
-        final response = await ApiService().get(ApiEndpoints.match);
+        final response = await ApiService().request(ApiEndpoints.match, ApiMethods.get);
         _data = {
           for (var json in response)
             json['id']: Match(

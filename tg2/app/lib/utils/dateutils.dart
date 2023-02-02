@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// This class is used to convert Postgrest date range json value to DateTimeRange
+// This class is used to convert PostgreSQL date range json value to DateTimeRange
 class DateUtilities {
   // Decodes Postgres compatible date format into Dart DateTimeRange
   DateTimeRange decoder(String json) {
