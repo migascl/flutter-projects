@@ -32,9 +32,7 @@ class _FutureImageState extends State<FutureImage> {
       image: widget.image,
       placeholder: const AssetImage('assets/images/loading.gif'),
       imageErrorBuilder: (context, error, stackTrace) {
-        return Image.asset(
-            widget.errorImageUri ?? 'assets/images/placeholder.png',
-            fit: BoxFit.contain);
+        return Image.asset(widget.errorImageUri ?? 'assets/images/placeholder.png', fit: BoxFit.contain);
       },
       fit: BoxFit.contain,
       placeholderFit: BoxFit.fill,
@@ -49,8 +47,7 @@ class _FutureImageState extends State<FutureImage> {
               color: widget.color,
             ),
             child: (widget.aspectRatio != null)
-                ? AspectRatio(
-                    aspectRatio: widget.aspectRatio!, child: imageWidget)
+                ? AspectRatio(aspectRatio: widget.aspectRatio!, child: imageWidget)
                 : imageWidget));
   }
 }

@@ -124,7 +124,7 @@ class _ContractAddView extends State<ContractAddView> {
                                     child: Row(
                                       children: [
                                         FutureImage(
-                                          image: value.picture!,
+                                          image: value.logo!,
                                           errorImageUri: 'assets/images/placeholder-club.png',
                                           height: 32,
                                           aspectRatio: 1 / 1,
@@ -211,7 +211,7 @@ class _ContractAddView extends State<ContractAddView> {
                                           return 'Campo necessário';
                                         } else if (contractProvider.items.values
                                             .where((element) => element.club.id == _club!.id && element.active)
-                                            .any((element) => element.number == _number)) {
+                                            .any((element) => element.shirtNumber == _number)) {
                                           return 'Número em uso pelo clube.';
                                         } else {
                                           return null;

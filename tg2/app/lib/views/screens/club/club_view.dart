@@ -64,355 +64,364 @@ class _ClubViewState extends State<ClubView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: widget.club.color,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
-            onPressed: () {
-              _loadPageData();
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: fab,
-      body: Column(children: [
-        // Page header
-        Container(
-          padding: const EdgeInsets.all(24),
-          height: MediaQuery.of(context).size.height * 0.2,
-          color: widget.club.color,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              FutureImage(
-                image: widget.club.picture!,
-                errorImageUri: 'assets/images/placeholder-club.png',
-                aspectRatio: 1 / 1,
-                height: double.infinity,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.club.name,
-                      style: Theme.of(context).textTheme.titleLarge?.merge(
-                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black : Colors.white)),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.club.stadium?.name ?? '',
-                      style: Theme.of(context).textTheme.subtitle1?.merge(
-                          TextStyle(color: widget.club.color!.computeLuminance() > 0.5 ? Colors.black54 : Colors.white70)),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+    var theme = Theme.of(context);
+    if (widget.club.color != null) {
+      theme = theme.copyWith(colorScheme: ColorScheme.fromSeed(seedColor: widget.club.color!));
+    }
+    return Theme(
+      data: theme,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.primary,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              tooltip: 'Refresh',
+              onPressed: () {
+                _loadPageData();
+              },
+            ),
+          ],
         ),
-        // Page body
-        Expanded(
-          child: PageView(
-            controller: _pageController,
-            children: [
-              // ############# Stats Page #############
-              Consumer<MatchProvider>(
-                builder: (context, matchProvider, child) {
-                  if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
-                    matchweeks = matchProvider.getMatchweeks();
-                    // Get all matches from the club and sort them by most recent
-                    matches = matchProvider.getByClub(widget.club).values.toList();
-                    if (selectedMatchweek != null) {
-                      matches = matches.where((element) => element.matchweek == selectedMatchweek).toList();
+        floatingActionButton: fab,
+        body: Column(children: [
+          // Page header
+          Container(
+            padding: const EdgeInsets.all(24),
+            height: MediaQuery.of(context).size.height * 0.2,
+            color: theme.colorScheme.primary,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                FutureImage(
+                  image: widget.club.logo!,
+                  errorImageUri: 'assets/images/placeholder-club.png',
+                  aspectRatio: 1 / 1,
+                  height: double.infinity,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.club.name,
+                        style: Theme.of(context).textTheme.titleLarge?.apply(color: theme.colorScheme.onPrimary),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.club.stadium?.name ?? '',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.apply(color: theme.colorScheme.onPrimary.withOpacity(0.75)),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          // Page body
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              children: [
+                // ############# Stats Page #############
+                Consumer<MatchProvider>(
+                  builder: (context, matchProvider, child) {
+                    if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
+                      matchweeks = matchProvider.getMatchweeks();
+                      // Get all matches from the club and sort them by most recent
+                      matches = matchProvider.getByClub(widget.club).values.toList();
+                      if (selectedMatchweek != null) {
+                        matches = matches.where((element) => element.matchweek == selectedMatchweek).toList();
+                      }
+                      matches.sort((a, b) => b.date.compareTo(a.date));
                     }
-                    matches.sort((a, b) => b.date.compareTo(a.date));
-                  }
 
-                  if (matches.isNotEmpty) {
-                    return SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            Column(
-                              children: [
-                                // Statistics (total games & points)
-                                HeaderWidget(
-                                  headerText: 'Estatísticas',
-                                  headerAction: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      DropdownButton<int>(
-                                        items: matchweeks.map<DropdownMenuItem<int>>((int value) {
-                                          return DropdownMenuItem<int>(
-                                            value: value,
-                                            child: Text('Jornada $value'),
-                                          );
-                                        }).toList(),
-                                        hint: const Text('Época Inteira'),
-                                        value: selectedMatchweek,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            matches.clear();
-                                            selectedMatchweek = value;
-                                          });
-                                        },
-                                        underline: Container(),
-                                      ),
-                                      IconButton(
-                                        splashRadius: 24,
-                                        onPressed: () => setState(() {
-                                          selectedMatchweek = null;
-                                        }),
-                                        icon: const Icon(Icons.clear_sharp, size: 24),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: IntrinsicHeight(
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Jogos Totais',
-                                                    style: Theme.of(context).textTheme.subtitle1,
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    selectedMatchweek != null
-                                                        ? '${matches.where((match) => match.matchweek == selectedMatchweek).length}'
-                                                        : '${matches.length}',
-                                                    style: Theme.of(context).textTheme.headline5,
-                                                  ),
-                                                ],
+                    if (matches.isNotEmpty) {
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Column(
+                                children: [
+                                  // Statistics (total games & points)
+                                  HeaderWidget(
+                                    headerText: 'Estatísticas',
+                                    headerAction: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        DropdownButton<int>(
+                                          items: matchweeks.map<DropdownMenuItem<int>>((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text('Jornada $value'),
+                                            );
+                                          }).toList(),
+                                          hint: const Text('Época Inteira'),
+                                          value: selectedMatchweek,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              matches.clear();
+                                              selectedMatchweek = value;
+                                            });
+                                          },
+                                          underline: Container(),
+                                        ),
+                                        IconButton(
+                                          splashRadius: 24,
+                                          onPressed: () => setState(() {
+                                            selectedMatchweek = null;
+                                          }),
+                                          icon: const Icon(Icons.clear_sharp, size: 24),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: IntrinsicHeight(
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Jogos Totais',
+                                                      style: Theme.of(context).textTheme.subtitle1,
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      selectedMatchweek != null
+                                                          ? '${matches.where((match) => match.matchweek == selectedMatchweek).length}'
+                                                          : '${matches.length}',
+                                                      style: Theme.of(context).textTheme.headlineSmall,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            const VerticalDivider(thickness: 1),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Pontos Total',
-                                                    style: Theme.of(context).textTheme.subtitle1,
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    '${matchProvider.getClubPoints(club: widget.club, matchweek: selectedMatchweek)}',
-                                                    style: Theme.of(context).textTheme.headline5,
-                                                  ),
-                                                ],
+                                              const VerticalDivider(thickness: 1),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Pontos Total',
+                                                      style: Theme.of(context).textTheme.subtitle1,
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      '${matchProvider.getClubPoints(club: widget.club, matchweek: selectedMatchweek)}',
+                                                      style: Theme.of(context).textTheme.headlineSmall,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 32),
-                                Column(
-                                  children: [
-                                    ListTile(
-                                      tileColor: Theme.of(context).colorScheme.surfaceVariant,
-                                      dense: true,
-                                      textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      title: Text(
-                                        'Histórico de Jogos',
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.subtitle1,
+                                  const SizedBox(height: 32),
+                                  Column(
+                                    children: [
+                                      ListTile(
+                                        tileColor: Theme.of(context).colorScheme.surfaceVariant,
+                                        dense: true,
+                                        textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                        title: Text(
+                                          'Histórico de Jogos',
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context).textTheme.titleMedium,
+                                        ),
                                       ),
-                                    ),
-                                    Card(
-                                      child: ListView.separated(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        itemCount: matches.length,
-                                        itemBuilder: (context, index) {
-                                          Match match = matches[index];
-                                          return MatchTile(match: match);
-                                        },
-                                        separatorBuilder: (context, index) => const Divider(height: 0),
+                                      Card(
+                                        child: ListView.separated(
+                                          primary: false,
+                                          shrinkWrap: true,
+                                          itemCount: matches.length,
+                                          itemBuilder: (context, index) {
+                                            Match match = matches[index];
+                                            return MatchTile(match: match);
+                                          },
+                                          separatorBuilder: (context, index) => const Divider(height: 0),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                // Recent games
-                              ],
-                            ),
-                          ],
+                                    ],
+                                  ),
+                                  // Recent games
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      );
+                    }
+                    if (matches.isEmpty && matchProvider.state == ProviderState.busy) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    // If nothing is found
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Center(
+                          child: Text(
+                        'Este clube ainda não participou em nenhuma competição',
+                        style: Theme.of(context).textTheme.caption,
+                      )),
                     );
-                  }
-                  if (matches.isEmpty && matchProvider.state == ProviderState.busy) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  // If nothing is found
-                  return Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Center(
-                        child: Text(
-                      'Este clube ainda não participou em nenhuma competição',
-                      style: Theme.of(context).textTheme.caption,
-                    )),
-                  );
-                },
-              ),
-              // ############# Team Page #############
-              Consumer<ContractProvider>(
-                builder: (context, contractProvider, child) {
-                  if (contractProvider.state != ProviderState.busy && _contracts.isEmpty) {
-                    // Get all active contracts of the club
-                    _contracts = contractProvider.items.values
-                        .where((element) => element.club.id == widget.club.id && element.active)
-                        .toList();
-                  }
-                  if (_contracts.isNotEmpty) {
-                    return SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: HeaderWidget(
-                          headerText: 'Plantel',
-                          child: Card(
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              primary: false,
-                              itemCount: _contracts.length,
-                              itemBuilder: (context, index) {
-                                Contract contract = _contracts.elementAt(index);
-                                return ContractTile(
-                                  contract: contract,
-                                  showClub: false,
-                                  showAlert: true,
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        isDismissible: true,
-                                        backgroundColor: Colors.transparent,
-                                        context: context,
-                                        builder: (context) => ContractView(contract: contract));
-                                  },
-                                  onDelete: () {
-                                    _loadPageData();
-                                  },
-                                );
-                              },
-                              separatorBuilder: (context, index) => Divider(
-                                  height: 0, indent: 16, endIndent: 16, color: Theme.of(context).colorScheme.outline),
+                  },
+                ),
+                // ############# Team Page #############
+                Consumer<ContractProvider>(
+                  builder: (context, contractProvider, child) {
+                    if (contractProvider.state != ProviderState.busy && _contracts.isEmpty) {
+                      // Get all active contracts of the club
+                      _contracts = contractProvider.items.values
+                          .where((element) => element.club.id == widget.club.id && element.active)
+                          .toList();
+                    }
+                    if (_contracts.isNotEmpty) {
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: HeaderWidget(
+                            headerText: 'Plantel',
+                            child: Card(
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                primary: false,
+                                itemCount: _contracts.length,
+                                itemBuilder: (context, index) {
+                                  Contract contract = _contracts.elementAt(index);
+                                  return ContractTile(
+                                    contract: contract,
+                                    showClub: false,
+                                    showAlert: true,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          isDismissible: true,
+                                          backgroundColor: Colors.transparent,
+                                          context: context,
+                                          builder: (context) => ContractView(contract: contract));
+                                    },
+                                    onDelete: () {
+                                      _loadPageData();
+                                    },
+                                  );
+                                },
+                                separatorBuilder: (context, index) => Divider(
+                                    height: 0, indent: 16, endIndent: 16, color: Theme.of(context).colorScheme.outline),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: HeaderWidget(
-                      headerText: 'Plantel',
-                      child: Expanded(
-                        child: (_contracts.isEmpty && contractProvider.state == ProviderState.busy)
-                            ? const Center(child: CircularProgressIndicator())
-                            // If nothing is found
-                            : Card(
-                                child: Center(
-                                  child: Text(
-                                    'Não existem jogadores neste clube.',
-                                    style: Theme.of(context).textTheme.caption,
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: HeaderWidget(
+                        headerText: 'Plantel',
+                        child: Expanded(
+                          child: (_contracts.isEmpty && contractProvider.state == ProviderState.busy)
+                              ? const Center(child: CircularProgressIndicator())
+                              // If nothing is found
+                              : Card(
+                                  child: Center(
+                                    child: Text(
+                                      'Não existem jogadores neste clube.',
+                                      style: Theme.of(context).textTheme.caption,
+                                    ),
                                   ),
                                 ),
-                              ),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              // ############# Info Page #############
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: HeaderWidget(
-                    headerText: 'Dados Gerais',
-                    child: Card(
-                      child: Column(
-                        children: [
-                          ListTile(
-                            isThreeLine: true,
-                            title: const Text('Morada'),
-                            subtitle: Text(
-                              '${widget.club.stadium!.address}\n'
-                              '${widget.club.stadium?.city}, ${widget.club.stadium?.country.name}',
+                    );
+                  },
+                ),
+                // ############# Info Page #############
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: HeaderWidget(
+                      headerText: 'Dados Gerais',
+                      child: Card(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              isThreeLine: true,
+                              title: const Text('Morada'),
+                              subtitle: Text(
+                                '${widget.club.stadium!.address}\n'
+                                '${widget.club.stadium?.city}, ${widget.club.stadium?.country.name}',
+                              ),
                             ),
-                          ),
-                          const Divider(height: 0, indent: 16, endIndent: 16),
-                          if (widget.club.phone != null)
-                            ListTile(title: const Text('Telefone'), subtitle: Text(widget.club.phone!)),
-                          const Divider(height: 0, indent: 16, endIndent: 16),
-                          if (widget.club.fax != null) ListTile(title: const Text('Fax'), subtitle: Text(widget.club.fax!)),
-                          const Divider(height: 0, indent: 16, endIndent: 16),
-                          if (widget.club.email != null)
-                            ListTile(title: const Text('Email'), subtitle: Text(widget.club.email!)),
-                        ],
+                            const Divider(height: 0, indent: 16, endIndent: 16),
+                            if (widget.club.phone != null)
+                              ListTile(title: const Text('Telefone'), subtitle: Text(widget.club.phone!)),
+                            const Divider(height: 0, indent: 16, endIndent: 16),
+                            if (widget.club.fax != null)
+                              ListTile(title: const Text('Fax'), subtitle: Text(widget.club.fax!)),
+                            const Divider(height: 0, indent: 16, endIndent: 16),
+                            if (widget.club.email != null)
+                              ListTile(title: const Text('Email'), subtitle: Text(widget.club.email!)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Divider(thickness: 1, height: 0, color: Theme.of(context).colorScheme.outline)
-      ]),
+          Divider(thickness: 1, height: 0, color: Theme.of(context).colorScheme.outline)
+        ]),
 
-      // ############# Bottom Nav #############
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), label: 'Estatísticas'),
-          BottomNavigationBarItem(icon: Icon(Icons.groups_outlined), label: 'Plantel'),
-          BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'Dados Gerais')
-        ],
-        onTap: (int value) {
-          setState(() {
-            _selectedIndex = value;
-            switch (_selectedIndex) {
-              case 1:
-                fab = FloatingActionButton(
-                  backgroundColor: widget.club.color,
-                  onPressed: () => showGeneralDialog(
+        // ############# Bottom Nav #############
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), label: 'Estatísticas'),
+            BottomNavigationBarItem(icon: Icon(Icons.groups_outlined), label: 'Plantel'),
+            BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'Dados Gerais')
+          ],
+          onTap: (int value) {
+            setState(() {
+              _selectedIndex = value;
+              switch (_selectedIndex) {
+                case 1:
+                  fab = FloatingActionButton(
+                    onPressed: () => showGeneralDialog(
                       context: context,
                       barrierDismissible: false,
                       pageBuilder: (BuildContext buildContext, Animation animation, Animation secondaryAnimation) =>
-                          ContractAddView(club: widget.club, onComplete: _loadPageData)),
-                  child: const Icon(Icons.add),
-                );
-                break;
-              default:
-                fab = null;
-                break;
-            }
-          });
-          _pageController.animateToPage(
-            value,
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeIn,
-          );
-        },
-        selectedItemColor: widget.club.color,
-        currentIndex: _selectedIndex,
+                          ContractAddView(club: widget.club, onComplete: _loadPageData),
+                    ),
+                    child: const Icon(Icons.add),
+                  );
+                  break;
+                default:
+                  fab = null;
+                  break;
+              }
+            });
+            _pageController.animateToPage(
+              value,
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeIn,
+            );
+          },
+          //selectedItemColor: widget.club.color ?? Theme.of(context).colorScheme.primary,
+          currentIndex: _selectedIndex,
+        ),
       ),
     );
   }

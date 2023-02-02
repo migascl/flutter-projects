@@ -1,9 +1,9 @@
 // Enumerator for Schooling entity
 enum Schooling {
-  preSchool(name: "Ensino Básico - 1º Ciclo"),
-  elementarySchool(name: "Ensino Básico - 2º Ciclo"),
-  middleSchool(name: "Ensino Básico - 3º Ciclo"),
-  highSchool(name: "Ensino Secundário"),
+  preschool(name: "Ensino Básico - 1º Ciclo"),
+  elementary(name: "Ensino Básico - 2º Ciclo"),
+  middleschool(name: "Ensino Básico - 3º Ciclo"),
+  highschool(name: "Ensino Secundário"),
   college(name: "Ensino Superior");
 
   const Schooling({required this.name});

@@ -35,7 +35,7 @@ class ContractView extends StatelessWidget {
                               Text('Contratante', style: Theme.of(context).textTheme.subtitle2),
                               const SizedBox(height: 16),
                               FutureImage(
-                                image: contract.club.picture!,
+                                image: contract.club.logo!,
                                 errorImageUri: 'assets/images/placeholder-club.png',
                                 height: 64,
                                 aspectRatio: 1 / 1,
@@ -80,7 +80,7 @@ class ContractView extends StatelessWidget {
                               TextButton.icon(
                                   onPressed: () async {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return _PassportView(passport: contract.documentImage);
+                                      return _PassportView(passport: contract.passportImage);
                                     }));
                                   },
                                   icon: const Icon(Icons.recent_actors_sharp),
@@ -114,7 +114,7 @@ class ContractView extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '${contract.number}',
+                              '${contract.shirtNumber}',
                               style: Theme.of(context).textTheme.headline6,
                             ),
                           ],

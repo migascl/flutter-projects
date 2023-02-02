@@ -186,7 +186,7 @@ class _ClubListViewState extends State<ClubListView> {
                           tileColor: Theme.of(context).colorScheme.surface,
                           dense: true,
                           leading: FutureImage(
-                            image: club.picture!,
+                            image: club.logo!,
                             errorImageUri: 'assets/images/placeholder-club.png',
                             aspectRatio: 1 / 1,
                             height: 42,

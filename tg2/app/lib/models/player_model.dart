@@ -9,15 +9,15 @@ class Player {
   String? nickname; // Player's optional nickname
   late Country country; // Player's nationality
   late DateTime birthday; // Player's date of birth
-  late int height; // Player's height
-  late int weight; // Player's weight
-  Schooling? schoolingLvl; // Player's schooling level
+  int? height; // Player's height
+  int? weight; // Player's weight
+  Schooling? schooling; // Player's schooling level
   NetworkImage? picture; // Player's profile picture
   final int? _id; // Database id number (managed by provider)
 
   // CONSTRUCTORS
-  Player(this.name, this.country, this.birthday, this.height, this.weight,
-      [this.nickname, this.schoolingLvl, this.picture, this._id]);
+  Player(this.name, this.country, this.birthday,
+      [this.nickname, this.height, this.weight, this.schooling, this.picture, this._id]);
 
   // GETTERS
   int? get id => _id;

@@ -47,12 +47,15 @@ class ClubProvider extends ChangeNotifier {
             json['id']: Club(
                 json['name'],
                 json['playing'],
-                _stadiumProvider.items[json['stadium_id']]!,
+                json['nickname'],
+                _stadiumProvider.items[json['stadium']]!,
                 json['phone'],
                 json['fax'],
                 json['email'],
-                Color.fromARGB(255, json['color_rgb'][0], json['color_rgb'][1], json['color_rgb'][2]),
-                NetworkImage(dotenv.env['API_URL']! + json['picture']),
+                json['color'] != null
+                    ? Color.fromARGB(255, json['color'][0], json['color'][1], json['color'][2])
+                    : null,
+                NetworkImage(dotenv.env['API_URL']! + json['logo']),
                 json['id'])
         };
         print("Club/P: Fetched successfully!");

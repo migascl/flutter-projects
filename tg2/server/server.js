@@ -101,7 +101,7 @@ app.post('/passport', (req, res) => {
    */
 
   // Move the uploaded image to passport folder
-  image.mv(__dirname + '/assets/img/passports/' + image.name);
+  image.mv(__dirname + '/assets/img/passport/' + image.name);
 
   // All good
   res.sendStatus(200);
@@ -149,9 +149,9 @@ app.get('/exam', (req, res) => connection.any('SELECT * FROM exam')
     .catch((error) => console.log('ERROR:', error))
 )
 app.post('/exam', (req,res) => {
-  const { player_id, date, result } = req.body
-  connection.none('INSERT INTO exam(player_id, date, result) VALUES($/player_id/, $/date/, $/result/)', {
-    player_id: player_id,
+  const { player, date, result } = req.body
+  connection.none('INSERT INTO exam(player, date, result) VALUES($/player/, $/date/, $/result/)', {
+    player: player,
     date: date,
     result: result
   })
@@ -160,10 +160,10 @@ app.post('/exam', (req,res) => {
 
 });
 app.patch('/exam', (req,res) => {
-  const { id, player_id, date, result } = req.body
-  connection.none('UPDATE exam SET player_id = $/player_id/, date = $/date/, result = $/result/ WHERE id = $/id/', {
+  const { id, player, date, result } = req.body
+  connection.none('UPDATE exam SET player = $/player/, date = $/date/, result = $/result/ WHERE id = $/id/', {
     id: id,
-    player_id: player_id,
+    player: player,
     date: date,
     result: result
   })
@@ -192,17 +192,17 @@ app.get('/contract', (req, res) => connection.any('SELECT * FROM contract')
     .catch((error) => console.log('ERROR:', error))
 );
 app.post('/contract', (req,res) => {
-  const { player_id, club_id, number, position_id, period, document } = req.body
+  const { player, club, shirtnumber, position, period, passport } = req.body
   connection.none(
-      'INSERT INTO contract(player_id, club_id, number, position_id, period, document) ' +
-      'VALUES($/player_id/, $/club_id/, $/number/, $/position_id/, $/period/, $/document/)',
+      'INSERT INTO contract(player, club, number, position, period, passport) ' +
+      'VALUES($/player/, $/club/, $/shirtnumber/, $/position/, $/period/, $/passport/)',
       {
-        player_id: player_id,
-        club_id: club_id,
-        number: number,
-        position_id: position_id,
+        player_id: player,
+        club_id: club,
+        number: shirtnumber,
+        position_id: position,
         period: period,
-        document: document,
+        passport: passport,
       })
       .then(r => res.json(r))
       .catch((error) => console.log('ERROR:', error));

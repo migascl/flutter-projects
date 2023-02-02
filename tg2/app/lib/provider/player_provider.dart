@@ -47,12 +47,12 @@ class PlayerProvider extends ChangeNotifier {
           for (var json in response)
             json['id']: Player(
               json['name'],
-              _countryProvider.items[json['country_id']]!,
+              _countryProvider.items[json['country']]!,
               DateTime.parse(json['birthday'].toString()),
+              json['nickname'],
               json['height'],
               json['weight'],
-              json['nickname'],
-              Schooling.values[json['schooling_id']],
+              Schooling.values[json['schooling']],
               NetworkImage(dotenv.env['API_URL']! + json['picture']),
               json['id'],
             )

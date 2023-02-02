@@ -10,11 +10,16 @@ class Exam {
 
   // CONSTRUCTORS
   Exam(this.player, this.date, this.result, [this._id]);
-  
+
   // GETTERS
   int? get id => _id;
 
   // METHODS
   // Convert object into API readable JSON
-  Map<String, dynamic> toJson() => {'id': _id, 'player_id': player.id, 'date': date.toIso8601String(), 'result': result};
+  Map<String, dynamic> toJson() => {
+        'id': _id,
+        'player': player.id,
+        'date': date.toIso8601String(),
+        'result': result,
+      };
 }

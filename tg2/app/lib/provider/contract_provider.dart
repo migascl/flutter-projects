@@ -52,12 +52,12 @@ class ContractProvider extends ChangeNotifier {
         _items = {
           for (var json in response)
             json['id']: Contract(
-              _playerProvider.items[json['player_id']]!,
-              _clubProvider.items[json['club_id']]!,
-              json['number'],
-              Position.values[json['position_id']],
+              _playerProvider.items[json['player']]!,
+              _clubProvider.items[json['club']]!,
+              json['shirtnumber'],
+              Position.values[json['position']],
               DateUtilities().decoder(json['period']),
-              json['document'],
+              json['passport'],
               json['id'],
             )
         };
@@ -103,7 +103,7 @@ class ContractProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Contract/P: Inserting new contract...");
-        await ApiService().upload(contract.document, contract.id.toString());
+        await ApiService().upload(contract.passport, contract.id.toString());
         await ApiService().post(ApiEndpoints.contract, contract.toJson());
         print("Contract/P: Contract inserted successfully!");
       }

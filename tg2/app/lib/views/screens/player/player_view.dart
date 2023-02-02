@@ -145,8 +145,8 @@ class _PlayerViewState extends State<PlayerView> {
                             const Divider(height: 0, indent: 16, endIndent: 16),
                             ListTile(title: const Text("Peso"), subtitle: Text("${_player.weight} kg")),
                             const Divider(height: 0, indent: 16, endIndent: 16),
-                            if (_player.schoolingLvl != null)
-                              ListTile(title: const Text("Escolaridade"), subtitle: Text(_player.schoolingLvl!.name))
+                            if (_player.schooling != null)
+                              ListTile(title: const Text("Escolaridade"), subtitle: Text(_player.schooling!.name))
                           ],
                         ),
                       ),
@@ -349,22 +349,24 @@ class _PlayerViewState extends State<PlayerView> {
                 fab = FloatingActionButton(
                   child: const Icon(Icons.add),
                   onPressed: () => showGeneralDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      pageBuilder: (buildContext, animation, secondaryAnimation) =>
-                          ContractAddView(player: _player, onComplete: _loadPageData)),
+                    context: context,
+                    barrierDismissible: false,
+                    pageBuilder: (buildContext, animation, secondaryAnimation) =>
+                        ContractAddView(player: _player, onComplete: _loadPageData),
+                  ),
                 );
                 break;
               case 2:
                 fab = FloatingActionButton(
                   child: const Icon(Icons.add),
                   onPressed: () => showGeneralDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      pageBuilder: (buildContext, animation, secondaryAnimation) => ExamModifyView(
-                            player: _player,
-                            onComplete: _loadPageData,
-                          )),
+                    context: context,
+                    barrierDismissible: false,
+                    pageBuilder: (buildContext, animation, secondaryAnimation) => ExamModifyView(
+                      player: _player,
+                      onComplete: _loadPageData,
+                    ),
+                  ),
                 );
                 break;
               default:

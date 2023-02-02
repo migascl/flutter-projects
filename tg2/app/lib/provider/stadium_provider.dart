@@ -43,8 +43,13 @@ class StadiumProvider extends ChangeNotifier {
         final response = await ApiService().get(ApiEndpoints.stadium);
         _items = {
           for (var json in response)
-            json['id']:
-                Stadium(json['name'], json['address'], json['city'], _countryProvider.items[json['country_id']]!, json['id'])
+            json['id']: Stadium(
+              json['name'],
+              json['address'],
+              json['city'],
+              _countryProvider.items[json['country']]!,
+              json['id'],
+            )
         };
         print("Stadium/P: Fetched successfully!");
       }

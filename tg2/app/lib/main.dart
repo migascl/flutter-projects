@@ -85,9 +85,7 @@ class Main extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
-          Locale('pt', 'PT'), // Hebrew, no country code
-        ],
+        supportedLocales: [Locale('pt', 'PT')],
         home: const StartUpView(),
       ),
     );
@@ -121,7 +119,14 @@ class _StartUpView extends State<StartUpView> {
           barrierDismissible: false,
           builder: (BuildContext context) => AlertDialog(
                 title: const Text('Ocorreu um erro!'),
-                content: Text('Não foi possível estabelecer conexão ao servidor.\nErro: $e.'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Não foi possível estabelecer conexão ao servidor.'),
+                    const SizedBox(height: 16),
+                    Text('$e', style: Theme.of(context).textTheme.caption),
+                  ],
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {

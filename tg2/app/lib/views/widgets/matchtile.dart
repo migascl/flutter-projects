@@ -24,7 +24,7 @@ class MatchTile extends StatelessWidget {
               showTimeOnly
                   ? DateFormat.Hm('pt_PT').format(match.date)
                   : DateFormat.yMMMMd('pt_PT').add_Hm().format(match.date),
-              style: Theme.of(context).textTheme.caption,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 8),
             Row(
@@ -32,7 +32,7 @@ class MatchTile extends StatelessWidget {
                 // HOME CLUB BADGE
                 Expanded(
                   child: FutureImage(
-                    image: match.clubHome.picture!,
+                    image: match.homeClub.logo!,
                     errorImageUri: 'assets/images/placeholder-club.png',
                     height: 48,
                     aspectRatio: 1 / 1,
@@ -52,7 +52,7 @@ class MatchTile extends StatelessWidget {
                 // AWAY CLUB BADGE
                 Expanded(
                   child: FutureImage(
-                    image: match.clubAway.picture!,
+                    image: match.awayClub.logo!,
                     errorImageUri: 'assets/images/placeholder-club.png',
                     height: 48,
                     aspectRatio: 1 / 1,
@@ -66,7 +66,7 @@ class MatchTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    match.clubHome.name,
+                    match.homeClub.nickname ?? match.homeClub.name,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.caption,
                   ),
@@ -74,7 +74,7 @@ class MatchTile extends StatelessWidget {
                 const Spacer(),
                 Expanded(
                   child: Text(
-                    match.clubAway.name,
+                    match.awayClub.nickname ?? match.awayClub.name,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.caption,
                   ),

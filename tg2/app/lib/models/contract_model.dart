@@ -10,20 +10,20 @@ class Contract {
   // ################################## VARIABLES ##################################
   late Player player; // Employee player
   late Club club; // Employer club
-  late int number; // Shirt number
+  late int shirtNumber; // Shirt number
   late Position position; // Player field position
   late DateTimeRange period; // Contract period
-  late String document; // Verification passport document
+  late String passport; // Verification passport document
   final int? _id; // Database id number (managed by provider)
 
   // ################################## CONSTRUCTORS ##################################
-  Contract(this.player, this.club, this.number, this.position, this.period, this.document, [this._id]);
+  Contract(this.player, this.club, this.shirtNumber, this.position, this.period, this.passport, [this._id]);
 
   // ################################## GETTERS ##################################
   int? get id => _id;
 
   // This getter is used to retrieve the image from the server, since the 'document' variable only stores the file path
-  NetworkImage get documentImage => NetworkImage(dotenv.env['API_URL']! + document);
+  NetworkImage get passportImage => NetworkImage(dotenv.env['API_URL']! + passport);
 
   // Runtime variable. Calculate remaining time of contract
   Duration get remainingTime => period.end.difference(DateTime.now());
@@ -45,11 +45,11 @@ class Contract {
   // Convert object into API readable JSON
   Map<String, dynamic> toJson() => {
         'id': _id,
-        'player_id': player.id,
-        'club_id': club.id,
-        'number': number,
-        'position_id': position.index,
+        'player': player.id,
+        'club': club.id,
+        'shirtnumber': shirtNumber,
+        'position': position.index,
         'period': DateUtilities().encoder(period),
-        'document': '/img/passports/${player.id}'
+        'passport': '/img/passport/${id}'
       };
 }

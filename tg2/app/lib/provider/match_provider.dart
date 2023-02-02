@@ -30,7 +30,7 @@ class MatchProvider extends ChangeNotifier {
   // Get matches where a given club participated in (Uses club id to search in both home and away)
   Map<int, Match> getByClub(Club club) {
     return Map.fromEntries(_items.entries.expand((element) => [
-          if (element.value.clubHome.id == club.id || element.value.clubAway.id == club.id)
+          if (element.value.homeClub.id == club.id || element.value.awayClub.id == club.id)
             MapEntry(element.key, element.value)
         ]));
   }
@@ -42,11 +42,11 @@ class MatchProvider extends ChangeNotifier {
         (matchweek == null ? getByClub(club).values : getByClub(club).values.where((e) => e.matchweek == matchweek!))
             .toList();
     for (var item in list) {
-      if (item.clubHome.id == club.id) {
+      if (item.homeClub.id == club.id) {
         points += item.homeScore;
         continue;
       }
-      if (item.clubAway.id == club.id) {
+      if (item.awayClub.id == club.id) {
         points += item.awayScore;
         continue;
       }
@@ -89,12 +89,12 @@ class MatchProvider extends ChangeNotifier {
             json['id']: Match(
               DateTime.parse(json['date'].toString()),
               json['matchweek'],
-              _clubProvider.items[json['club_home_id']]!,
-              json['score_home'],
-              _clubProvider.items[json['club_away_id']]!,
-              json['score_away'],
+              _clubProvider.items[json['homeclub']]!,
+              json['homescore'],
+              _clubProvider.items[json['awayclub']]!,
+              json['awayscore'],
               json['duration'],
-              _stadiumProvider.items[json['stadium_id']]!,
+              _stadiumProvider.items[json['stadium']]!,
               json['id'],
             )
         };

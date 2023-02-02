@@ -6,16 +6,16 @@ class Match {
   // VARIABLES
   late DateTime date; // Math's date
   late int matchweek; // Match's matchweek
-  late Club clubHome; // Match's home club
+  late Club homeClub; // Match's home club
   late int homeScore; // Match's home score
-  late Club clubAway; // Match's away club
+  late Club awayClub; // Match's away club
   late int awayScore; // Match's away score
   late int duration; // Match duration
   late Stadium stadium; // Match location stadium
   final int? _id; // Database id number (managed by provider)
 
   // CONSTRUCTORS
-  Match(this.date, this.matchweek, this.clubHome, this.homeScore, this.clubAway, this.awayScore, this.duration, this.stadium,
+  Match(this.date, this.matchweek, this.homeClub, this.homeScore, this.awayClub, this.awayScore, this.duration, this.stadium,
       [this._id]);
 
   // GETTERS

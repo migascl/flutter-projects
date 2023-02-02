@@ -58,7 +58,7 @@ class ExamProvider extends ChangeNotifier {
         _items = {
           for (var json in response)
             json['id']: Exam(
-              _playerProvider.items[json['player_id']]!,
+              _playerProvider.items[json['player']]!,
               DateTime.parse(json['date'].toString()),
               json['result'],
               json['id'],

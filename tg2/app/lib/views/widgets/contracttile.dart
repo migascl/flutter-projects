@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tg2/models/contract_model.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
-import 'package:tg2/utils/dateutils.dart';
 import 'package:tg2/provider/contract_provider.dart';
 
 // Club's squad player tile. It displays basic player information from a contract.
@@ -36,7 +36,7 @@ class _ContractTileState extends State<ContractTile> {
   }
 
   void _showDropDown() {
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     showMenu(
       context: context,
@@ -84,12 +84,12 @@ class _ContractTileState extends State<ContractTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => widget.onTap?.call(),
-      onLongPress: (widget.dense) ? null : _showDropDown,
       onTapDown: _storePosition,
       child: ListTile(
+        onTap: (widget.dense) ? null : () => widget.onTap?.call(),
         dense: widget.dense,
-        enabled: (widget.contract.active),
+        onLongPress: (widget.dense) ? null : _showDropDown,
+        //enabled: (widget.contract.active),
         contentPadding: widget.dense
             ? const EdgeInsets.symmetric(horizontal: 8)
             : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -97,7 +97,7 @@ class _ContractTileState extends State<ContractTile> {
         // Expired contracts are shown as disabled
         // Either show player or club picture
         leading: FutureImage(
-          image: (widget.showClub) ? widget.contract.club.picture! : widget.contract.player.picture!,
+          image: (widget.showClub) ? widget.contract.club.logo! : widget.contract.player.picture!,
           errorImageUri: (widget.showClub) ? 'assets/images/placeholder-club.png' : 'assets/images/placeholder-player.png',
           height: (widget.dense) ? 32 : null,
           aspectRatio: 1 / 1,
@@ -106,17 +106,17 @@ class _ContractTileState extends State<ContractTile> {
         // If set to show player, show player shirt number on the title
         title: (widget.showClub)
             ? Text(widget.contract.club.name)
-            : Text('${widget.contract.number}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
+            : Text('${widget.contract.shirtNumber}. ${widget.contract.player.nickname ?? widget.contract.player.name}'),
         // Don't show any subtitle if set to dense, and only show player shirt number if title set to show the club
         subtitle: (widget.dense)
             ? Text(widget.contract.position.name)
             : Text(
-                '${(widget.showClub) ? 'Número: ${widget.contract.number}\n' : ''}Posição: ${widget.contract.position.name}'),
+                '${(widget.showClub) ? 'Número: ${widget.contract.shirtNumber}\n' : ''}Posição: ${widget.contract.position.name}'),
         // Show warning icon that shows a tooltip with remaining contract duration and expiry date if contract is active
         trailing: (widget.showAlert && widget.contract.needsRenovation && widget.contract.active)
             ? Tooltip(
                 message:
-                    'Contrato expira em ${widget.contract.remainingTime.inDays} dias!\n(${DateUtilities().toYMD(widget.contract.period.end)})',
+                    'Contrato expira em ${widget.contract.remainingTime.inDays} dias!\n(${DateFormat.yMd('pt_PT').format(widget.contract.period.end)})',
                 textAlign: TextAlign.center,
                 child: const Icon(
                   Icons.warning_rounded,

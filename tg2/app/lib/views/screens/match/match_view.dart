@@ -25,7 +25,7 @@ class _MatchViewState extends State<MatchView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FutureImage(
-            image: club.picture!,
+            image: club.logo!,
             errorImageUri: 'assets/images/placeholder-club.png',
             height: 64,
             aspectRatio: 1 / 1,
@@ -102,7 +102,7 @@ class _MatchViewState extends State<MatchView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ############# Club Home #############
-                  Expanded(child: _clubBadgeWidget(widget.match.clubHome)),
+                  Expanded(child: _clubBadgeWidget(widget.match.homeClub)),
                   // ############# Score & Time #############
                   Expanded(
                     child: Column(children: [
@@ -147,7 +147,7 @@ class _MatchViewState extends State<MatchView> {
                     ]),
                   ),
                   // ############# Club Away #############
-                  Expanded(child: _clubBadgeWidget(widget.match.clubAway)),
+                  Expanded(child: _clubBadgeWidget(widget.match.awayClub)),
                 ],
               ),
             ],
@@ -161,11 +161,11 @@ class _MatchViewState extends State<MatchView> {
             child: Row(
               children: [
                 Expanded(
-                  child: _MatchSquadList(scrollController: controller, club: widget.match.clubHome),
+                  child: _MatchSquadList(scrollController: controller, club: widget.match.homeClub),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _MatchSquadList(scrollController: controller, club: widget.match.clubAway, mirrored: true),
+                  child: _MatchSquadList(scrollController: controller, club: widget.match.awayClub, mirrored: true),
                 ),
               ],
             ),
@@ -230,7 +230,7 @@ class _MatchSquadListState extends State<_MatchSquadList> {
       child: Builder(builder: (context) {
         List<Widget> _header = [
           FutureImage(
-            image: widget.club.picture!,
+            image: widget.club.logo!,
             errorImageUri: 'assets/images/placeholder-club.png',
             height: 32,
             aspectRatio: 1 / 1,
