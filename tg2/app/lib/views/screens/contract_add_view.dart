@@ -110,13 +110,13 @@ class _ContractAddView extends State<ContractAddView> {
                                 value: _club?.id,
                                 onChanged: widget.club == null
                                     ? (int? value) => setState(() {
-                                          _club = clubProvider.items.values.singleWhere((element) => element.id == value);
+                                          _club = clubProvider.data.values.singleWhere((element) => element.id == value);
                                         })
                                     : null,
                                 // The validator checks if the field is null or empty
                                 validator: (value) => value == null ? 'Campo necessário' : null,
                                 // New contracts can only be made by currently playing clubs
-                                items: clubProvider.items.values
+                                items: clubProvider.data.values
                                     .where((element) => element.playing)
                                     .map<DropdownMenuItem<int>>((Club value) {
                                   return DropdownMenuItem<int>(
@@ -147,12 +147,11 @@ class _ContractAddView extends State<ContractAddView> {
                                 value: _player?.id,
                                 onChanged: widget.player == null
                                     ? (int? value) => setState(() {
-                                          _player =
-                                              playerProvider.items.values.singleWhere((element) => element.id == value);
+                                          _player = playerProvider.data.values.singleWhere((element) => element.id == value);
                                         })
                                     : null,
                                 validator: (value) => value == null ? 'Campo necessário' : null,
-                                items: playerProvider.items.values.map<DropdownMenuItem<int>>((Player value) {
+                                items: playerProvider.data.values.map<DropdownMenuItem<int>>((Player value) {
                                   return DropdownMenuItem<int>(
                                     value: value.id,
                                     child: Row(
@@ -209,7 +208,7 @@ class _ContractAddView extends State<ContractAddView> {
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Campo necessário';
-                                        } else if (contractProvider.items.values
+                                        } else if (contractProvider.data.values
                                             .where((element) => element.club.id == _club!.id && element.active)
                                             .any((element) => element.shirtNumber == _number)) {
                                           return 'Número em uso pelo clube.';
@@ -259,7 +258,7 @@ class _ContractAddView extends State<ContractAddView> {
                                           DateUtils.addMonthsToMonthDate(_period!.start, 60).difference(_period!.start)) ==
                                       1) {
                                     return 'Contratos têm duração máxima de 5 anos';
-                                  } else if (contractProvider.items.values.any((element) =>
+                                  } else if (contractProvider.data.values.any((element) =>
                                       element.player.id == _player!.id && _period!.start.isBefore(element.period.end))) {
                                     return 'Jogador atualmente contratado neste periodo';
                                   } else {

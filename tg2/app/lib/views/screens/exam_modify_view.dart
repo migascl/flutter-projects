@@ -74,7 +74,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
         child: Card(
           child: Consumer2<PlayerProvider, ExamProvider>(
             builder: (context, playerProvider, examProvider, child) {
-              if (examProvider.state == ProviderState.ready) {
+              if (examProvider.state != ProviderState.busy) {
                 return Form(
                   key: _examFormKey,
                   child: Padding(
@@ -110,7 +110,7 @@ class _ExamModifyViewState extends State<ExamModifyView> {
                                   ),
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (value) {
-                                    List<Exam> _exams = examProvider.items.values
+                                    List<Exam> _exams = examProvider.data.values
                                         .where((element) => element.player.id == widget.player.id)
                                         .toList();
                                     // The validator first checks if the field is null or empty
@@ -206,64 +206,5 @@ class _ExamModifyViewState extends State<ExamModifyView> {
         ),
       ),
     );
-    /*
-    return AlertDialog(
-      title: widget.exam == null ? const Text('Novo Exame') : Text('Modificar Exame ${exam.id}'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: CheckboxListTile(
-              title: const Text("Passou?"),
-              contentPadding: EdgeInsets.zero,
-              activeColor: Theme.of(context).colorScheme.secondary,
-              value: exam.result,
-              enabled: !isLoading,
-              onChanged: (bool? value) => setState(() => exam.result = value!),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-          ),
-          Flexible(
-            child: TextFormField(
-              controller: dateFieldController,
-              readOnly: true,
-              enabled: !isLoading,
-              decoration: InputDecoration(
-                labelText: "Data",
-                errorText: errorText,
-                border: const OutlineInputBorder(),
-              ),
-              onTap: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                DateTime? result = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (result != null) {
-                  setState(() {
-                    errorText = null;
-                    exam.date = result;
-                    dateFieldController.text = DateFormat.yMd('pt_PT').format(exam.date);
-                  });
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancelar'),
-          onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-        ),
-        ElevatedButton(
-          onPressed: isLoading ? null : () => _submitData(),
-          child: isLoading ? const CircularProgressIndicator() : const Text('Guardar'),
-        ),
-      ],
-    );
-    */
   }
 }

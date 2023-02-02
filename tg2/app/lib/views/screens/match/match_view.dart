@@ -32,7 +32,7 @@ class _MatchViewState extends State<MatchView> {
           ),
           const SizedBox(height: 8),
           Text(
-            club.name,
+            club.nickname ?? club.name,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall?.merge(const TextStyle(color: Colors.white)),
           ),
@@ -110,6 +110,7 @@ class _MatchViewState extends State<MatchView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
+                            flex: 2,
                             child: Text(
                               '${widget.match.homeScore}',
                               textAlign: TextAlign.center,
@@ -124,6 +125,7 @@ class _MatchViewState extends State<MatchView> {
                             ),
                           ),
                           Expanded(
+                            flex: 2,
                             child: Text(
                               '${widget.match.awayScore}',
                               textAlign: TextAlign.center,
@@ -204,7 +206,7 @@ class _MatchSquadListState extends State<_MatchSquadList> {
                   margin: EdgeInsets.zero,
                   child: Builder(builder: (context) {
                     List<Contract> _squad =
-                        contractProvider.items.values.where((e) => e.club == widget.club && e.active).toList();
+                        contractProvider.data.values.where((e) => e.club == widget.club && e.active).toList();
                     switch (contractProvider.state) {
                       case ProviderState.busy:
                         return const Center(child: CircularProgressIndicator());

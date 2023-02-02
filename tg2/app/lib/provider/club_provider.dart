@@ -12,7 +12,7 @@ class ClubProvider extends ChangeNotifier {
   // VARIABLES
   late StadiumProvider _stadiumProvider; // Reference to parent provider Stadium
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Club> _items = {}; // Cached data
+  static Map<int, Club> _data = {}; // Cached data
 
   ClubProvider(this._stadiumProvider) {
     print("Club/P: Initialized");
@@ -21,7 +21,7 @@ class ClubProvider extends ChangeNotifier {
   // GETTERS
   ProviderState get state => _stadiumProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
-  Map<int, Club> get items => _items;
+  Map<int, Club> get data => _data;
 
   // METHODS
   // Called when ProviderProxy update is called
@@ -42,19 +42,17 @@ class ClubProvider extends ChangeNotifier {
         notifyListeners();
         print("Club/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.club);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Club(
                 json['name'],
                 json['playing'],
                 json['nickname'],
-                _stadiumProvider.items[json['stadium']]!,
+                _stadiumProvider.data[json['stadium']]!,
                 json['phone'],
                 json['fax'],
                 json['email'],
-                json['color'] != null
-                    ? Color.fromARGB(255, json['color'][0], json['color'][1], json['color'][2])
-                    : null,
+                json['color'] != null ? Color.fromARGB(255, json['color'][0], json['color'][1], json['color'][2]) : null,
                 NetworkImage(dotenv.env['API_URL']! + json['logo']),
                 json['id'])
         };
@@ -64,7 +62,7 @@ class ClubProvider extends ChangeNotifier {
       print("Club/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

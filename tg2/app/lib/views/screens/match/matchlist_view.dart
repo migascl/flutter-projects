@@ -71,7 +71,7 @@ class _MatchListViewState extends State<MatchListView> {
               return TabBarView(
                 children: matchweeks.map((int matchweek) {
                   // Get matchdays of that matchweek
-                  List<String> matchdays = matchProvider.items.values
+                  List<String> matchdays = matchProvider.data.values
                       .where((e) => (e.matchweek == matchweek))
                       .map((match) => DateTime(match.date.year, match.date.month, match.date.day).toIso8601String())
                       .toSet()
@@ -92,7 +92,7 @@ class _MatchListViewState extends State<MatchListView> {
                               // Get matches from matchday
                               DateTime matchday = DateTime.parse(matchdays[index]);
                               String matchdayLabel = DateFormat.yMMMMEEEEd('pt_PT').format(matchday);
-                              List<Match> matches = matchProvider.items.values
+                              List<Match> matches = matchProvider.data.values
                                   .where((match) => DateUtils.isSameDay(match.date, matchday))
                                   .toList();
                               return Column(children: [

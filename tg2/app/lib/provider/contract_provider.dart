@@ -15,7 +15,7 @@ class ContractProvider extends ChangeNotifier {
   late PlayerProvider _playerProvider; // Reference to parent provider Player
   late ClubProvider _clubProvider; // Reference to parent provider Club
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Contract> _items = {}; // Cached data
+  static Map<int, Contract> _data = {}; // Cached data
 
   ContractProvider(this._playerProvider, this._clubProvider) {
     print("Contract/P: Initialized");
@@ -25,7 +25,7 @@ class ContractProvider extends ChangeNotifier {
   ProviderState get state =>
       _playerProvider.state == ProviderState.busy || _clubProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
-  Map<int, Contract> get items => _items;
+  Map<int, Contract> get data => _data;
 
   // METHODS
   // Called when ProviderProxy update is called
@@ -49,11 +49,11 @@ class ContractProvider extends ChangeNotifier {
         notifyListeners();
         print("Contract/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.contract);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Contract(
-              _playerProvider.items[json['player']]!,
-              _clubProvider.items[json['club']]!,
+              _playerProvider.data[json['player']]!,
+              _clubProvider.data[json['club']]!,
               json['shirtnumber'],
               Position.values[json['position']],
               DateUtilities().decoder(json['period']),
@@ -67,7 +67,7 @@ class ContractProvider extends ChangeNotifier {
       print("Contract/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }
@@ -88,7 +88,7 @@ class ContractProvider extends ChangeNotifier {
       print("Contract/P: Error deleting contract ${contract.id}! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
@@ -111,7 +111,7 @@ class ContractProvider extends ChangeNotifier {
       print("Contract/P: Error inserting! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }

@@ -61,7 +61,7 @@ class _ClubListViewState extends State<ClubListView> {
       if (matchProvider.state != ProviderState.busy && matches.isEmpty) {
         filterData = matchProvider.getMatchweeks();
         // Query data from clubs and matches to sort them by who has the most points and matches
-        matches = clubProvider.items.values
+        matches = clubProvider.data.values
             .where((club) => club.playing == true)
             .map((club) => {
                   'club': club,

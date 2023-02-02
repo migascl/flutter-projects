@@ -158,8 +158,7 @@ class _PlayerViewState extends State<PlayerView> {
                   builder: (context, contractProvider, child) {
                     if (contractProvider.state != ProviderState.busy && _contracts.isEmpty) {
                       // Get all active contracts of the player
-                      _contracts =
-                          contractProvider.items.values.where((element) => element.player.id == _player.id).toList();
+                      _contracts = contractProvider.data.values.where((element) => element.player.id == _player.id).toList();
                       _contracts.sort((a, b) => b.period.end.compareTo(a.period.end));
                     }
                     if (_contracts.isNotEmpty) {
@@ -226,7 +225,7 @@ class _PlayerViewState extends State<PlayerView> {
                   builder: (context, examProvider, child) {
                     if (examProvider.state != ProviderState.busy && _exams.isEmpty) {
                       // Get all active exams of the player and sort by most recent
-                      _exams = examProvider.items.values.where((element) => element.player.id == _player.id).toList();
+                      _exams = examProvider.data.values.where((element) => element.player.id == _player.id).toList();
                       _exams.sort((a, b) => b.date.compareTo(a.date));
                     }
                     if (_exams.isNotEmpty) {
@@ -337,9 +336,21 @@ class _PlayerViewState extends State<PlayerView> {
       // ############# Bottom Nav #############
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'Informação'),
-          BottomNavigationBarItem(icon: Icon(Icons.file_copy_outlined), label: 'Contratos'),
-          BottomNavigationBarItem(icon: Icon(Icons.science_outlined), label: 'Exames')
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline),
+            activeIcon: Icon(Icons.info_sharp),
+            label: 'Informação',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.file_copy_outlined),
+            activeIcon: Icon(Icons.file_copy_sharp),
+            label: 'Contratos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.science_outlined),
+            activeIcon: Icon(Icons.science_sharp),
+            label: 'Exames',
+          )
         ],
         onTap: (int value) {
           setState(() {

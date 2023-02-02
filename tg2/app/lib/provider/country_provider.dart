@@ -9,7 +9,7 @@ import 'package:tg2/utils/constants.dart';
 class CountryProvider extends ChangeNotifier {
   // VARIABLES
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Country> _items = {}; // Cached data
+  static Map<int, Country> _data = {}; // Cached data
 
   CountryProvider() {
     print("Country/P: Initialized");
@@ -18,7 +18,7 @@ class CountryProvider extends ChangeNotifier {
   // GETTERS
   ProviderState get state => _state;
 
-  Map<int, Country> get items => _items;
+  Map<int, Country> get data => _data;
 
   // METHODS
   // Get all countries from database.
@@ -31,14 +31,14 @@ class CountryProvider extends ChangeNotifier {
         notifyListeners();
         print("Country/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.country);
-        _items = {for (var json in response) json['id']: Country(json['id'], json['name'])};
+        _data = {for (var json in response) json['id']: Country(json['id'], json['name'])};
         print("Country/P: Fetched successfully!");
       }
     } catch (e) {
       print("Country/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

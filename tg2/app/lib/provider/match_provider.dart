@@ -14,7 +14,7 @@ class MatchProvider extends ChangeNotifier {
   late StadiumProvider _stadiumProvider; // Reference to parent provider Stadium
   late ClubProvider _clubProvider; // Reference to parent provider Club
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Match> _items = {}; // Cached data
+  static Map<int, Match> _data = {}; // Cached data
 
   MatchProvider(this._stadiumProvider, this._clubProvider) {
     print("Match/P: Initialized");
@@ -25,11 +25,11 @@ class MatchProvider extends ChangeNotifier {
       ? ProviderState.busy
       : _state;
 
-  Map<int, Match> get items => _items;
+  Map<int, Match> get data => _data;
 
   // Get matches where a given club participated in (Uses club id to search in both home and away)
   Map<int, Match> getByClub(Club club) {
-    return Map.fromEntries(_items.entries.expand((element) => [
+    return Map.fromEntries(_data.entries.expand((element) => [
           if (element.value.homeClub.id == club.id || element.value.awayClub.id == club.id)
             MapEntry(element.key, element.value)
         ]));
@@ -56,7 +56,7 @@ class MatchProvider extends ChangeNotifier {
 
   List<int> getMatchweeks() {
     Set<int> seen = <int>{};
-    List<Match> uniquelist = _items.values.where((element) => seen.add(element.matchweek)).toList();
+    List<Match> uniquelist = _data.values.where((element) => seen.add(element.matchweek)).toList();
     uniquelist.sort((a, b) => b.matchweek.compareTo(a.matchweek));
     return List.from(uniquelist.map((e) => e.matchweek));
   }
@@ -84,17 +84,17 @@ class MatchProvider extends ChangeNotifier {
         notifyListeners();
         print("Match/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.match);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Match(
               DateTime.parse(json['date'].toString()),
               json['matchweek'],
-              _clubProvider.items[json['homeclub']]!,
+              _clubProvider.data[json['homeclub']]!,
               json['homescore'],
-              _clubProvider.items[json['awayclub']]!,
+              _clubProvider.data[json['awayclub']]!,
               json['awayscore'],
               json['duration'],
-              _stadiumProvider.items[json['stadium']]!,
+              _stadiumProvider.data[json['stadium']]!,
               json['id'],
             )
         };
@@ -104,7 +104,7 @@ class MatchProvider extends ChangeNotifier {
       print("Match/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

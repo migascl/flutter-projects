@@ -83,30 +83,6 @@ app.get('/', (req, res) => {
   res.json(app.settings)
 });
 
-// PASSPORT
-app.post('/passport', (req, res) => {
-
-  // Get the file that was set to our field named "image"
-  const { image } = req.files;
-  const { name } = req.body;
-  image.name = name + '.png'
-
-  // If no image submitted, exit
-  if (!image) return res.sendStatus(400);
-
-  /*
-  // If does not have image mime type prevent from uploading
-  if (/^image/.test(image.mimetype)) return res.sendStatus(400);
-
-   */
-
-  // Move the uploaded image to passport folder
-  image.mv(__dirname + '/assets/img/passport/' + image.name);
-
-  // All good
-  res.sendStatus(200);
-});
-
 // COUNTRY
 app.get('/country', (req, res) => connection.any('SELECT * FROM country')
     .then((data) => res.json(data))
@@ -215,4 +191,28 @@ app.delete('/contract', (req,res) => {
   })
       .then(r => res.json(r))
       .catch((error) => console.log('ERROR:', error));
+});
+
+// PASSPORT
+app.post('/passport', (req, res) => {
+
+  // Get the file that was set to our field named "image"
+  const { image } = req.files;
+  const { name } = req.body;
+  image.name = name + '.png'
+
+  // If no image submitted, exit
+  if (!image) return res.sendStatus(400);
+
+  /*
+  // If does not have image mime type prevent from uploading
+  if (/^image/.test(image.mimetype)) return res.sendStatus(400);
+
+   */
+
+  // Move the uploaded image to passport folder
+  image.mv(__dirname + '/assets/img/passport/' + image.name);
+
+  // All good
+  res.json(req.files);
 });

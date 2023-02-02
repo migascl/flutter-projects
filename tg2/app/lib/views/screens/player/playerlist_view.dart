@@ -180,7 +180,7 @@ class _PlayerListViewState extends State<PlayerListView> {
         onRefresh: _loadPageData,
         child: Consumer2<PlayerProvider, ExamProvider>(builder: (context, playerProvider, examProvider, child) {
           if (examProvider.state != ProviderState.busy && players.isEmpty) {
-            players = playerProvider.items;
+            players = playerProvider.data;
           }
 
           if (players.isNotEmpty) {
@@ -193,7 +193,7 @@ class _PlayerListViewState extends State<PlayerListView> {
               filterResults = players;
             } else {
               List<Exam> exams =
-                  (filterPeriod != null ? examProvider.getByDate(filterPeriod!).values : examProvider.items.values).toList();
+                  (filterPeriod != null ? examProvider.getByDate(filterPeriod!).values : examProvider.data.values).toList();
               for (var player in players.values) {
                 if (filter == _ExamFilters.hasTests && exams.any((element) => element.player.id == player.id)) {
                   filterResults.putIfAbsent(player.id!, () => player);
@@ -219,7 +219,7 @@ class _PlayerListViewState extends State<PlayerListView> {
                       height: 42,
                       color: Colors.white,
                     ),
-                    title: Text(player.nickname ?? player.name, style: Theme.of(context).textTheme.titleSmall),
+                    title: Text(player.name, style: Theme.of(context).textTheme.titleSmall),
                     subtitle: Text(player.country.name, style: Theme.of(context).textTheme.caption),
                     tileColor: Theme.of(context).colorScheme.surface,
                     onTap: () => Navigator.of(context).push(

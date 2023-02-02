@@ -13,7 +13,7 @@ class PlayerProvider extends ChangeNotifier {
   // VARIABLES
   late CountryProvider _countryProvider; // Reference to parent provider Country
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Player> _items = {}; // Cached data
+  static Map<int, Player> _data = {}; // Cached data
 
   PlayerProvider(this._countryProvider) {
     print("Player/P: Initialized");
@@ -22,7 +22,7 @@ class PlayerProvider extends ChangeNotifier {
   // GETTERS
   ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
-  Map<int, Player> get items => _items;
+  Map<int, Player> get data => _data;
 
   // METHODS
   // Called when ProviderProxy update is called
@@ -43,11 +43,11 @@ class PlayerProvider extends ChangeNotifier {
         notifyListeners();
         print("Player/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.player);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Player(
               json['name'],
-              _countryProvider.items[json['country']]!,
+              _countryProvider.data[json['country']]!,
               DateTime.parse(json['birthday'].toString()),
               json['nickname'],
               json['height'],
@@ -63,7 +63,7 @@ class PlayerProvider extends ChangeNotifier {
       print("Player/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

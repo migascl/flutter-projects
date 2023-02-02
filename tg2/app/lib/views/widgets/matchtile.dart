@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tg2/main.dart';
 import 'package:tg2/models/match_model.dart';
 import 'package:tg2/views/screens/match/match_view.dart';
 import 'package:tg2/views/widgets/futureimage.dart';
@@ -14,7 +15,6 @@ class MatchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      tileColor: Theme.of(context).colorScheme.surface,
       title: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
@@ -28,35 +28,31 @@ class MatchTile extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // HOME CLUB BADGE
-                Expanded(
-                  child: FutureImage(
-                    image: match.homeClub.logo!,
-                    errorImageUri: 'assets/images/placeholder-club.png',
-                    height: 48,
-                    aspectRatio: 1 / 1,
-                  ),
+                FutureImage(
+                  image: match.homeClub.logo!,
+                  errorImageUri: 'assets/images/placeholder-club.png',
+                  height: 48,
+                  aspectRatio: 1 / 1,
                 ),
                 // SCORE
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('${match.homeScore}', style: Theme.of(context).textTheme.headlineMedium),
-                      Text(':', style: Theme.of(context).textTheme.headlineSmall),
-                      Text('${match.awayScore}', style: Theme.of(context).textTheme.headlineMedium),
-                    ],
-                  ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 16,
+                  children: [
+                    Text('${match.homeScore}', style: Theme.of(context).textTheme.headlineMedium),
+                    Text(':', style: Theme.of(context).textTheme.headlineSmall),
+                    Text('${match.awayScore}', style: Theme.of(context).textTheme.headlineMedium),
+                  ],
                 ),
                 // AWAY CLUB BADGE
-                Expanded(
-                  child: FutureImage(
-                    image: match.awayClub.logo!,
-                    errorImageUri: 'assets/images/placeholder-club.png',
-                    height: 48,
-                    aspectRatio: 1 / 1,
-                  ),
+                FutureImage(
+                  image: match.awayClub.logo!,
+                  errorImageUri: 'assets/images/placeholder-club.png',
+                  height: 48,
+                  aspectRatio: 1 / 1,
                 ),
               ],
             ),

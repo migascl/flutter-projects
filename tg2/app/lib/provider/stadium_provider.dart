@@ -11,7 +11,7 @@ class StadiumProvider extends ChangeNotifier {
   // VARIABLES
   late CountryProvider _countryProvider; // Reference to parent provider Country
   ProviderState _state = ProviderState.empty; // Provider state
-  static Map<int, Stadium> _items = {}; // Cached data
+  static Map<int, Stadium> _data = {}; // Cached data
 
   StadiumProvider(this._countryProvider) {
     print("Stadium/P: Initialized");
@@ -20,7 +20,7 @@ class StadiumProvider extends ChangeNotifier {
   // GETTERS
   ProviderState get state => _countryProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
-  Map<int, Stadium> get items => _items;
+  Map<int, Stadium> get data => _data;
 
   // METHODS
   // Called when ProviderProxy update is called
@@ -41,13 +41,13 @@ class StadiumProvider extends ChangeNotifier {
         notifyListeners();
         print("Stadium/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.stadium);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Stadium(
               json['name'],
               json['address'],
               json['city'],
-              _countryProvider.items[json['country']]!,
+              _countryProvider.data[json['country']]!,
               json['id'],
             )
         };
@@ -57,7 +57,7 @@ class StadiumProvider extends ChangeNotifier {
       print("Stadium/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }

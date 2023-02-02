@@ -14,7 +14,7 @@ class ExamProvider extends ChangeNotifier {
   // VARIABLES
   late PlayerProvider _playerProvider; // Reference to parent provider Player
   ProviderState _state = ProviderState.empty; // Provider state
-  Map<int, Exam> _items = {}; // Cached data
+  Map<int, Exam> _data = {}; // Cached data
 
   ExamProvider(this._playerProvider) {
     print("Exam/P: Initialized");
@@ -23,17 +23,17 @@ class ExamProvider extends ChangeNotifier {
   // GETTERS
   ProviderState get state => _playerProvider.state == ProviderState.busy ? ProviderState.busy : _state;
 
-  Map<int, Exam> get items => _items;
+  Map<int, Exam> get data => _data;
 
   // Get exams from given player (Uses player id to search)
   Map<int, Exam> getByPlayer(Player player) {
-    return Map.fromEntries(_items.entries.where((element) => element.value.player.id == player.id));
+    return Map.fromEntries(_data.entries.where((element) => element.value.player.id == player.id));
   }
 
   // Get exams from a date range
   Map<int, Exam> getByDate(DateTimeRange date) {
     return Map.fromEntries(
-        _items.entries.where((element) => element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
+        _data.entries.where((element) => element.value.date.isAfter(date.start) && element.value.date.isBefore(date.end)));
   }
 
   // METHODS
@@ -55,10 +55,10 @@ class ExamProvider extends ChangeNotifier {
         notifyListeners();
         print("Exam/P: Getting all...");
         final response = await ApiService().get(ApiEndpoints.exam);
-        _items = {
+        _data = {
           for (var json in response)
             json['id']: Exam(
-              _playerProvider.items[json['player']]!,
+              _playerProvider.data[json['player']]!,
               DateTime.parse(json['date'].toString()),
               json['result'],
               json['id'],
@@ -70,7 +70,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error fetching! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       notifyListeners();
     }
   }
@@ -91,7 +91,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error deleting exam ${exam.id}! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
@@ -112,7 +112,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error inserting! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
@@ -127,7 +127,7 @@ class ExamProvider extends ChangeNotifier {
         _state = ProviderState.busy;
         notifyListeners();
         print("Exam/P: Patching exam ${exam.id}...");
-        if (_items.values.any((element) =>
+        if (_data.values.any((element) =>
             element.date.isAtSameMomentAs(exam.date) && element.player.id == exam.player.id && element.id != exam.id)) {
           throw DuplicateException("Player ${exam.player.id} already had an exam in ${exam.date}");
         } else {
@@ -139,7 +139,7 @@ class ExamProvider extends ChangeNotifier {
       print("Exam/P: Error patching exam ${exam.id}! $e");
       rethrow;
     } finally {
-      (_items.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
+      (_data.isEmpty) ? _state = ProviderState.empty : _state = ProviderState.ready;
       await get();
     }
   }
