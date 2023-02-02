@@ -70,9 +70,12 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             tileColor: Theme.of(context).colorScheme.tertiaryContainer,
             dense: true,
-            title: Text("Miguel Leirosa 2022/2023",
-                style:
-                    Theme.of(context).textTheme.overline?.apply(color: Theme.of(context).colorScheme.onTertiaryContainer)),
+            title: Text(
+              "Miguel Leirosa 2022/2023",
+              style: Theme.of(context).textTheme.overline?.apply(
+                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+            ),
           ),
         ],
       ),
