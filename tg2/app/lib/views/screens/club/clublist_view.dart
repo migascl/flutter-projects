@@ -182,19 +182,34 @@ class _ClubListViewState extends State<ClubListView> {
                         Club club = matches[index]['club'];
                         int totalMatches = matches[index]['matches'];
                         int totalPoints = matches[index]['points'];
-                        return ListTile(
-                          tileColor: Theme.of(context).colorScheme.surface,
-                          dense: true,
-                          leading: FutureImage(
-                            image: club.logo!,
-                            errorImageUri: 'assets/images/placeholder-club.png',
-                            aspectRatio: 1 / 1,
-                            height: 42,
-                          ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        return Container(
+                          color: Theme.of(context).colorScheme.surface,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
                             children: [
-                              Expanded(child: Text(club.name, style: Theme.of(context).textTheme.titleSmall)),
+                              Expanded(
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  dense: true,
+                                  leading: FutureImage(
+                                    image: club.logo!,
+                                    errorImageUri: 'assets/images/placeholder-club.png',
+                                    aspectRatio: 1 / 1,
+                                    height: 42,
+                                  ),
+                                  title: Text(club.name, style: Theme.of(context).textTheme.titleSmall),
+                                  subtitle: Text(club.stadium!.city, style: Theme.of(context).textTheme.caption),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ClubView(club: club, selectedMatchweek: selectedMatchweek),
+                                        maintainState: false,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                               Container(
                                 margin: const EdgeInsets.symmetric(horizontal: 4),
                                 alignment: Alignment.center,
@@ -209,16 +224,6 @@ class _ClubListViewState extends State<ClubListView> {
                               ),
                             ],
                           ),
-                          subtitle: Text(club.stadium!.city, style: Theme.of(context).textTheme.caption),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ClubView(club: club, selectedMatchweek: selectedMatchweek),
-                                maintainState: false,
-                              ),
-                            );
-                          },
                         );
                       },
                       separatorBuilder: (context, index) => const Divider(height: 0),
