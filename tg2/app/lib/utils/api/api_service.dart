@@ -20,7 +20,7 @@ class ApiService {
         var result = await http.Response.fromStream(response);
         return result.contentLength! > 0 ? jsonDecode(result.body) : result.body; // Don't decode if content empty
       default:
-        throw ApiRequestException("Api request returned ${response.statusCode}");
+        throw ApiRequestException("API request returned ${response.statusCode}");
     }
   }
 }
